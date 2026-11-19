@@ -1,80 +1,424 @@
-function syncModalRotations() {
-    const dialogs = document.querySelectorAll(".fs-modal-dialog");
-    dialogs.forEach((dlg) => {
-        dlg.classList.remove("fs-rot-ccw", "fs-rot-cw");
-        if (isFocusMode) {
-            dlg.classList.add(rotationMode === "cw" ? "fs-rot-cw" : "fs-rot-ccw");
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificator Ture & Program de Lucru</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#172033',
+                            950: '#0a0f1c'
+                        }
+                    }
+                }
+            }
         }
-    });
-}
-
-function applyRotationClass() {
-    const shell = document.getElementById("fullscreen-overlay-shell");
-    if (!shell) return;
-    shell.classList.remove("rotated-cw", "rotated-ccw");
-    if (isFocusMode) {
-        shell.classList.add(rotationMode === "cw" ? "rotated-cw" : "rotated-ccw");
-    }
-    syncModalRotations();
-}
-
-function enterFullscreenSchedule() {
-    if (isFocusMode) return;
-    isFocusMode = true;
-    if (viewMode !== "table") viewMode = "table";
-
-    const shell = document.getElementById("fullscreen-overlay-shell");
-    const fsTopBar = document.getElementById("fullscreen-top-bar");
-    const tableContainer = document.getElementById("table-view-container");
-    const scrollWrapper = document.getElementById("table-scroll-wrapper");
-
-    document.body.classList.add("fullscreen-schedule-active");
-    if (shell) {
-        shell.classList.add("active");
-        applyRotationClass();
-    }
-    if (fsTopBar) fsTopBar.classList.remove("hidden");
-    if (tableContainer) {
-        tableContainer.classList.remove("rounded-2xl", "border");
-        tableContainer.classList.add("rounded-none", "border-0");
-    }
-    if (scrollWrapper) {
-        scrollWrapper.classList.remove("max-h-[78vh]");
-        scrollWrapper.style.height = "100%";
-        scrollWrapper.style.maxHeight = "none";
-    }
-
-    renderAll();
-}
-
-function exitFullscreenSchedule() {
-    if (!isFocusMode) return;
-    isFocusMode = false;
-
-    try {
-        if (document.fullscreenElement && document.exitFullscreen) {
-            document.exitFullscreen().catch(() => {});
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-    } catch (e) {}
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
 
-    const shell = document.getElementById("fullscreen-overlay-shell");
-    const fsTopBar = document.getElementById("fullscreen-top-bar");
-    const tableContainer = document.getElementById("table-view-container");
-    const scrollWrapper = document.getElementById("table-scroll-wrapper");
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+        }
 
-    document.body.classList.remove("fullscreen-schedule-active");
-    if (shell) shell.classList.remove("active", "rotated-cw", "rotated-ccw");
-    syncModalRotations();
-    if (fsTopBar) fsTopBar.classList.add("hidden");
-    if (tableContainer) {
-        tableContainer.classList.add("rounded-2xl", "border");
-        tableContainer.classList.remove("rounded-none", "border-0");
-    }
-    if (scrollWrapper) {
-        scrollWrapper.style.height = "";
-        scrollWrapper.style.maxHeight = "";
-        scrollWrapper.classList.add("max-h-[78vh]");
-    }
+        .sticky-thead th {
+            position: sticky;
+            top: 0;
+            z-index: 15;
+        }
+        .sticky-thead th.sticky-col {
+            z-index: 25;
+        }
 
-    renderAll();
-}
+        body.fullscreen-schedule-active {
+            overflow: hidden !important;
+        }
+
+        #fullscreen-overlay-shell.active {
+            position: fixed;
+            inset: 0;
+            z-index: 45;
+            width: 100vw;
+            width: 100dvw;
+            height: 100vh;
+            height: 100dvh;
+            background: #0f172a;
+            overflow: hidden;
+        }
+
+        #fullscreen-rotated-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            overflow: hidden;
+            transition: transform 0.25s ease;
+        }
+
+        #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage,
+        #fullscreen-overlay-shell.active.rotated-cw #fullscreen-rotated-stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vh;
+            width: 100dvh;
+            height: 100vw;
+            height: 100dvw;
+        }
+
+        #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage {
+            transform: translate(-50%, -50%) rotate(-90deg);
+        }
+
+        #fullscreen-overlay-shell.active.rotated-cw #fullscreen-rotated-stage {
+            transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        /* Fit-to-screen full 7 days without horizontal scrolling in fullscreen mode */
+        #fullscreen-overlay-shell.active #table-scroll-wrapper {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        #fullscreen-overlay-shell.active table {
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed !important;
+        }
+
+        /* Pe telefon (< 768px): ascunde bara de sus în modul tot ecranul */
+        @media (max-width: 767px) {
+            #fullscreen-overlay-shell.active #fullscreen-top-bar {
+                display: none !important;
+            }
+        }
+
+        /* Buton Înapoi pe telefon în modul tot ecranul */
+        #fs-back-btn {
+            display: none;
+        }
+        #fullscreen-overlay-shell.active #fs-back-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 46;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            background: rgba(15, 23, 42, 0.92);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            #fullscreen-overlay-shell.active #fs-back-btn {
+                display: none !important;
+            }
+        }
+
+        /* Modale rotite exact ca tabelul la 90 grade în modul tot ecranul */
+        .fs-modal-dialog.fs-rot-ccw {
+            transform: rotate(-90deg);
+            width: min(82vh, 460px) !important;
+            max-height: 88vw !important;
+            overflow-y: auto;
+        }
+        .fs-modal-dialog.fs-rot-cw {
+            transform: rotate(90deg);
+            width: min(82vh, 460px) !important;
+            max-height: 88vw !important;
+            overflow-y: auto;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                font-size: 11px !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-full {
+                width: 100% !important;
+                max-width: none !important;
+                box-shadow: none !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            table {
+                border-collapse: collapse !important;
+                width: 100% !important;
+            }
+            th, td {
+                border: 1px solid #cbd5e1 !important;
+                padding: 4px 6px !important;
+            }
+            .sticky-col {
+                position: static !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Notificare Toast -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Header Principal -->
+    <header id="main-header" class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print transition-all">
+        <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <!-- Logo și Titlu Interactiv "Programul de muncă" -->
+                <div class="flex items-center justify-between gap-3">
+                    <div onclick="enterFullscreenSchedule()" role="button" tabindex="0" onkeydown="if(event.key==='Enter') enterFullscreenSchedule()"
+                        title="Click pentru a deschide Programul de muncă pe tot ecranul și întors invers"
+                        class="flex items-center gap-3 group cursor-pointer rounded-xl p-1 -ml-1 hover:bg-indigo-50/70 transition">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-600 group-hover:bg-indigo-700 text-white flex items-center justify-center shadow-md shadow-indigo-200 shrink-0 transition">
+                            <i data-lucide="calendar-clock" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 group-hover:text-indigo-700 tracking-tight underline decoration-indigo-300 decoration-2 underline-offset-4 transition">
+                                    Programul de muncă
+                                </h1>
+                                <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                    2026 & 2027
+                                </span>
+                            </div>
+                            <p id="header-subtitle" class="text-xs text-slate-500">Click pe „Programul de muncă” pentru tot ecranul & rotire inversă</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selector Rapid An + Săptămână -->
+                <div class="flex items-center gap-2">
+                    <select id="quick-year-select" onchange="onYearOrWeekDropdownChange()"
+                        class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                    <select id="quick-week-select" onchange="switchWeek(this.value)"
+                        class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-900 border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer max-w-[220px]">
+                    </select>
+                </div>
+
+                <!-- Acțiuni Rapide Header & Buton Tot Ecranul -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" id="btn-focus-mode" onclick="enterFullscreenSchedule()"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-md shadow-indigo-200 cursor-pointer">
+                        <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                        <span>Programul de muncă (Tot ecranul)</span>
+                    </button>
+
+                    <button type="button" onclick="openAddEmployeeModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 transition shadow-sm cursor-pointer">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>Adaugă Persoană</span>
+                    </button>
+                    <button type="button" onclick="exportToCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition cursor-pointer">
+                        <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+                        <span class="hidden md:inline">Export CSV</span>
+                    </button>
+                    <button type="button" onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition cursor-pointer">
+                        <i data-lucide="printer" class="w-4 h-4 text-slate-600"></i>
+                        <span class="hidden xl:inline">Printează</span>
+                    </button>
+                    <button type="button" onclick="openResetModal()" title="Resetează la datele inițiale" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 transition cursor-pointer">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bară Tab-uri Săptămâni -->
+            <div id="week-tabs" class="flex items-center gap-1.5 overflow-x-auto pt-2.5 mt-2.5 border-t border-slate-100 pb-1"></div>
+        </div>
+    </header>
+
+    <!-- Conținut Principal -->
+    <main id="main-container" class="flex-1 w-full max-w-none px-3 sm:px-6 lg:px-8 py-5 space-y-5 print-full">
+
+        <!-- Carduri Statistici & Grafic Prezență -->
+        <section id="stats-section" class="grid grid-cols-1 lg:grid-cols-12 gap-4 no-print">
+            <div class="lg:col-span-5 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-500">Total Persoane</span>
+                        <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                            <i data-lucide="users" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div id="stat-total-employees" class="text-2xl font-bold text-slate-900">0</div>
+                        <p id="stat-dept-count" class="text-xs text-slate-500 mt-0.5">În această săptămână</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-500">Total Ture Active</span>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div id="stat-total-shifts" class="text-2xl font-bold text-slate-900">0</div>
+                        <p id="stat-avg-shifts" class="text-xs text-emerald-600 font-medium mt-0.5">Medie 0 / zi</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-500">Zile Libere (Vrij)</span>
+                        <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                            <i data-lucide="coffee" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div id="stat-vrij-count" class="text-2xl font-bold text-slate-900">0</div>
+                        <p class="text-xs text-slate-500 mt-0.5">Sloturi libere marcate</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-medium text-slate-500">Note / Extra / Concediu</span>
+                        <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <div id="stat-special-count" class="text-2xl font-bold text-slate-900">0</div>
+                        <p id="stat-special-desc" class="text-xs text-purple-600 font-medium mt-0.5">Extra, TAS, Vakantie</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribuție Prezență pe Zile -->
+            <div class="lg:col-span-7 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900">Prezență Zilnică pe Săptămână</h2>
+                        <p class="text-xs text-slate-500">Click pe o zi pentru filtrare rapidă în tabelul de mai jos</p>
+                    </div>
+                    <span id="week-badge-info" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+                        Week 47
+                    </span>
+                </div>
+                <div id="daily-chart-container" class="grid grid-cols-7 gap-2 items-end h-28 pt-3 px-1"></div>
+            </div>
+        </section>
+
+        <!-- Bară de Filtrare, Comutator Moduri și Zoom Tabel -->
+        <section id="toolbar-section" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3 no-print">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 flex-1">
+                    <div class="relative">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="filter-search" oninput="applyFilters()" placeholder="Caută persoană..."
+                            class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+                        <button type="button" id="clear-search-btn" onclick="clearSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+
+                    <div class="relative">
+                        <i data-lucide="layers" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <select id="filter-dept" onchange="applyFilters()"
+                            class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition appearance-none cursor-pointer">
+                            <option value="ALL">Toate Departamentele / Grupele</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+
+                    <div class="relative">
+                        <i data-lucide="calendar" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <select id="filter-day" onchange="applyFilters()"
+                            class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition appearance-none cursor-pointer">
+                            <option value="ALL">Toate zilele săptămânii</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+
+                    <div class="relative">
+                        <i data-lucide="filter" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <select id="filter-status" onchange="applyFilters()"
+                            class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition appearance-none cursor-pointer">
+                            <option value="ALL">Toate statusurile</option>
+                            <option value="WORKING">Doar cei care lucrează</option>
+                            <option value="VRIJ">Doar Vrij (Liber)</option>
+                            <option value="SPECIAL">Note speciale (Extra, TAS, Vakantie)</option>
+                        </select>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between xl:justify-end gap-2 shrink-0">
+                    <div id="zoom-controls" class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+                        <span class="text-[11px] font-semibold text-slate-500 px-2 hidden sm:inline">Mărime:</span>
+                        <button type="button" id="btn-zoom-normal" onclick="setTableZoom('normal')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900">Normal</button>
+                        <button type="button" id="btn-zoom-large" onclick="setTableZoom('large')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm">Mare</button>
+                        <button type="button" id="btn-zoom-xlarge" onclick="setTableZoom('xlarge')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900">Foarte Mare</button>
+                    </div>
+
+                    <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80">
+                        <button type="button" id="btn-view-table" onclick="setViewMode('table')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm">
+                            <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                            <span>Tabel Complet</span>
+                        </button>
+                        <button type="button" id="btn-view-cards" onclick="setViewMode('cards')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                            <span>Pe Zile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="legend-bar" class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="font-semibold text-slate-700 mr-1">Legendă:</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-50 text-cyan-800 border border-cyan-200 font-semibold">06:00</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold">07:00 - 07:15</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800 border border-indigo-200 font-semibold">08:00 - 09:00</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-semibold">10:00+</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border

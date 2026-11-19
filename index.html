@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planificator Ture & Program de Lucru</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
@@ -18,12 +15,6 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#172033',
-                            950: '#0a0f1c'
-                        }
                     }
                 }
             }
@@ -70,9 +61,7 @@
             inset: 0;
             z-index: 45;
             width: 100vw;
-            width: 100dvw;
             height: 100vh;
-            height: 100dvh;
             background: #0f172a;
             overflow: hidden;
         }
@@ -93,9 +82,7 @@
             top: 50%;
             left: 50%;
             width: 100vh;
-            width: 100dvh;
             height: 100vw;
-            height: 100dvw;
         }
 
         #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage {
@@ -106,7 +93,6 @@
             transform: translate(-50%, -50%) rotate(90deg);
         }
 
-        /* Modale rotite la 90 de grade în modul tot ecranul */
         .fs-modal-dialog {
             transition: transform 0.25s ease;
         }
@@ -125,7 +111,6 @@
             overflow-y: auto;
         }
 
-        /* Fit-to-screen full 7 days without horizontal scrolling in fullscreen mode */
         #fullscreen-overlay-shell.active #table-scroll-wrapper {
             overflow-x: hidden !important;
             overflow-y: auto !important;
@@ -139,7 +124,6 @@
             table-layout: fixed !important;
         }
 
-        /* Ascunde complet bara și butoanele pe telefon în modul tot ecranul */
         @media (max-width: 767px) {
             #fullscreen-overlay-shell.active #fullscreen-top-bar,
             #fullscreen-overlay-shell.active .no-print {
@@ -187,7 +171,6 @@
     <header id="main-header" class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print transition-all">
         <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-3">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                <!-- Logo și Titlu Interactiv "Programul de muncă" -->
                 <div class="flex items-center justify-between gap-3">
                     <div onclick="enterFullscreenSchedule()" role="button" tabindex="0" onkeydown="if(event.key==='Enter') enterFullscreenSchedule()"
                         title="Click pentru a deschide Programul de muncă pe tot ecranul și întors invers"
@@ -311,7 +294,6 @@
                 </div>
             </div>
 
-            <!-- Distribuție Prezență pe Zile -->
             <div class="lg:col-span-7 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <div>
@@ -618,4 +600,27 @@
                 <button type="button" onclick="confirmDeleteEmployee('all')" class="w-full px-4 py-2.5 text-sm font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 cursor-pointer">
                     Șterge din TOATE săptămânile (2026 & 2027)
                 </button>
-                <button type="button" onclick="closeDeleteEmployeeModal()" class="w-full px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover
+                <button type="button" onclick="closeDeleteEmployeeModal()" class="w-full px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">
+                    Anulează
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: CONFIRMARE RESETARE -->
+    <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
+        <div class="fs-modal-dialog bg-white rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full p-5 space-y-4">
+            <div class="flex items-center gap-3 text-rose-600">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
+                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Resetare Date</h3>
+                    <p class="text-xs text-slate-500">Revenire la datele inițiale</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600">
+                Ești sigur că vrei să ștergi toate modificările locale și să restaurezi programul inițial?
+            </p>
+            <div class="flex items-center justify-end gap-2 pt-1">
+                <button type="button"

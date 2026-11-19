@@ -123,7 +123,8 @@
 
         /* Pe telefon (< 768px): ascunde bara de sus în modul tot ecranul */
         @media (max-width: 767px) {
-            #fullscreen-overlay-shell.active #fullscreen-top-bar {
+            #fullscreen-overlay-shell.active #fullscreen-top-bar,
+            #fullscreen-overlay-shell.active .no-print {
                 display: none !important;
             }
         }
@@ -421,4 +422,202 @@
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold">07:00 - 07:15</span>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800 border border-indigo-200 font-semibold">08:00 - 09:00</span>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 font-semibold">10:00+</span>
-                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">Vrij (Liber)</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 font-semibold">Vakantie</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-semibold">Extra / TAS</span>
+                </div>
+                <div class="text-slate-500 flex flex-wrap items-center gap-3">
+                    <span class="inline-flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5 text-indigo-600"></i> Click pe <strong>nume</strong> pt. fișă</span>
+                    <span class="inline-flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i> Iconița coș șterge persoana</span>
+                    <span class="inline-flex items-center gap-1"><i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-emerald-600"></i> Click pe <strong>oră</strong> pt. editare</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Container Notă Săptămână -->
+        <div id="week-note-banner" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5 text-amber-900 text-sm">
+                <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                    <i data-lucide="info" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <span class="font-semibold">Notă importantă săptămână:</span>
+                    <span id="week-note-text" class="ml-1"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHELL FULLSCREEN PENTRU PROGRAMUL DE MUNCĂ -->
+        <div id="fullscreen-overlay-shell" class="w-full">
+            <div id="fullscreen-rotated-stage">
+                <button type="button" id="fs-back-btn" onclick="exitFullscreenSchedule()" title="Înapoi la pagina principală">
+                    <span>← Înapoi</span>
+                </button>
+
+                <div id="fullscreen-top-bar" class="hidden bg-slate-900 text-white px-2.5 sm:px-4 h-[44px] shrink-0 flex items-center justify-between gap-2 border-b border-slate-700 shadow-md no-print">
+                    <div class="flex items-center gap-2 min-w-0 overflow-x-auto">
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span class="font-extrabold text-xs sm:text-sm tracking-tight text-white">Programul de muncă</span>
+                        </div>
+                        <div id="fs-week-tabs" class="flex items-center gap-1 shrink-0"></div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <div class="relative hidden md:block w-36 lg:w-44">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="fs-filter-search" oninput="syncFullscreenSearch(this.value)" placeholder="Caută..."
+                                class="w-full pl-7 pr-2.5 py-1 text-xs bg-slate-800 text-white placeholder-slate-400 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+
+                        <button type="button" onclick="openAddEmployeeModal()" class="px-2 py-1 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer">
+                            + Persoană
+                        </button>
+
+                        <button type="button" onclick="cycleRotationDirection()" title="Schimbă sensul de rotire"
+                            class="px-2 py-1 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 cursor-pointer">
+                            ↻ Rotește
+                        </button>
+
+                        <button type="button" onclick="exitFullscreenSchedule()"
+                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 transition shadow-sm cursor-pointer">
+                            <span>← Înapoi</span>
+                        </button>
+                    </div>
+                </div>
+
+                <section id="table-view-container" class="bg-white rounded-2xl border border-slate-300/90 shadow-md overflow-hidden flex-1 flex flex-col w-full">
+                    <div id="table-scroll-wrapper" class="overflow-auto max-h-[78vh] w-full flex-1">
+                        <table class="w-full text-left border-collapse">
+                            <thead id="schedule-thead" class="bg-slate-900 text-white sticky-thead"></thead>
+                            <tbody id="schedule-tbody" class="divide-y divide-slate-200"></tbody>
+                            <tfoot id="schedule-tfoot" class="bg-slate-100 border-t-2 border-slate-300 font-bold text-slate-900"></tfoot>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- VIZUALIZARE 2: CARDURI PE ZILE -->
+        <section id="cards-view-container" class="hidden space-y-4">
+            <div id="cards-day-pills" class="flex items-center gap-2 overflow-x-auto pb-1"></div>
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+            <p>Toate săptămânile din <strong>2026 & 2027</strong>. Modificările, adăugările și ștergerile se salvează automat în browser.</p>
+            <p>Termeni: <span class="font-medium text-slate-700">Maandag</span>=Luni, <span class="font-medium text-slate-700">Vrij</span>=Liber, <span class="font-medium text-slate-700">Vakantie</span>=Concediu</p>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: EDITARE CELULĂ TURĂ -->
+    <div id="edit-cell-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
+        <div class="fs-modal-dialog bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden">
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900" id="modal-edit-title">Editare Tură</h3>
+                    <p class="text-xs text-slate-500" id="modal-edit-subtitle">Persoană • Ziua</p>
+                </div>
+                <button type="button" onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="edit-shift-form" onsubmit="saveShiftEdit(event)" class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Selectare Rapidă Status / Oră</label>
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <button type="button" onclick="applyQuickPreset('06:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-cyan-50 text-cyan-800 border border-cyan-200 hover:bg-cyan-100 cursor-pointer">06:00</button>
+                        <button type="button" onclick="applyQuickPreset('07:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 cursor-pointer">07:00</button>
+                        <button type="button" onclick="applyQuickPreset('08:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 hover:bg-indigo-100 cursor-pointer">08:00</button>
+                        <button type="button" onclick="applyQuickPreset('10:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 cursor-pointer">10:00</button>
+                        <button type="button" onclick="applyQuickPreset('Vrij', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 cursor-pointer">Vrij (Liber)</button>
+                        <button type="button" onclick="applyQuickPreset('Vakantie', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer">Vakantie</button>
+                        <button type="button" onclick="applyQuickPreset('07:00', 'Extra')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 cursor-pointer">+ Extra</button>
+                        <button type="button" onclick="applyQuickPreset('', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 cursor-pointer">Gol (-)</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="edit-begin" class="block text-xs font-semibold text-slate-700 mb-1">Oră Început / Status</label>
+                        <input type="text" id="edit-begin" placeholder="ex. 07:00, Vrij, Vakantie"
+                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="edit-end" class="block text-xs font-semibold text-slate-700 mb-1">Oră Sfârșit / Notă</label>
+                        <input type="text" id="edit-end" placeholder="ex. 16:00, Extra, TAS"
+                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">Anulează</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm cursor-pointer">Salvează Modificarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADAUGĂ PERSOANĂ NOUĂ -->
+    <div id="add-employee-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
+        <div class="fs-modal-dialog bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden">
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Adaugă Persoană în Program</h3>
+                    <p class="text-xs text-slate-500" id="modal-add-week-label">Week 47</p>
+                </div>
+                <button type="button" onclick="closeAddEmployeeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAddEmployee(event)" class="p-5 space-y-4">
+                <div>
+                    <label for="new-emp-name" class="block text-xs font-semibold text-slate-700 mb-1">Nume Persoană *</label>
+                    <input type="text" id="new-emp-name" required placeholder="ex. Alexandru"
+                        class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div id="new-emp-group-field">
+                    <label for="new-emp-group" class="block text-xs font-semibold text-slate-700 mb-1">Grupă (A, B, C - opțional)</label>
+                    <select id="new-emp-group" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="">Fără grupă</option>
+                        <option value="A">Grupa A</option>
+                        <option value="B">Grupa B</option>
+                        <option value="C">Grupa C</option>
+                    </select>
+                </div>
+
+                <div id="new-emp-dept-field">
+                    <label for="new-emp-dept" class="block text-xs font-semibold text-slate-700 mb-1">Departament / Secțiune</label>
+                    <select id="new-emp-dept" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"></select>
+                </div>
+
+                <div>
+                    <label for="new-emp-default-shift" class="block text-xs font-semibold text-slate-700 mb-1">Program implicit (Luni - Vineri)</label>
+                    <select id="new-emp-default-shift" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="07:00">07:00 (L-V), Vrij (S-D)</option>
+                        <option value="08:00">08:00 (L-V), Vrij (S-D)</option>
+                        <option value="Vrij">Vrij toată săptămâna</option>
+                        <option value="">Celule goale (-)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="new-emp-scope" class="block text-xs font-semibold text-slate-700 mb-1">Unde se adaugă?</label>
+                    <select id="new-emp-scope" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="current">Doar în săptămâna curentă</option>
+                        <option value="all">În toate săptămânile din 2026 și 2027</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAddEmployeeModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">Anulează</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm cursor-pointer">Adaugă Persoană</button>
+                </div>
+            </form>

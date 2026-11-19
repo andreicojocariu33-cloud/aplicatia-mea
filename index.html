@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -31,7 +30,6 @@
         }
     </script>
     <style>
-        /* Stiluri personalizate pentru scrollbar și printare */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -48,14 +46,12 @@
             background: #94a3b8;
         }
 
-        /* Coloana fixă (sticky) pentru numele angajatului pe mobil/tabletă */
         .sticky-col {
             position: sticky;
             left: 0;
             z-index: 20;
         }
 
-        /* Antet fix (sticky) pentru tabelul înalt */
         .sticky-thead th {
             position: sticky;
             top: 0;
@@ -65,7 +61,6 @@
             z-index: 25;
         }
 
-        /* Mod 100% Ecran Complet (edge-to-edge) pentru tabelul Programul de muncă */
         body.fullscreen-schedule-active {
             overflow: hidden !important;
         }
@@ -81,7 +76,6 @@
             overflow: hidden;
         }
 
-        /* Stiluri pentru printare curată */
         @media print {
             body {
                 background: white !important;
@@ -136,7 +130,7 @@
                                     Programul de muncă
                                 </h1>
                                 <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                    Week 47.xlsx
+                                    2026 & 2027
                                 </span>
                             </div>
                             <p id="header-subtitle" class="text-xs text-slate-500">Click pe „Programul de muncă” pentru afișare 100% pe tot ecranul</p>
@@ -144,9 +138,17 @@
                     </div>
                 </div>
 
-                <!-- Tab-uri Săptămâni -->
-                <div id="week-tabs" class="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0">
-                    <!-- Generat dinamic via JS -->
+                <!-- Selector Rapid An + Săptămână -->
+                <div class="flex items-center gap-2">
+                    <select id="quick-year-select" onchange="onYearOrWeekDropdownChange()"
+                        class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                    <select id="quick-week-select" onchange="switchWeek(this.value)"
+                        class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-900 border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer max-w-[220px]">
+                        <!-- Populat dinamic -->
+                    </select>
                 </div>
 
                 <!-- Acțiuni Rapide Header & Buton Tot Ecranul -->
@@ -159,7 +161,7 @@
 
                     <button onclick="openAddEmployeeModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 transition shadow-sm cursor-pointer">
                         <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline">Adaugă Angajat</span>
+                        <span>Adaugă Persoană</span>
                     </button>
                     <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 transition cursor-pointer">
                         <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
@@ -169,24 +171,28 @@
                         <i data-lucide="printer" class="w-4 h-4 text-slate-600"></i>
                         <span class="hidden xl:inline">Printează</span>
                     </button>
-                    <button onclick="openResetModal()" title="Resetează la datele originale din Excel" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 transition cursor-pointer">
+                    <button onclick="openResetModal()" title="Resetează la datele inițiale" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-white text-rose-600 border border-rose-200 hover:bg-rose-50 transition cursor-pointer">
                         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
+
+            <!-- Bară Tab-uri Săptămâni (Toate săptămânile anului selectat) -->
+            <div id="week-tabs" class="flex items-center gap-1.5 overflow-x-auto pt-2.5 mt-2.5 border-t border-slate-100 pb-1">
+                <!-- Generat dinamic via JS -->
+            </div>
         </div>
     </header>
 
-    <!-- Conținut Principal (Full-Width pentru tabel mare) -->
+    <!-- Conținut Principal -->
     <main id="main-container" class="flex-1 w-full max-w-none px-3 sm:px-6 lg:px-8 py-5 space-y-5 print-full">
 
-        <!-- Carduri Statistici & Grafic Prezență (Ascunse în modul Ecran Complet) -->
+        <!-- Carduri Statistici & Grafic Prezență -->
         <section id="stats-section" class="grid grid-cols-1 lg:grid-cols-12 gap-4 no-print">
-            <!-- Metrici Rapide (5 col) -->
             <div class="lg:col-span-5 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-3">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-medium text-slate-500">Total Angajați</span>
+                        <span class="text-xs font-medium text-slate-500">Total Persoane</span>
                         <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
                             <i data-lucide="users" class="w-4 h-4"></i>
                         </div>
@@ -237,7 +243,7 @@
                 </div>
             </div>
 
-            <!-- Distribuție Prezență pe Zile (7 col) -->
+            <!-- Distribuție Prezență pe Zile -->
             <div class="lg:col-span-7 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <div>
@@ -257,9 +263,7 @@
         <!-- Bară de Filtrare, Comutator Moduri și Zoom Tabel -->
         <section id="toolbar-section" class="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-sm space-y-3 no-print">
             <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
-                <!-- Filtre -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 flex-1">
-                    <!-- Căutare Angajat -->
                     <div class="relative">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                         <input type="text" id="filter-search" oninput="applyFilters()" placeholder="Caută persoană..."
@@ -269,7 +273,6 @@
                         </button>
                     </div>
 
-                    <!-- Filtrare Departament / Grupă -->
                     <div class="relative">
                         <i data-lucide="layers" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                         <select id="filter-dept" onchange="applyFilters()"
@@ -279,7 +282,6 @@
                         <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                     </div>
 
-                    <!-- Filtrare Zi a Săptămânii -->
                     <div class="relative">
                         <i data-lucide="calendar" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                         <select id="filter-day" onchange="applyFilters()"
@@ -289,7 +291,6 @@
                         <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                     </div>
 
-                    <!-- Filtrare Status -->
                     <div class="relative">
                         <i data-lucide="filter" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                         <select id="filter-status" onchange="applyFilters()"
@@ -303,17 +304,14 @@
                     </div>
                 </div>
 
-                <!-- Controale Vizualizare & Dimensiune Tabel (Zoom) -->
                 <div class="flex flex-wrap items-center justify-between xl:justify-end gap-2 shrink-0">
-                    <!-- Selector Dimensiune Tabel -->
-                    <div id="zoom-controls" class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80" title="Dimensiune text și rânduri tabel">
+                    <div id="zoom-controls" class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80">
                         <span class="text-[11px] font-semibold text-slate-500 px-2 hidden sm:inline">Mărime:</span>
                         <button id="btn-zoom-normal" onclick="setTableZoom('normal')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900">Normal</button>
                         <button id="btn-zoom-large" onclick="setTableZoom('large')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm">Mare</button>
                         <button id="btn-zoom-xlarge" onclick="setTableZoom('xlarge')" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900">Foarte Mare</button>
                     </div>
 
-                    <!-- Comutator Vizualizare (Tabel Complet vs Pe Zile) -->
                     <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/80">
                         <button id="btn-view-table" onclick="setViewMode('table')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm">
                             <i data-lucide="table" class="w-3.5 h-3.5"></i>
@@ -327,7 +325,6 @@
                 </div>
             </div>
 
-            <!-- Legendă Culori & Instrucțiuni -->
             <div id="legend-bar" class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="font-semibold text-slate-700 mr-1">Legendă:</span>
@@ -340,13 +337,14 @@
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 font-semibold">Extra / TAS</span>
                 </div>
                 <div class="text-slate-500 flex flex-wrap items-center gap-3">
-                    <span class="inline-flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5 text-indigo-600"></i> Click pe <strong>nume</strong> pt. fișa completă</span>
+                    <span class="inline-flex items-center gap-1"><i data-lucide="user-check" class="w-3.5 h-3.5 text-indigo-600"></i> Click pe <strong>nume</strong> pt. fișă</span>
+                    <span class="inline-flex items-center gap-1"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-600"></i> Iconița coș șterge persoana</span>
                     <span class="inline-flex items-center gap-1"><i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-emerald-600"></i> Click pe <strong>oră</strong> pt. editare</span>
                 </div>
             </div>
         </section>
 
-        <!-- Container Notă Săptămână (ex. Albert vakantie) -->
+        <!-- Container Notă Săptămână -->
         <div id="week-note-banner" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-3.5 flex items-center justify-between gap-3">
             <div class="flex items-center gap-2.5 text-amber-900 text-sm">
                 <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
@@ -359,38 +357,34 @@
             </div>
         </div>
 
-        <!-- SHELL FULLSCREEN PENTRU PROGRAMUL DE MUNCĂ (Devine 100vw x 100vh la activare) -->
+        <!-- SHELL FULLSCREEN PENTRU PROGRAMUL DE MUNCĂ -->
         <div id="fullscreen-overlay-shell" class="w-full">
-            <!-- Bară superioară ultra-compactă vizibilă DOAR în modul 100% Tot Ecranul -->
             <div id="fullscreen-top-bar" class="hidden bg-slate-900 text-white px-3 sm:px-5 h-[52px] shrink-0 flex items-center justify-between gap-2 border-b border-slate-700 shadow-md no-print">
                 <div class="flex items-center gap-2 sm:gap-3 min-w-0 overflow-x-auto">
                     <div class="flex items-center gap-2 shrink-0">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         <span class="font-extrabold text-sm sm:text-base tracking-tight text-white">Programul de muncă</span>
                     </div>
-
-                    <!-- Selector rapid săptămână în Tot Ecranul -->
-                    <div id="fs-week-tabs" class="flex items-center gap-1.5 shrink-0">
-                        <!-- Generat dinamic -->
-                    </div>
+                    <div id="fs-week-tabs" class="flex items-center gap-1.5 shrink-0"></div>
                 </div>
 
                 <div class="flex items-center gap-2 shrink-0">
-                    <!-- Căutare rapidă persoană în Tot Ecranul -->
                     <div class="relative hidden md:block w-48 lg:w-60">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2"></i>
                         <input type="text" id="fs-filter-search" oninput="syncFullscreenSearch(this.value)" placeholder="Caută persoană..."
                             class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-800 text-white placeholder-slate-400 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
 
-                    <!-- Zoom rapid în Tot Ecranul -->
+                    <button onclick="openAddEmployeeModal()" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer">
+                        + Persoană
+                    </button>
+
                     <div class="hidden sm:flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700">
                         <button id="fs-zoom-normal" onclick="setTableZoom('normal')" class="px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer">Normal</button>
                         <button id="fs-zoom-large" onclick="setTableZoom('large')" class="px-2 py-1 rounded-md text-[11px] font-semibold bg-indigo-600 text-white cursor-pointer">Mare</button>
                         <button id="fs-zoom-xlarge" onclick="setTableZoom('xlarge')" class="px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer">XL</button>
                     </div>
 
-                    <!-- Buton clar Ieși din tot ecranul -->
                     <button onclick="exitFullscreenSchedule()"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-rose-600 text-white hover:bg-rose-700 transition shadow-sm cursor-pointer">
                         <span>✕ Ieși din tot ecranul</span>
@@ -398,19 +392,12 @@
                 </div>
             </div>
 
-            <!-- VIZUALIZARE 1: TABEL SĂPTĂMÂNAL COMPLET (MARE & AERISIT) -->
             <section id="table-view-container" class="bg-white rounded-2xl border border-slate-300/90 shadow-md overflow-hidden flex-1 flex flex-col">
                 <div id="table-scroll-wrapper" class="overflow-auto max-h-[78vh] w-full flex-1">
                     <table class="w-full text-left border-collapse">
-                        <thead id="schedule-thead" class="bg-slate-900 text-white sticky-thead">
-                            <!-- Generat dinamic -->
-                        </thead>
-                        <tbody id="schedule-tbody" class="divide-y divide-slate-200">
-                            <!-- Generat dinamic -->
-                        </tbody>
-                        <tfoot id="schedule-tfoot" class="bg-slate-100 border-t-2 border-slate-300 font-bold text-slate-900">
-                            <!-- Generat dinamic -->
-                        </tfoot>
+                        <thead id="schedule-thead" class="bg-slate-900 text-white sticky-thead"></thead>
+                        <tbody id="schedule-tbody" class="divide-y divide-slate-200"></tbody>
+                        <tfoot id="schedule-tfoot" class="bg-slate-100 border-t-2 border-slate-300 font-bold text-slate-900"></tfoot>
                     </table>
                 </div>
             </section>
@@ -418,13 +405,8 @@
 
         <!-- VIZUALIZARE 2: CARDURI PE ZILE -->
         <section id="cards-view-container" class="hidden space-y-4">
-            <!-- Selector rapid zi pentru modul Carduri -->
-            <div id="cards-day-pills" class="flex items-center gap-2 overflow-x-auto pb-1">
-                <!-- Generat dinamic -->
-            </div>
-            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Generat dinamic -->
-            </div>
+            <div id="cards-day-pills" class="flex items-center gap-2 overflow-x-auto pb-1"></div>
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </section>
 
     </main>
@@ -432,18 +414,18 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 mt-8 no-print">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
-            <p>Date sincronizate din <strong class="text-slate-700">Week 47.xlsx</strong> (Week 47, Week 51, Week 52). Modificările sunt salvate automat în browser.</p>
+            <p>Toate săptămânile din <strong>2026 & 2027</strong>. Modificările, adăugările și ștergerile se salvează automat în browser.</p>
             <p>Termeni: <span class="font-medium text-slate-700">Maandag</span>=Luni, <span class="font-medium text-slate-700">Vrij</span>=Liber, <span class="font-medium text-slate-700">Vakantie</span>=Concediu</p>
         </div>
     </footer>
 
     <!-- MODAL 1: EDITARE CELULĂ TURĂ -->
     <div id="edit-cell-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden">
             <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                 <div>
                     <h3 class="text-base font-bold text-slate-900" id="modal-edit-title">Editare Tură</h3>
-                    <p class="text-xs text-slate-500" id="modal-edit-subtitle">Angajat • Ziua</p>
+                    <p class="text-xs text-slate-500" id="modal-edit-subtitle">Persoană • Ziua</p>
                 </div>
                 <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 cursor-pointer">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -451,7 +433,6 @@
             </div>
 
             <form id="edit-shift-form" onsubmit="saveShiftEdit(event)" class="p-5 space-y-4">
-                <!-- Presetări Rapide -->
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1.5">Selectare Rapidă Status / Oră</label>
                     <div class="grid grid-cols-4 gap-1.5">
@@ -468,19 +449,15 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label for="edit-begin" class="block text-xs font-semibold text-slate-700 mb-1">Oră Început / Status (Begin)</label>
+                        <label for="edit-begin" class="block text-xs font-semibold text-slate-700 mb-1">Oră Început / Status</label>
                         <input type="text" id="edit-begin" placeholder="ex. 07:00, Vrij, Vakantie"
                             class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                     <div>
-                        <label for="edit-end" class="block text-xs font-semibold text-slate-700 mb-1">Oră Sfârșit / Notă (Eind)</label>
+                        <label for="edit-end" class="block text-xs font-semibold text-slate-700 mb-1">Oră Sfârșit / Notă</label>
                         <input type="text" id="edit-end" placeholder="ex. 16:00, Extra, TAS"
                             class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
-                </div>
-
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 text-xs text-slate-600">
-                    <span class="font-semibold text-slate-800">Notă:</span> Orele valide (ex. <code>07:00</code>, <code>08:00</code>, <code>13:00</code>) sunt contorizate automat în totalul zilnic al angajaților prezenți.
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
@@ -491,12 +468,12 @@
         </div>
     </div>
 
-    <!-- MODAL 2: ADAUGĂ ANGAJAT NOU -->
+    <!-- MODAL 2: ADAUGĂ PERSOANĂ NOUĂ -->
     <div id="add-employee-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
         <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden">
             <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
                 <div>
-                    <h3 class="text-base font-bold text-slate-900">Adaugă Angajat în Săptămâna Curentă</h3>
+                    <h3 class="text-base font-bold text-slate-900">Adaugă Persoană în Program</h3>
                     <p class="text-xs text-slate-500" id="modal-add-week-label">Week 47</p>
                 </div>
                 <button onclick="closeAddEmployeeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 cursor-pointer">
@@ -506,7 +483,7 @@
 
             <form onsubmit="handleAddEmployee(event)" class="p-5 space-y-4">
                 <div>
-                    <label for="new-emp-name" class="block text-xs font-semibold text-slate-700 mb-1">Nume Angajat *</label>
+                    <label for="new-emp-name" class="block text-xs font-semibold text-slate-700 mb-1">Nume Persoană *</label>
                     <input type="text" id="new-emp-name" required placeholder="ex. Alexandru"
                         class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
@@ -523,9 +500,7 @@
 
                 <div id="new-emp-dept-field">
                     <label for="new-emp-dept" class="block text-xs font-semibold text-slate-700 mb-1">Departament / Secțiune</label>
-                    <select id="new-emp-dept" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
-                        <!-- Populat dinamic -->
-                    </select>
+                    <select id="new-emp-dept" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"></select>
                 </div>
 
                 <div>
@@ -538,11 +513,48 @@
                     </select>
                 </div>
 
+                <div>
+                    <label for="new-emp-scope" class="block text-xs font-semibold text-slate-700 mb-1">Unde se adaugă?</label>
+                    <select id="new-emp-scope" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="current">Doar în săptămâna curentă</option>
+                        <option value="all">În toate săptămânile din 2026 și 2027</option>
+                    </select>
+                </div>
+
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <button type="button" onclick="closeAddEmployeeModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">Anulează</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm cursor-pointer">Adaugă Angajat</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm cursor-pointer">Adaugă Persoană</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL ȘTERGERE PERSOANĂ -->
+    <div id="delete-employee-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full p-5 space-y-4">
+            <div class="flex items-center gap-3 text-rose-600">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
+                    <i data-lucide="user-minus" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Șterge Persoană</h3>
+                    <p class="text-xs text-slate-500" id="delete-emp-subtitle">Eliminare din program</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600">
+                Vrei să ștergi persoana <strong id="delete-emp-name" class="text-slate-900"></strong>?
+            </p>
+            <div class="flex flex-col gap-2 pt-1">
+                <button onclick="confirmDeleteEmployee('current')" class="w-full px-4 py-2.5 text-sm font-semibold text-white bg-rose-600 rounded-xl hover:bg-rose-700 shadow-sm cursor-pointer">
+                    Șterge doar din săptămâna curentă
+                </button>
+                <button onclick="confirmDeleteEmployee('all')" class="w-full px-4 py-2.5 text-sm font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 cursor-pointer">
+                    Șterge din TOATE săptămânile (2026 & 2027)
+                </button>
+                <button onclick="closeDeleteEmployeeModal()" class="w-full px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">
+                    Anulează
+                </button>
+            </div>
         </div>
     </div>
 
@@ -555,11 +567,11 @@
                 </div>
                 <div>
                     <h3 class="text-base font-bold text-slate-900">Resetare Date</h3>
-                    <p class="text-xs text-slate-500">Revenire la datele originale din Excel</p>
+                    <p class="text-xs text-slate-500">Revenire la datele inițiale</p>
                 </div>
             </div>
             <p class="text-sm text-slate-600">
-                Ești sigur că vrei să ștergi toate modificările locale și să restaurezi programul exact din fișierul <strong>Week 47.xlsx</strong>?
+                Ești sigur că vrei să ștergi toate modificările locale și să restaurezi programul inițial?
             </p>
             <div class="flex items-center justify-end gap-2 pt-1">
                 <button onclick="closeResetModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">Anulează</button>
@@ -568,14 +580,12 @@
         </div>
     </div>
 
-    <!-- MODAL 4: FIȘA COMPLETĂ A PERSOANEI (Programul pe toate săptămânile) -->
+    <!-- MODAL 4: FIȘA PERSOANEI -->
     <div id="employee-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
         <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
             <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div id="emp-modal-avatar" class="w-11 h-11 rounded-xl bg-indigo-500 text-white font-bold text-lg flex items-center justify-center shadow-inner">
-                        A
-                    </div>
+                    <div id="emp-modal-avatar" class="w-11 h-11 rounded-xl bg-indigo-500 text-white font-bold text-lg flex items-center justify-center shadow-inner">A</div>
                     <div>
                         <h3 class="text-lg font-bold text-white" id="emp-modal-name">Nume Persoană</h3>
                         <p class="text-xs text-slate-300" id="emp-modal-meta">Departament • Grupă</p>
@@ -586,9 +596,7 @@
                 </button>
             </div>
 
-            <div id="emp-modal-body" class="p-5 sm:p-6 overflow-y-auto space-y-5 bg-slate-50/60">
-                <!-- Generat dinamic cu programul persoanei pe Week 47, 51, 52 -->
-            </div>
+            <div id="emp-modal-body" class="p-5 sm:p-6 overflow-y-auto space-y-5 bg-slate-50/60"></div>
 
             <div class="px-6 py-3.5 bg-white border-t border-slate-200 flex items-center justify-between">
                 <span class="text-xs text-slate-500">Click pe orice zi din fișă pentru a edita ora sau statusul.</span>
@@ -599,215 +607,256 @@
 
     <script>
         // =========================================================================
-        // 1. DATELE EXACTE DIN FIȘIERUL EXCEL (WEEK 47, WEEK 51, WEEK 52)
+        // 1. GENERATOR TOATE SĂPTĂMÂNILE DIN 2026 ȘI 2027 + DATELE INIȚIALE
         // =========================================================================
-        const INITIAL_SCHEDULE_DATA = {
-            "week47": {
-                id: "week47",
-                title: "Week 47",
-                subtitle: "16 - 22 Nov 2026",
-                hasGroupColumn: true,
-                hasDepartments: false,
-                activeGroups: ["AB", "AB", "BC", "BC", "AC", "AC", "AB"],
-                note: "Albert vakantie 18-11-2026 > 21-11-2026",
-                days: [
-                    { nl: "Maandag", ro: "Luni", date: "16-11-2026", shortDate: "16 Nov" },
-                    { nl: "Dinsdag", ro: "Marți", date: "17-11-2026", shortDate: "17 Nov" },
-                    { nl: "Woensdag", ro: "Miercuri", date: "18-11-2026", shortDate: "18 Nov" },
-                    { nl: "Donderdag", ro: "Joi", date: "19-11-2026", shortDate: "19 Nov" },
-                    { nl: "Vrijdag", ro: "Vineri", date: "20-11-2026", shortDate: "20 Nov" },
-                    { nl: "Zaterdag", ro: "Sâmbătă", date: "21-11-2026", shortDate: "21 Nov" },
-                    { nl: "Zondag", ro: "Duminică", date: "22-11-2026", shortDate: "22 Nov" }
-                ],
-                employees: [
-                    {
-                        id: "w47-1", name: "Daniel", group: "", department: "General",
-                        shifts: [
-                            { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
-                            { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "Vrij", end: "" }, { begin: "Vrij", end: "" }
-                        ]
-                    },
-                    {
-                        id: "w47-2", name: "Druvis", group: "", department: "General",
-                        shifts: [
-                            { begin: "Vrij", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
-                            { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "09:00", end: "" }, { begin: "Vrij", end: "" }
-                        ]
-                    },
-                    {
-                        id: "w47-3", name: "Ghenadie", group: "", department: "General",
-                        shifts: [
-                            { begin: "10:00", end: "" }, { begin: "10:00", end: "" }, { begin: "10:00", end: "" },
-                            { begin: "10:00", end: "" }, { begin: "10:00", end: "" }, { begin: "Vrij", end: "" }, { begin: "Vrij", end: "" }
-                        ]
-                    },
-                    {
-                        id: "w47-4", name: "Evelina", group: "A", department: "General",
-                        shifts: [
-                            { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "Vrij", end: "" },
-                            { begin: "Vrij", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }
-                        ]
-                    },
-                    {
-                        id: "w47-5", name: "Andrei", group: "B", department: "General",
-                        shifts: [
-                            { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
-                            { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "Extra" }, { begin: "Vrij", end: "" }
-                        ]
-                    },
-                    {
-                        id: "w47-6", name: "Albert", group: "C", department: "General",
-                        shifts: [
-                            { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" },
-                            { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }
-                        ]
-                    },
-                    {
-                        id: "w47-7", name: "Iulian", group: "A", department: "General",
-                        shifts: [
-                            { begin: "08:00", end: "" }, { begin: "08:00", end: "" }, { begin: "08:00", end: "Extra" },
-                            { begin: "Vrij", end: "" }, { begin: "08:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }
-                        ]
-                    }
+        const NL_DAYS = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag"];
+        const RO_DAYS = ["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"];
+        const MONTHS_SHORT = ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const BASE_WEEK47_EMPLOYEES = [
+            {
+                id: "w47-1", name: "Daniel", group: "", department: "General",
+                shifts: [
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "Vrij", end: "" }, { begin: "Vrij", end: "" }
                 ]
             },
+            {
+                id: "w47-2", name: "Druvis", group: "", department: "General",
+                shifts: [
+                    { begin: "Vrij", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "09:00", end: "" }, { begin: "Vrij", end: "" }
+                ]
+            },
+            {
+                id: "w47-3", name: "Ghenadie", group: "", department: "General",
+                shifts: [
+                    { begin: "10:00", end: "" }, { begin: "10:00", end: "" }, { begin: "10:00", end: "" },
+                    { begin: "10:00", end: "" }, { begin: "10:00", end: "" }, { begin: "Vrij", end: "" }, { begin: "Vrij", end: "" }
+                ]
+            },
+            {
+                id: "w47-4", name: "Evelina", group: "A", department: "General",
+                shifts: [
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "Vrij", end: "" },
+                    { begin: "Vrij", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }
+                ]
+            },
+            {
+                id: "w47-5", name: "Andrei", group: "B", department: "General",
+                shifts: [
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "Extra" }, { begin: "Vrij", end: "" }
+                ]
+            },
+            {
+                id: "w47-6", name: "Albert", group: "C", department: "General",
+                shifts: [
+                    { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" },
+                    { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }
+                ]
+            },
+            {
+                id: "w47-7", name: "Iulian", group: "A", department: "General",
+                shifts: [
+                    { begin: "08:00", end: "" }, { begin: "08:00", end: "" }, { begin: "08:00", end: "Extra" },
+                    { begin: "Vrij", end: "" }, { begin: "08:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }
+                ]
+            }
+        ];
 
-            "week51": {
-                id: "week51",
-                title: "Week 51",
-                subtitle: "14 - 20 Dec 2026",
-                hasGroupColumn: false,
-                hasDepartments: true,
-                activeGroups: null,
-                note: "",
-                days: [
-                    { nl: "Maandag", ro: "Luni", date: "14-20", shortDate: "14 Dec" },
-                    { nl: "Dinsdag", ro: "Marți", date: "15-20", shortDate: "15 Dec" },
-                    { nl: "Woensdag", ro: "Miercuri", date: "16-20", shortDate: "16 Dec" },
-                    { nl: "Donderdag", ro: "Joi", date: "17-20", shortDate: "17 Dec" },
-                    { nl: "Vrijdag", ro: "Vineri", date: "18-20", shortDate: "18 Dec" },
-                    { nl: "Zaterdag", ro: "Sâmbătă", date: "19-20", shortDate: "19 Dec" },
-                    { nl: "Zondag", ro: "Duminică", date: "20-20", shortDate: "20 Dec" }
-                ],
-                departments: [
-                    "General / Fără categorie",
-                    "Edeka / Superunie",
-                    "Daghandel",
-                    "Binnenkomst / Kleinpak 3",
-                    "Metro/Real",
-                    "TAS"
-                ],
-                employees: [
-                    // General / Fără categorie
+        function pad2(n) { return String(n).padStart(2, "0"); }
+
+        function formatDateRO(d) {
+            return `${pad2(d.getDate())}-${pad2(d.getMonth() + 1)}-${d.getFullYear()}`;
+        }
+
+        function formatShortDate(d) {
+            return `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`;
+        }
+
+        function getISOWeekNumber(date) {
+            const temp = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = temp.getUTCDay() || 7;
+            temp.setUTCDate(temp.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(temp.getUTCFullYear(), 0, 1));
+            const weekNo = Math.ceil((((temp - yearStart) / 86400000) + 1) / 7);
+            return { year: temp.getUTCFullYear(), week: weekNo };
+        }
+
+        function getFirstMondayOfYear(year) {
+            const d = new Date(year, 0, 1);
+            const day = d.getDay(); // 0 = Sun, 1 = Mon...
+            const diff = day === 0 ? 1 : (day === 1 ? 0 : 8 - day);
+            d.setDate(d.getDate() + diff);
+            d.setHours(12, 0, 0, 0);
+            return d;
+        }
+
+        function buildYearWeeks(year) {
+            const weeksMap = {};
+            const startMonday = getFirstMondayOfYear(year);
+            let currentMonday = new Date(startMonday);
+
+            for (let i = 0; i < 53; i++) {
+                const iso = getISOWeekNumber(currentMonday);
+                if (i > 0 && iso.year > year) break;
+
+                const weekNum = i + 1;
+                const weekId = `y${year}-w${weekNum}`;
+                const days = [];
+                for (let dIdx = 0; dIdx < 7; dIdx++) {
+                    const dayDate = new Date(currentMonday);
+                    dayDate.setDate(currentMonday.getDate() + dIdx);
+                    days.push({
+                        nl: NL_DAYS[dIdx],
+                        ro: RO_DAYS[dIdx],
+                        date: formatDateRO(dayDate),
+                        shortDate: formatShortDate(dayDate)
+                    });
+                }
+
+                const sundayDate = new Date(currentMonday);
+                sundayDate.setDate(currentMonday.getDate() + 6);
+
+                weeksMap[weekId] = {
+                    id: weekId,
+                    year: year,
+                    weekNumber: weekNum,
+                    title: `Week ${weekNum}`,
+                    subtitle: `${formatShortDate(currentMonday)} - ${formatShortDate(sundayDate)} ${year}`,
+                    hasGroupColumn: true,
+                    hasDepartments: false,
+                    activeGroups: ["AB", "AB", "BC", "BC", "AC", "AC", "AB"],
+                    note: "",
+                    days,
+                    employees: BASE_WEEK47_EMPLOYEES.map(emp => ({
+                        id: `${weekId}-${emp.name.toLowerCase()}`,
+                        name: emp.name,
+                        group: emp.group,
+                        department: emp.department,
+                        shifts: emp.shifts.map(s => ({ ...s }))
+                    }))
+                };
+
+                currentMonday.setDate(currentMonday.getDate() + 7);
+            }
+
+            return weeksMap;
+        }
+
+        function buildInitialScheduleData() {
+            const data = {
+                ...buildYearWeeks(2026),
+                ...buildYearWeeks(2027)
+            };
+
+            // Aplicăm datele detaliate exacte pentru Week 47, Week 51 și Week 52 din 2026
+            if (data["y2026-w47"]) {
+                data["y2026-w47"].note = "Albert vakantie 18-11-2026 > 21-11-2026";
+                data["y2026-w47"].employees = JSON.parse(JSON.stringify(BASE_WEEK47_EMPLOYEES));
+            }
+
+            const w51_52_depts = [
+                "General / Fără categorie",
+                "Edeka / Superunie",
+                "Daghandel",
+                "Binnenkomst / Kleinpak 3",
+                "Metro/Real",
+                "TAS"
+            ];
+
+            if (data["y2026-w51"]) {
+                data["y2026-w51"].hasGroupColumn = false;
+                data["y2026-w51"].hasDepartments = true;
+                data["y2026-w51"].activeGroups = null;
+                data["y2026-w51"].departments = w51_52_depts;
+                data["y2026-w51"].employees = [
                     { id: "w51-1", name: "Anneke", group: "", department: "General / Fără categorie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w51-2", name: "Serge", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"11:00",end:""},{begin:"",end:""}] },
                     { id: "w51-3", name: "Sander", group: "", department: "General / Fără categorie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"",end:""}] },
                     { id: "w51-4", name: "Franny", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w51-5", name: "Wesley", group: "", department: "General / Fără categorie", shifts: [{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"07:00",end:""},{begin:"08:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
                     { id: "w51-6", name: "Devin", group: "", department: "General / Fără categorie", shifts: [{begin:"11:00",end:""},{begin:"13:00",end:""},{begin:"11:00",end:""},{begin:"13:00",end:""},{begin:"13:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
-                    // Edeka / Superunie
                     { id: "w51-7", name: "Daniel", group: "", department: "Edeka / Superunie", shifts: [{begin:"08:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w51-8", name: "Serghei", group: "", department: "Edeka / Superunie", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"08:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w51-9", name: "Krys", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w51-10", name: "Raivis", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
-                    // Daghandel
                     { id: "w51-11", name: "Richard", group: "", department: "Daghandel", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"08:00",end:"Tas"},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w51-12", name: "Makele", group: "", department: "Daghandel", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
-                    // Binnenkomst / Kleinpak 3
                     { id: "w51-13", name: "Jurek", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"Vrij",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w51-14", name: "Owen", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
                     { id: "w51-15", name: "Mariusz", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"06:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
-                    // Metro/Real
                     { id: "w51-16", name: "Philip", group: "", department: "Metro/Real", shifts: [{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
-                    // TAS
                     { id: "w51-17", name: "Gabriel", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""}] },
                     { id: "w51-18", name: "Alina", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] },
                     { id: "w51-19", name: "Octavian", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""}] },
                     { id: "w51-20", name: "Ari", group: "", department: "TAS", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""}] },
                     { id: "w51-21", name: "Rado", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] }
-                ]
-            },
+                ];
+            }
 
-            "week52": {
-                id: "week52",
-                title: "Week 52",
-                subtitle: "21 - 27 Dec 2026 (Crăciun)",
-                hasGroupColumn: false,
-                hasDepartments: true,
-                activeGroups: null,
-                note: "Vineri (25 Dec - Crăciun): Toți angajații au Vrij (Liber).",
-                days: [
-                    { nl: "Maandag", ro: "Luni", date: "21-20", shortDate: "21 Dec" },
-                    { nl: "Dinsdag", ro: "Marți", date: "22-20", shortDate: "22 Dec" },
-                    { nl: "Woensdag", ro: "Miercuri", date: "23-20", shortDate: "23 Dec" },
-                    { nl: "Donderdag", ro: "Joi", date: "24-20", shortDate: "24 Dec" },
-                    { nl: "Vrijdag", ro: "Vineri (Crăciun)", date: "25-20", shortDate: "25 Dec" },
-                    { nl: "Zaterdag", ro: "Sâmbătă", date: "26-20", shortDate: "26 Dec" },
-                    { nl: "Zondag", ro: "Duminică", date: "27-20", shortDate: "27 Dec" }
-                ],
-                departments: [
-                    "General / Fără categorie",
-                    "Edeka / Superunie",
-                    "Daghandel",
-                    "Binnenkomst / Kleinpak 3",
-                    "Metro/Real",
-                    "TAS"
-                ],
-                employees: [
-                    // General / Fără categorie
+            if (data["y2026-w52"]) {
+                data["y2026-w52"].hasGroupColumn = false;
+                data["y2026-w52"].hasDepartments = true;
+                data["y2026-w52"].activeGroups = null;
+                data["y2026-w52"].departments = w51_52_depts;
+                data["y2026-w52"].note = "Vineri (25 Dec - Crăciun): Toți angajații au Vrij (Liber).";
+                data["y2026-w52"].employees = [
                     { id: "w52-1", name: "Anneke", group: "", department: "General / Fără categorie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
                     { id: "w52-2", name: "Serge", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"09:00",end:""},{begin:"",end:""}] },
                     { id: "w52-3", name: "Sander", group: "", department: "General / Fără categorie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w52-4", name: "Franny", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"07:00",end:""},{begin:"",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
                     { id: "w52-5", name: "Wesley", group: "", department: "General / Fără categorie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
                     { id: "w52-6", name: "Devin", group: "", department: "General / Fără categorie", shifts: [{begin:"13:00",end:""},{begin:"13:00",end:""},{begin:"11:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
-                    // Edeka / Superunie
                     { id: "w52-7", name: "Daniel", group: "", department: "Edeka / Superunie", shifts: [{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w52-8", name: "Serghei", group: "", department: "Edeka / Superunie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
                     { id: "w52-9", name: "Krys", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w52-10", name: "Raivis", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
-                    // Daghandel
                     { id: "w52-11", name: "Richard", group: "", department: "Daghandel", shifts: [{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:"TAS"},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:15",end:""},{begin:"",end:""}] },
                     { id: "w52-12", name: "Makele", group: "", department: "Daghandel", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
-                    // Binnenkomst / Kleinpak 3
                     { id: "w52-13", name: "Jurek", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
                     { id: "w52-14", name: "Owen", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
                     { id: "w52-15", name: "Mariusz", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"Vrij",end:""},{begin:"12:00",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
-                    // Metro/Real
                     { id: "w52-16", name: "Philip", group: "", department: "Metro/Real", shifts: [{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
-                    // TAS
                     { id: "w52-17", name: "Gabriel", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""}] },
                     { id: "w52-18", name: "Alina", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] },
                     { id: "w52-19", name: "Octavian", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""}] },
                     { id: "w52-20", name: "Ari", group: "", department: "TAS", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""}] },
                     { id: "w52-21", name: "Rado", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] }
-                ]
+                ];
             }
-        };
+
+            return data;
+        }
 
         // =========================================================================
-        // 2. STAREA APLICAȚIEI & PERSISTENȚĂ LOCALSTORAGE
+        // 2. STARE APLICAȚIE & PERSISTENȚĂ LOCALSTORAGE
         // =========================================================================
-        const STORAGE_KEY = "shift_planner_week47_v1";
+        const STORAGE_KEY = "shift_planner_2026_2027_v2";
         let scheduleData = {};
-        let activeWeekId = "week47";
-        let viewMode = "table"; // 'table' sau 'cards'
-        let tableZoom = "large"; // 'normal', 'large', 'xlarge' (Implicit: Mare!)
-        let isFocusMode = false; // Mod Ecran Complet Program
-        let selectedCardDayIdx = 0; // Ziua selectată în vizualizarea pe carduri
-        let currentlyEditing = null; // { weekId, empId, dayIdx }
+        let activeWeekId = "y2026-w47";
+        let viewMode = "table";
+        let tableZoom = "large";
+        let isFocusMode = false;
+        let selectedCardDayIdx = 0;
+        let currentlyEditing = null;
+        let pendingDeleteEmployee = null; // { empId, empName }
 
         function loadData() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     scheduleData = JSON.parse(saved);
+                    if (!scheduleData[activeWeekId]) {
+                        activeWeekId = Object.keys(scheduleData)[0] || "y2026-w47";
+                    }
                 } else {
-                    scheduleData = JSON.parse(JSON.stringify(INITIAL_SCHEDULE_DATA));
+                    scheduleData = buildInitialScheduleData();
                 }
             } catch (e) {
                 console.error("Eroare la încărcarea datelor:", e);
-                scheduleData = JSON.parse(JSON.stringify(INITIAL_SCHEDULE_DATA));
+                scheduleData = buildInitialScheduleData();
             }
         }
 
@@ -834,11 +883,6 @@
             return shift.begin.trim().toLowerCase() === "vrij";
         }
 
-        function isVakantieShift(shift) {
-            if (!shift || !shift.begin) return false;
-            return shift.begin.trim().toLowerCase() === "vakantie";
-        }
-
         function hasSpecialNote(shift) {
             if (!shift) return false;
             const b = (shift.begin || "").trim().toLowerCase();
@@ -852,74 +896,24 @@
             const lowerBegin = begin.toLowerCase();
 
             if (!begin || begin === "-") {
-                return {
-                    bg: "bg-slate-50/70 hover:bg-slate-100",
-                    text: "text-slate-300",
-                    border: "border-transparent",
-                    label: "-",
-                    sublabel: end
-                };
+                return { bg: "bg-slate-50/70 hover:bg-slate-100", text: "text-slate-300", border: "border-transparent", label: "-", sublabel: end };
             }
-
             if (lowerBegin === "vrij") {
-                return {
-                    bg: "bg-rose-50 hover:bg-rose-100",
-                    text: "text-rose-700 font-bold",
-                    border: "border-rose-200",
-                    label: "Vrij",
-                    sublabel: "Liber"
-                };
+                return { bg: "bg-rose-50 hover:bg-rose-100", text: "text-rose-700 font-bold", border: "border-rose-200", label: "Vrij", sublabel: "Liber" };
             }
-
             if (lowerBegin === "vakantie") {
-                return {
-                    bg: "bg-purple-50 hover:bg-purple-100",
-                    text: "text-purple-800 font-bold",
-                    border: "border-purple-200",
-                    label: "Vakantie",
-                    sublabel: "Concediu"
-                };
+                return { bg: "bg-purple-50 hover:bg-purple-100", text: "text-purple-800 font-bold", border: "border-purple-200", label: "Vakantie", sublabel: "Concediu" };
             }
-
-            // Orele de început
             if (begin.startsWith("06:")) {
-                return {
-                    bg: "bg-sky-50 hover:bg-sky-100",
-                    text: "text-sky-900 font-extrabold",
-                    border: "border-sky-200",
-                    label: begin,
-                    sublabel: end
-                };
+                return { bg: "bg-sky-50 hover:bg-sky-100", text: "text-sky-900 font-extrabold", border: "border-sky-200", label: begin, sublabel: end };
             }
-
             if (begin.startsWith("07:")) {
-                return {
-                    bg: "bg-emerald-50 hover:bg-emerald-100",
-                    text: "text-emerald-900 font-extrabold",
-                    border: "border-emerald-200",
-                    label: begin,
-                    sublabel: end
-                };
+                return { bg: "bg-emerald-50 hover:bg-emerald-100", text: "text-emerald-900 font-extrabold", border: "border-emerald-200", label: begin, sublabel: end };
             }
-
             if (begin.startsWith("08:") || begin.startsWith("09:")) {
-                return {
-                    bg: "bg-blue-50 hover:bg-blue-100",
-                    text: "text-blue-900 font-extrabold",
-                    border: "border-blue-200",
-                    label: begin,
-                    sublabel: end
-                };
+                return { bg: "bg-blue-50 hover:bg-blue-100", text: "text-blue-900 font-extrabold", border: "border-blue-200", label: begin, sublabel: end };
             }
-
-            // 10:00, 11:00, 12:00, 13:00+
-            return {
-                bg: "bg-teal-50 hover:bg-teal-100",
-                text: "text-teal-900 font-extrabold",
-                border: "border-teal-200",
-                label: begin,
-                sublabel: end
-            };
+            return { bg: "bg-teal-50 hover:bg-teal-100", text: "text-teal-900 font-extrabold", border: "border-teal-200", label: begin, sublabel: end };
         }
 
         function getGroupBadgeColor(group) {
@@ -930,44 +924,86 @@
         }
 
         // =========================================================================
-        // 4. RANDARE INTERFAȚĂ (TAB-URI, FILTRE, STATISTICI, TABEL, CARDURI)
+        // 4. RANDARE INTERFAȚĂ
         // =========================================================================
+        function syncYearAndWeekDropdowns() {
+            const activeWeek = scheduleData[activeWeekId];
+            if (!activeWeek) return;
+
+            const yearSelect = document.getElementById("quick-year-select");
+            const weekSelect = document.getElementById("quick-week-select");
+
+            yearSelect.value = String(activeWeek.year);
+            const yearWeeks = Object.values(scheduleData).filter(w => w.year === activeWeek.year);
+
+            weekSelect.innerHTML = yearWeeks.map(w => `
+                <option value="${w.id}" ${w.id === activeWeekId ? "selected" : ""}>
+                    ${w.title} (${w.subtitle})
+                </option>
+            `).join("");
+        }
+
+        function onYearOrWeekDropdownChange() {
+            const selectedYear = parseInt(document.getElementById("quick-year-select").value, 10);
+            const currentWeek = scheduleData[activeWeekId];
+            const targetWeekNum = currentWeek ? currentWeek.weekNumber : 1;
+
+            const match = Object.values(scheduleData).find(w => w.year === selectedYear && w.weekNumber === targetWeekNum)
+                || Object.values(scheduleData).find(w => w.year === selectedYear);
+
+            if (match) {
+                switchWeek(match.id);
+            }
+        }
+
         function renderWeekTabs() {
+            const activeWeek = scheduleData[activeWeekId];
+            if (!activeWeek) return;
+
             const container = document.getElementById("week-tabs");
             const fsContainer = document.getElementById("fs-week-tabs");
 
-            container.innerHTML = Object.values(scheduleData).map(week => {
+            const yearWeeks = Object.values(scheduleData).filter(w => w.year === activeWeek.year);
+
+            container.innerHTML = yearWeeks.map(week => {
                 const isActive = week.id === activeWeekId;
                 return `
-                    <button onclick="switchWeek('${week.id}')"
-                        class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition whitespace-nowrap cursor-pointer border ${
+                    <button id="tab-${week.id}" onclick="switchWeek('${week.id}')"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition whitespace-nowrap cursor-pointer border ${
                             isActive
                                 ? "bg-indigo-600 text-white border-indigo-600 shadow-sm shadow-indigo-200"
                                 : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900"
                         }">
                         <span>${week.title}</span>
-                        <span class="text-[11px] font-normal px-1.5 py-0.5 rounded-md ${
+                        <span class="text-[10px] font-normal px-1.5 py-0.5 rounded-md ${
                             isActive ? "bg-indigo-500/60 text-indigo-50" : "bg-slate-100 text-slate-500"
-                        }">${week.subtitle}</span>
+                        }">${week.subtitle.replace(` ${week.year}`, "")}</span>
                     </button>
                 `;
             }).join("");
 
+            const activeTabEl = document.getElementById(`tab-${activeWeekId}`);
+            if (activeTabEl) {
+                activeTabEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+            }
+
             if (fsContainer) {
-                fsContainer.innerHTML = Object.values(scheduleData).map(week => {
+                fsContainer.innerHTML = yearWeeks.map(week => {
                     const isActive = week.id === activeWeekId;
                     return `
                         <button onclick="switchWeek('${week.id}')"
-                            class="px-3 py-1 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                            class="px-2.5 py-1 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                                 isActive
                                     ? "bg-indigo-600 text-white shadow-xs"
                                     : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
                             }">
-                            ${week.title}
+                            W${week.weekNumber}
                         </button>
                     `;
                 }).join("");
             }
+
+            syncYearAndWeekDropdowns();
         }
 
         function populateFilterOptions() {
@@ -975,14 +1011,13 @@
             const deptSelect = document.getElementById("filter-dept");
             const daySelect = document.getElementById("filter-day");
 
-            // Populare Departamente / Grupe
             let deptOptions = `<option value="ALL">Toate Departamentele / Grupele</option>`;
             if (week.hasGroupColumn) {
                 deptOptions += `
-                    <option value="GROUP_A">Grupa A (Evelina, Iulian)</option>
-                    <option value="GROUP_B">Grupa B (Andrei)</option>
-                    <option value="GROUP_C">Grupa C (Albert)</option>
-                    <option value="GROUP_NONE">Fără grupă (Daniel, Druvis, Ghenadie)</option>
+                    <option value="GROUP_A">Grupa A</option>
+                    <option value="GROUP_B">Grupa B</option>
+                    <option value="GROUP_C">Grupa C</option>
+                    <option value="GROUP_NONE">Fără grupă</option>
                 `;
             } else if (week.departments) {
                 week.departments.forEach(dept => {
@@ -991,7 +1026,6 @@
             }
             deptSelect.innerHTML = deptOptions;
 
-            // Populare Zile
             let dayOptions = `<option value="ALL">Toate zilele săptămânii</option>`;
             week.days.forEach((d, idx) => {
                 dayOptions += `<option value="${idx}">${d.ro} (${d.nl}) - ${d.shortDate}</option>`;
@@ -1007,12 +1041,8 @@
             const statusFilter = document.getElementById("filter-status").value;
 
             return week.employees.filter(emp => {
-                // 1. Căutare nume
-                if (searchQuery && !emp.name.toLowerCase().includes(searchQuery)) {
-                    return false;
-                }
+                if (searchQuery && !emp.name.toLowerCase().includes(searchQuery)) return false;
 
-                // 2. Filtru departament / grupă
                 if (deptFilter !== "ALL") {
                     if (week.hasGroupColumn) {
                         if (deptFilter === "GROUP_A" && emp.group !== "A") return false;
@@ -1024,7 +1054,6 @@
                     }
                 }
 
-                // 3. Filtru zi & status
                 if (dayFilter !== "ALL") {
                     const dIdx = parseInt(dayFilter, 10);
                     const shift = emp.shifts[dIdx];
@@ -1045,7 +1074,6 @@
             const week = scheduleData[activeWeekId];
             const totalEmployees = week.employees.length;
 
-            // Calcul totaluri zilnice pe întreaga săptămână (indiferent de filtre, pentru imaginea de ansamblu)
             const dailyTotals = week.days.map((_, dayIdx) => {
                 return week.employees.reduce((sum, emp) => sum + (isWorkingShift(emp.shifts[dayIdx]) ? 1 : 0), 0);
             });
@@ -1069,12 +1097,11 @@
                 : `Grupe A, B, C + General`;
 
             document.getElementById("stat-total-shifts").textContent = totalShifts;
-            document.getElementById("stat-avg-shifts").textContent = `Medie ${avgShifts} angajați / zi`;
+            document.getElementById("stat-avg-shifts").textContent = `Medie ${avgShifts} persoane / zi`;
             document.getElementById("stat-vrij-count").textContent = vrijCount;
             document.getElementById("stat-special-count").textContent = specialCount;
             document.getElementById("week-badge-info").textContent = `${week.title} (${week.subtitle})`;
 
-            // Randare Grafic Prezență Zilnică
             const maxVal = Math.max(...dailyTotals, 1);
             const currentDayFilter = document.getElementById("filter-day").value;
             const chartContainer = document.getElementById("daily-chart-container");
@@ -1094,11 +1121,7 @@
                         <div class="w-full max-w-[38px] bg-slate-100 rounded-t-lg h-16 flex items-end overflow-hidden p-0.5 border ${isSelected ? 'border-indigo-400 ring-2 ring-indigo-200' : 'border-transparent'}">
                             <div style="height: ${Math.max(heightPct, count > 0 ? 12 : 4)}%"
                                 class="w-full rounded-t-md transition-all duration-300 ${
-                                    count === 0
-                                        ? 'bg-rose-300'
-                                        : isSelected
-                                            ? 'bg-indigo-600'
-                                            : 'bg-indigo-400 group-hover:bg-indigo-500'
+                                    count === 0 ? 'bg-rose-300' : isSelected ? 'bg-indigo-600' : 'bg-indigo-400 group-hover:bg-indigo-500'
                                 }">
                             </div>
                         </div>
@@ -1110,7 +1133,6 @@
                 `;
             }).join("");
 
-            // Banner Notă Săptămână
             const noteBanner = document.getElementById("week-note-banner");
             const noteText = document.getElementById("week-note-text");
             if (week.note && week.note.trim() !== "") {
@@ -1130,14 +1152,13 @@
             const tbody = document.getElementById("schedule-tbody");
             const tfoot = document.getElementById("schedule-tfoot");
 
-            // Configurare dimensiuni în funcție de Zoom (Normal / Mare / Foarte Mare)
             const zoomCfg = {
                 normal: {
-                    nameColMinW: "min-w-[175px] sm:min-w-[205px]",
+                    nameColMinW: "min-w-[185px] sm:min-w-[220px]",
                     dayColMinW: "min-w-[115px]",
                     thPad: "py-3 px-3",
                     thDayText: "text-sm",
-                    tdNamePad: "py-3 px-4",
+                    tdNamePad: "py-3 px-3.5",
                     nameText: "text-sm sm:text-base",
                     avatarSize: "w-8 h-8 text-xs",
                     cellPad: "p-2",
@@ -1147,7 +1168,7 @@
                     deptRowPad: "py-2.5 px-4 text-xs"
                 },
                 large: {
-                    nameColMinW: "min-w-[210px] sm:min-w-[250px]",
+                    nameColMinW: "min-w-[220px] sm:min-w-[265px]",
                     dayColMinW: "min-w-[138px]",
                     thPad: "py-4 px-3.5",
                     thDayText: "text-base",
@@ -1161,7 +1182,7 @@
                     deptRowPad: "py-3 px-4 text-sm"
                 },
                 xlarge: {
-                    nameColMinW: "min-w-[240px] sm:min-w-[285px]",
+                    nameColMinW: "min-w-[250px] sm:min-w-[300px]",
                     dayColMinW: "min-w-[160px]",
                     thPad: "py-5 px-4",
                     thDayText: "text-lg",
@@ -1176,23 +1197,18 @@
                 }
             }[tableZoom];
 
-            // 1. Construire Header Tabel
             let headerHtml = `<tr>`;
             headerHtml += `
                 <th class="sticky-col bg-slate-900 ${zoomCfg.thPad} font-bold border-r border-slate-700 ${zoomCfg.nameColMinW}">
                     <div class="flex items-center justify-between">
-                        <span class="${zoomCfg.thDayText}">Persoană / Angajat</span>
-                        <span class="text-xs font-medium text-slate-400">Zile</span>
+                        <span class="${zoomCfg.thDayText}">Persoană</span>
+                        <span class="text-xs font-medium text-slate-400">Zile / Șterge</span>
                     </div>
                 </th>
             `;
 
             if (week.hasGroupColumn) {
-                headerHtml += `
-                    <th class="${zoomCfg.thPad} text-center font-bold border-r border-slate-700 w-20 ${zoomCfg.thDayText}">
-                        Group
-                    </th>
-                `;
+                headerHtml += `<th class="${zoomCfg.thPad} text-center font-bold border-r border-slate-700 w-20 ${zoomCfg.thDayText}">Group</th>`;
             }
 
             week.days.forEach((day, idx) => {
@@ -1212,32 +1228,30 @@
             headerHtml += `</tr>`;
             thead.innerHTML = headerHtml;
 
-            // 2. Construire Corp Tabel (Body)
             if (filteredEmployees.length === 0) {
                 const colSpan = week.days.length + (week.hasGroupColumn ? 2 : 1);
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="${colSpan}" class="py-16 text-center text-slate-500">
                             <div class="flex flex-col items-center justify-center gap-2">
-                                <i data-lucide="search-x" class="w-10 h-10 text-slate-300"></i>
-                                <p class="text-base font-semibold text-slate-700">Niciun angajat nu corespunde filtrelor selectate.</p>
-                                <button onclick="resetAllFilters()" class="text-sm font-semibold text-indigo-600 hover:underline cursor-pointer">Resetează filtrele</button>
+                                <i data-lucide="users" class="w-10 h-10 text-slate-300"></i>
+                                <p class="text-base font-semibold text-slate-700">Nicio persoană în această săptămână sau filtru.</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <button onclick="resetAllFilters()" class="text-sm font-semibold text-indigo-600 hover:underline cursor-pointer">Resetează filtrele</button>
+                                    <button onclick="openAddEmployeeModal()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer">+ Adaugă Persoană</button>
+                                </div>
                             </div>
                         </td>
                     </tr>
                 `;
             } else {
                 let bodyHtml = "";
-
-                // Grupare pe departamente dacă săptămâna are departamente (Week 51, Week 52)
                 if (week.hasDepartments) {
                     const departmentsOrder = week.departments || [...new Set(filteredEmployees.map(e => e.department))];
-
                     departmentsOrder.forEach(deptName => {
                         const deptEmps = filteredEmployees.filter(e => e.department === deptName);
                         if (deptEmps.length === 0) return;
 
-                        // Rând separator departament
                         bodyHtml += `
                             <tr class="bg-slate-100 border-y border-slate-300">
                                 <td colspan="${week.days.length + 1}" class="${zoomCfg.deptRowPad} font-extrabold uppercase tracking-wider text-slate-800">
@@ -1249,22 +1263,18 @@
                                 </td>
                             </tr>
                         `;
-
                         deptEmps.forEach(emp => {
                             bodyHtml += buildEmployeeRowHtml(emp, week, dayFilter, zoomCfg);
                         });
                     });
                 } else {
-                    // Week 47 (listă directă cu coloana Group)
                     filteredEmployees.forEach(emp => {
                         bodyHtml += buildEmployeeRowHtml(emp, week, dayFilter, zoomCfg);
                     });
                 }
-
                 tbody.innerHTML = bodyHtml;
             }
 
-            // 3. Construire Footer cu Totaluri Zilnice
             const dailyTotals = week.days.map((_, dayIdx) => {
                 return filteredEmployees.reduce((sum, emp) => sum + (isWorkingShift(emp.shifts[dayIdx]) ? 1 : 0), 0);
             });
@@ -1287,9 +1297,7 @@
                 footerHtml += `
                     <td class="py-3.5 px-2 text-center border-r border-slate-200 ${isHighlightedDay ? 'bg-indigo-100/70 text-indigo-900' : ''}">
                         <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-base font-extrabold ${
-                            total === 0
-                                ? 'bg-rose-100 text-rose-700 border border-rose-200'
-                                : 'bg-white text-slate-900 shadow-sm border border-slate-300'
+                            total === 0 ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-white text-slate-900 shadow-sm border border-slate-300'
                         }">
                             ${total}
                         </span>
@@ -1303,16 +1311,15 @@
         function buildEmployeeRowHtml(emp, week, dayFilter, zoomCfg) {
             const workedDaysCount = emp.shifts.filter(isWorkingShift).length;
             const initials = emp.name.slice(0, 2).toUpperCase();
+            const safeName = emp.name.replace(/'/g, "\\'");
 
             let row = `<tr class="hover:bg-indigo-50/30 transition-colors group">`;
 
-            // Nume angajat (Sticky, cu avatar, click deschide fișa completă a persoanei)
             row += `
-                <td onclick="openEmployeeDetailModal('${emp.name.replace(/'/g, "\\'")}')"
-                    title="Click pentru a vedea tot programul lui ${emp.name}"
-                    class="sticky-col bg-white group-hover:bg-slate-50 ${zoomCfg.tdNamePad} font-bold text-slate-900 border-r border-slate-200 cursor-pointer">
-                    <div class="flex items-center justify-between gap-2.5">
-                        <div class="flex items-center gap-2.5 min-w-0">
+                <td class="sticky-col bg-white group-hover:bg-slate-50 ${zoomCfg.tdNamePad} font-bold text-slate-900 border-r border-slate-200">
+                    <div class="flex items-center justify-between gap-2">
+                        <div onclick="openEmployeeDetailModal('${safeName}')" title="Click pentru fișa completă a lui ${emp.name}"
+                            class="flex items-center gap-2.5 min-w-0 cursor-pointer flex-1">
                             <div class="${zoomCfg.avatarSize} rounded-xl bg-slate-100 group-hover:bg-indigo-600 group-hover:text-white text-slate-700 font-extrabold flex items-center justify-center shrink-0 transition-colors">
                                 ${initials}
                             </div>
@@ -1321,14 +1328,20 @@
                                 ${week.hasDepartments ? `<div class="text-[11px] font-normal text-slate-400 truncate">${emp.department}</div>` : ''}
                             </div>
                         </div>
-                        <span class="text-xs font-bold px-2 py-1 rounded-lg bg-slate-100 text-slate-700 shrink-0" title="Zile lucrate în această săptămână">
-                            ${workedDaysCount}z
-                        </span>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <span class="text-xs font-bold px-2 py-1 rounded-lg bg-slate-100 text-slate-700" title="Zile lucrate">
+                                ${workedDaysCount}z
+                            </span>
+                            <button type="button" onclick="openDeleteEmployeeModal('${emp.id}', '${safeName}')"
+                                title="Șterge ${emp.name}"
+                                class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 </td>
             `;
 
-            // Coloana Group (doar în Week 47)
             if (week.hasGroupColumn) {
                 const groupBadge = emp.group
                     ? `<span class="inline-flex items-center justify-center w-8 h-8 rounded-xl text-sm font-extrabold border ${getGroupBadgeColor(emp.group)}">${emp.group}</span>`
@@ -1336,12 +1349,10 @@
                 row += `<td class="py-3 px-2 text-center border-r border-slate-200">${groupBadge}</td>`;
             }
 
-            // Cele 7 zile
             emp.shifts.forEach((shift, dayIdx) => {
                 const style = getShiftBadgeStyle(shift);
                 const isHighlightedDay = dayFilter === String(dayIdx);
 
-                // Verificare etichetă specială (Extra, Tas, TAS)
                 let extraBadgeHtml = "";
                 if (style.sublabel && style.sublabel !== "Liber" && style.sublabel !== "Concediu") {
                     extraBadgeHtml = `
@@ -1372,7 +1383,6 @@
             const week = scheduleData[activeWeekId];
             const filteredEmployees = getFilteredEmployees();
 
-            // 1. Randare pastile de selecție a zilei
             const pillsContainer = document.getElementById("cards-day-pills");
             pillsContainer.innerHTML = week.days.map((day, idx) => {
                 const count = filteredEmployees.filter(e => isWorkingShift(e.shifts[idx])).length;
@@ -1382,9 +1392,7 @@
                 return `
                     <button onclick="selectCardDay(${idx})"
                         class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition whitespace-nowrap cursor-pointer ${
-                            isSelected
-                                ? "bg-slate-900 text-white border-slate-900 shadow-sm"
-                                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                            isSelected ? "bg-slate-900 text-white border-slate-900 shadow-sm" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                         }">
                         <span>${day.ro} (${day.shortDate})${groupTag}</span>
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
@@ -1394,7 +1402,6 @@
                 `;
             }).join("");
 
-            // 2. Grupare angajați după ora de început pentru ziua selectată
             const dayObj = week.days[selectedCardDayIdx];
             const buckets = {
                 "06:00 - Intrare Matinală": [],
@@ -1410,19 +1417,12 @@
                 const begin = (shift.begin || "").trim();
                 const lower = begin.toLowerCase();
 
-                if (!begin || begin === "-") {
-                    buckets["Neprogramat (-)"].push({ emp, shift });
-                } else if (lower === "vrij" || lower === "vakantie") {
-                    buckets["Vrij (Liber) & Vakantie (Concediu)"].push({ emp, shift });
-                } else if (begin.startsWith("06:")) {
-                    buckets["06:00 - Intrare Matinală"].push({ emp, shift });
-                } else if (begin.startsWith("07:")) {
-                    buckets["07:00 - 07:15 - Tura 1"].push({ emp, shift });
-                } else if (begin.startsWith("08:") || begin.startsWith("09:")) {
-                    buckets["08:00 - 09:00 - Tura 2"].push({ emp, shift });
-                } else {
-                    buckets["10:00+ - Tura de Zi / După-amiază"].push({ emp, shift });
-                }
+                if (!begin || begin === "-") buckets["Neprogramat (-)"].push({ emp, shift });
+                else if (lower === "vrij" || lower === "vakantie") buckets["Vrij (Liber) & Vakantie (Concediu)"].push({ emp, shift });
+                else if (begin.startsWith("06:")) buckets["06:00 - Intrare Matinală"].push({ emp, shift });
+                else if (begin.startsWith("07:")) buckets["07:00 - 07:15 - Tura 1"].push({ emp, shift });
+                else if (begin.startsWith("08:") || begin.startsWith("09:")) buckets["08:00 - 09:00 - Tura 2"].push({ emp, shift });
+                else buckets["10:00+ - Tura de Zi / După-amiază"].push({ emp, shift });
             });
 
             const cardsGrid = document.getElementById("cards-grid");
@@ -1445,24 +1445,28 @@
                             </div>
                             <div class="mt-3 space-y-2 max-h-72 overflow-y-auto pr-1">
                                 ${items.length === 0
-                                    ? `<p class="text-xs text-slate-400 italic py-4 text-center">Niciun angajat în acest interval pentru ${dayObj.ro}.</p>`
+                                    ? `<p class="text-xs text-slate-400 italic py-4 text-center">Nicio persoană în acest interval pentru ${dayObj.ro}.</p>`
                                     : items.map(({ emp, shift }) => {
                                         const style = getShiftBadgeStyle(shift);
+                                        const safeName = emp.name.replace(/'/g, "\\'");
                                         return `
-                                            <div onclick="openEditModal('${emp.id}', ${selectedCardDayIdx})"
-                                                class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-slate-50 transition cursor-pointer">
-                                                <div>
+                                            <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-slate-50 transition">
+                                                <div onclick="openEditModal('${emp.id}', ${selectedCardDayIdx})" class="cursor-pointer flex-1">
                                                     <div class="flex items-center gap-1.5">
                                                         <span class="text-sm font-semibold text-slate-900">${emp.name}</span>
                                                         ${emp.group ? `<span class="text-[10px] font-bold px-1.5 py-0.2 rounded border ${getGroupBadgeColor(emp.group)}">${emp.group}</span>` : ''}
                                                     </div>
                                                     <div class="text-[11px] text-slate-500">${emp.department}</div>
                                                 </div>
-                                                <div class="text-right">
-                                                    <span class="inline-block px-2.5 py-1 rounded-lg text-xs border ${style.bg} ${style.border} ${style.text}">
-                                                        ${style.label}
-                                                    </span>
-                                                    ${shift.end ? `<div class="text-[10px] font-bold text-purple-700 mt-0.5">${shift.end}</div>` : ''}
+                                                <div class="flex items-center gap-2">
+                                                    <div onclick="openEditModal('${emp.id}', ${selectedCardDayIdx})" class="text-right cursor-pointer">
+                                                        <span class="inline-block px-2.5 py-1 rounded-lg text-xs border ${style.bg} ${style.border} ${style.text}">${style.label}</span>
+                                                        ${shift.end ? `<div class="text-[10px] font-bold text-purple-700 mt-0.5">${shift.end}</div>` : ''}
+                                                    </div>
+                                                    <button type="button" onclick="openDeleteEmployeeModal('${emp.id}', '${safeName}')" title="Șterge ${emp.name}"
+                                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer">
+                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         `;
@@ -1491,16 +1495,12 @@
         }
 
         // =========================================================================
-        // 5. INTERACȚIUNI UTILIZATOR (NAVIGARE, ZOOM, 100% TOT ECRANUL, MODALE)
+        // 5. INTERACȚIUNI UTILIZATOR
         // =========================================================================
         function enterFullscreenSchedule() {
             if (isFocusMode) return;
             isFocusMode = true;
-
-            // Ne asigurăm că suntem în vizualizarea Tabel Complet
-            if (viewMode !== "table") {
-                viewMode = "table";
-            }
+            if (viewMode !== "table") viewMode = "table";
 
             const shell = document.getElementById("fullscreen-overlay-shell");
             const fsTopBar = document.getElementById("fullscreen-top-bar");
@@ -1511,7 +1511,6 @@
             shell.classList.add("active");
             fsTopBar.classList.remove("hidden");
 
-            // Eliminăm marginile rotunjite ca tabelul să umple 100% edge-to-edge
             tableContainer.classList.remove("rounded-2xl", "border");
             tableContainer.classList.add("rounded-none", "border-0");
 
@@ -1519,23 +1518,17 @@
             scrollWrapper.style.height = "calc(100vh - 52px)";
             scrollWrapper.style.maxHeight = "calc(100vh - 52px)";
 
-            // Sincronizează căutarea din bara compactă
             const fsSearch = document.getElementById("fs-filter-search");
-            if (fsSearch) {
-                fsSearch.value = document.getElementById("filter-search").value;
-            }
+            if (fsSearch) fsSearch.value = document.getElementById("filter-search").value;
 
-            // Solicită și Fullscreen nativ al browserului dacă este permis (cu fallback CSS 100vw x 100vh)
             try {
                 if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
                     document.documentElement.requestFullscreen().catch(() => {});
                 }
-            } catch (e) {
-                // Fallback CSS acoperă deja 100% din ecran
-            }
+            } catch (e) {}
 
             renderAll();
-            showToast("Programul de muncă este afișat pe tot ecranul (apasă ESC pentru ieșire).", "info");
+            showToast("Mod tot ecranul activ (apasă ESC pentru ieșire).", "info");
         }
 
         function exitFullscreenSchedule() {
@@ -1567,35 +1560,23 @@
             renderAll();
         }
 
-        function toggleFocusMode() {
-            if (isFocusMode) {
-                exitFullscreenSchedule();
-            } else {
-                enterFullscreenSchedule();
-            }
-        }
-
         function syncFullscreenSearch(val) {
             document.getElementById("filter-search").value = val;
             applyFilters();
         }
 
-        // Suport tasta ESC pentru ieșirea din modul 100% Tot Ecranul (dacă nu e deschis un modal)
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") {
-                const editOpen = !document.getElementById("edit-cell-modal").classList.contains("hidden");
-                const detailOpen = !document.getElementById("employee-detail-modal").classList.contains("hidden");
-                const addOpen = !document.getElementById("add-employee-modal").classList.contains("hidden");
-                const resetOpen = !document.getElementById("reset-modal").classList.contains("hidden");
-
-                if (editOpen) { closeEditModal(); return; }
-                if (detailOpen) { closeEmployeeDetailModal(); return; }
-                if (addOpen) { closeAddEmployeeModal(); return; }
-                if (resetOpen) { closeResetModal(); return; }
-
-                if (isFocusMode) {
-                    exitFullscreenSchedule();
+                const modals = ["edit-cell-modal", "employee-detail-modal", "add-employee-modal", "delete-employee-modal", "reset-modal"];
+                for (const id of modals) {
+                    const el = document.getElementById(id);
+                    if (el && !el.classList.contains("hidden")) {
+                        el.classList.add("hidden");
+                        el.classList.remove("flex");
+                        return;
+                    }
                 }
+                if (isFocusMode) exitFullscreenSchedule();
             }
         });
 
@@ -1604,19 +1585,15 @@
             ["normal", "large", "xlarge"].forEach(lvl => {
                 const btn = document.getElementById(`btn-zoom-${lvl}`);
                 if (btn) {
-                    if (lvl === zoomLevel) {
-                        btn.className = "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm";
-                    } else {
-                        btn.className = "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
-                    }
+                    btn.className = lvl === zoomLevel
+                        ? "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm"
+                        : "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
                 }
                 const fsBtn = document.getElementById(`fs-zoom-${lvl}`);
                 if (fsBtn) {
-                    if (lvl === zoomLevel) {
-                        fsBtn.className = "px-2 py-1 rounded-md text-[11px] font-semibold bg-indigo-600 text-white cursor-pointer";
-                    } else {
-                        fsBtn.className = "px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer";
-                    }
+                    fsBtn.className = lvl === zoomLevel
+                        ? "px-2 py-1 rounded-md text-[11px] font-semibold bg-indigo-600 text-white cursor-pointer"
+                        : "px-2 py-1 rounded-md text-[11px] font-semibold text-slate-300 hover:text-white cursor-pointer";
                 }
             });
             if (viewMode === "table" || isFocusMode) {
@@ -1625,7 +1602,6 @@
             }
         }
 
-        // --- MODAL FIȘA COMPLETĂ A PERSOANEI ---
         function openEmployeeDetailModal(personName) {
             const modal = document.getElementById("employee-detail-modal");
             const body = document.getElementById("emp-modal-body");
@@ -1634,17 +1610,17 @@
 
             let foundMeta = [];
             let weeksHtml = "";
+            const activeYear = scheduleData[activeWeekId]?.year || 2026;
+            const relevantWeeks = Object.values(scheduleData).filter(w =>
+                w.year === activeYear && w.employees.some(e => e.name.toLowerCase() === personName.toLowerCase())
+            ).slice(0, 12);
 
-            Object.values(scheduleData).forEach(week => {
+            relevantWeeks.forEach(week => {
                 const emp = week.employees.find(e => e.name.toLowerCase() === personName.toLowerCase());
                 if (!emp) return;
 
-                if (emp.department && emp.department !== "General" && !foundMeta.includes(emp.department)) {
-                    foundMeta.push(emp.department);
-                }
-                if (emp.group && !foundMeta.includes(`Grupa ${emp.group}`)) {
-                    foundMeta.push(`Grupa ${emp.group}`);
-                }
+                if (emp.department && emp.department !== "General" && !foundMeta.includes(emp.department)) foundMeta.push(emp.department);
+                if (emp.group && !foundMeta.includes(`Grupa ${emp.group}`)) foundMeta.push(`Grupa ${emp.group}`);
 
                 const workedCount = emp.shifts.filter(isWorkingShift).length;
 
@@ -1678,7 +1654,7 @@
                 `;
             });
 
-            document.getElementById("emp-modal-meta").textContent = foundMeta.length > 0 ? foundMeta.join(" • ") : "Program Săptămânal";
+            document.getElementById("emp-modal-meta").textContent = foundMeta.length > 0 ? foundMeta.join(" • ") : `Program ${activeYear}`;
             body.innerHTML = weeksHtml || `<p class="text-sm text-slate-500">Nu s-au găsit date pentru această persoană.</p>`;
 
             modal.classList.remove("hidden");
@@ -1693,6 +1669,7 @@
         }
 
         function switchWeek(weekId) {
+            if (!scheduleData[weekId]) return;
             activeWeekId = weekId;
             selectedCardDayIdx = 0;
             populateFilterOptions();
@@ -1723,17 +1700,11 @@
         function applyFilters() {
             const searchVal = document.getElementById("filter-search").value;
             const clearBtn = document.getElementById("clear-search-btn");
-            if (searchVal.length > 0) {
-                clearBtn.classList.remove("hidden");
-            } else {
-                clearBtn.classList.add("hidden");
-            }
+            if (searchVal.length > 0) clearBtn.classList.remove("hidden");
+            else clearBtn.classList.add("hidden");
 
-            // Sincronizează ziua selectată în filtru cu vizualizarea pe carduri
             const dayFilter = document.getElementById("filter-day").value;
-            if (dayFilter !== "ALL") {
-                selectedCardDayIdx = parseInt(dayFilter, 10);
-            }
+            if (dayFilter !== "ALL") selectedCardDayIdx = parseInt(dayFilter, 10);
 
             renderAll();
         }
@@ -1753,9 +1724,8 @@
 
         function toggleDayFilterFromChart(dayIdx) {
             const daySelect = document.getElementById("filter-day");
-            if (daySelect.value === String(dayIdx)) {
-                daySelect.value = "ALL";
-            } else {
+            if (daySelect.value === String(dayIdx)) daySelect.value = "ALL";
+            else {
                 daySelect.value = String(dayIdx);
                 selectedCardDayIdx = dayIdx;
             }
@@ -1773,7 +1743,7 @@
             const day = week.days[dayIdx];
 
             document.getElementById("modal-edit-title").textContent = `Editare Program: ${emp.name}`;
-            document.getElementById("modal-edit-subtitle").textContent = `${day.ro} (${day.nl}) • ${day.date} • ${week.title}`;
+            document.getElementById("modal-edit-subtitle").textContent = `${day.ro} (${day.nl}) • ${day.date} • ${week.title} ${week.year}`;
             document.getElementById("edit-begin").value = shift.begin || "";
             document.getElementById("edit-end").value = shift.end || "";
 
@@ -1792,9 +1762,7 @@
 
         function applyQuickPreset(beginVal, endVal) {
             document.getElementById("edit-begin").value = beginVal;
-            if (endVal !== undefined) {
-                document.getElementById("edit-end").value = endVal;
-            }
+            if (endVal !== undefined) document.getElementById("edit-end").value = endVal;
         }
 
         function saveShiftEdit(event) {
@@ -1816,7 +1784,7 @@
             closeEditModal();
         }
 
-        // --- MODAL ADĂUGARE ANGAJAT ---
+        // --- MODAL ADĂUGARE PERSOANĂ ---
         function openAddEmployeeModal() {
             const week = scheduleData[activeWeekId];
             document.getElementById("modal-add-week-label").textContent = `${week.title} (${week.subtitle})`;
@@ -1831,7 +1799,7 @@
             } else {
                 groupField.classList.add("hidden");
                 deptField.classList.remove("hidden");
-                deptSelect.innerHTML = (week.departments || ["General"]).map(d => `<option value="${d}">${d}</option>`).join("");
+                deptSelect.innerHTML = (week.departments || ["General / Fără categorie"]).map(d => `<option value="${d}">${d}</option>`).join("");
             }
 
             document.getElementById("new-emp-name").value = "";
@@ -1847,6 +1815,15 @@
             modal.classList.remove("flex");
         }
 
+        function createShiftsFromDefault(defaultShift) {
+            return Array.from({ length: 7 }, (_, idx) => {
+                if (defaultShift === "07:00" || defaultShift === "08:00") {
+                    return idx < 5 ? { begin: defaultShift, end: "" } : { begin: "Vrij", end: "" };
+                }
+                return { begin: defaultShift, end: "" };
+            });
+        }
+
         function handleAddEmployee(event) {
             event.preventDefault();
             const week = scheduleData[activeWeekId];
@@ -1856,26 +1833,74 @@
             const group = week.hasGroupColumn ? document.getElementById("new-emp-group").value : "";
             const department = week.hasDepartments ? document.getElementById("new-emp-dept").value : "General";
             const defaultShift = document.getElementById("new-emp-default-shift").value;
+            const scope = document.getElementById("new-emp-scope").value;
 
-            const shifts = week.days.map((_, idx) => {
-                if (defaultShift === "07:00" || defaultShift === "08:00") {
-                    return idx < 5 ? { begin: defaultShift, end: "" } : { begin: "Vrij", end: "" };
-                }
-                return { begin: defaultShift, end: "" };
-            });
-
-            week.employees.push({
-                id: `${activeWeekId}-custom-${Date.now()}`,
-                name,
-                group,
-                department,
-                shifts
-            });
+            if (scope === "all") {
+                Object.values(scheduleData).forEach(w => {
+                    const targetDept = w.hasDepartments
+                        ? (w.departments && w.departments.includes(department) ? department : (w.departments?.[0] || "General / Fără categorie"))
+                        : "General";
+                    w.employees.push({
+                        id: `${w.id}-${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+                        name,
+                        group: w.hasGroupColumn ? group : "",
+                        department: targetDept,
+                        shifts: createShiftsFromDefault(defaultShift)
+                    });
+                });
+                showToast(`${name} a fost adăugat în toate săptămânile (2026 & 2027).`, "success");
+            } else {
+                week.employees.push({
+                    id: `${activeWeekId}-${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+                    name,
+                    group,
+                    department,
+                    shifts: createShiftsFromDefault(defaultShift)
+                });
+                showToast(`${name} a fost adăugat în ${week.title}.`, "success");
+            }
 
             saveData();
             closeAddEmployeeModal();
             renderAll();
-            showToast(`Angajatul ${name} a fost adăugat în ${week.title}.`, "success");
+        }
+
+        // --- MODAL ȘTERGERE PERSOANĂ ---
+        function openDeleteEmployeeModal(empId, empName) {
+            pendingDeleteEmployee = { empId, empName };
+            document.getElementById("delete-emp-name").textContent = empName;
+            document.getElementById("delete-emp-subtitle").textContent = scheduleData[activeWeekId]?.title || "";
+            const modal = document.getElementById("delete-employee-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            lucide.createIcons();
+        }
+
+        function closeDeleteEmployeeModal() {
+            const modal = document.getElementById("delete-employee-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            pendingDeleteEmployee = null;
+        }
+
+        function confirmDeleteEmployee(scope) {
+            if (!pendingDeleteEmployee) return;
+            const { empId, empName } = pendingDeleteEmployee;
+
+            if (scope === "all") {
+                Object.values(scheduleData).forEach(w => {
+                    w.employees = w.employees.filter(e => e.name.toLowerCase() !== empName.toLowerCase());
+                });
+                showToast(`${empName} a fost șters din toate săptămânile.`, "success");
+            } else {
+                const week = scheduleData[activeWeekId];
+                week.employees = week.employees.filter(e => e.id !== empId);
+                showToast(`${empName} a fost șters din ${week.title}.`, "success");
+            }
+
+            saveData();
+            closeDeleteEmployeeModal();
+            renderAll();
         }
 
         // --- MODAL RESETARE ---
@@ -1893,17 +1918,18 @@
 
         function confirmResetData() {
             localStorage.removeItem(STORAGE_KEY);
-            scheduleData = JSON.parse(JSON.stringify(INITIAL_SCHEDULE_DATA));
+            scheduleData = buildInitialScheduleData();
+            activeWeekId = "y2026-w47";
             populateFilterOptions();
             renderAll();
             closeResetModal();
-            showToast("Datele au fost resetate la versiunea originală din Excel.", "info");
+            showToast("Datele au fost resetate la versiunea inițială (2026 & 2027).", "info");
         }
 
         // --- EXPORT CSV ---
         function exportToCSV() {
             const week = scheduleData[activeWeekId];
-            const headers = ["Departament", "Group", "Angajat", ...week.days.map(d => `${d.ro} (${d.date})`)];
+            const headers = ["An", "Săptămână", "Departament", "Group", "Persoană", ...week.days.map(d => `${d.ro} (${d.date})`)];
             const rows = [headers.join(",")];
 
             week.employees.forEach(emp => {
@@ -1913,6 +1939,8 @@
                     return `"${b}${e}"`;
                 });
                 rows.push([
+                    `"${week.year}"`,
+                    `"${week.title}"`,
                     `"${emp.department || ""}"`,
                     `"${emp.group || ""}"`,
                     `"${emp.name}"`,
@@ -1925,16 +1953,15 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", `Program_${week.title.replace(/\s+/g, "_")}.csv`);
+            link.setAttribute("download", `Program_${week.year}_${week.title.replace(/\s+/g, "_")}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
 
-            showToast(`Fișierul CSV pentru ${week.title} a fost descărcat.`, "success");
+            showToast(`CSV exportat pentru ${week.title} (${week.year}).`, "success");
         }
 
-        // --- SISTEM NOTIFICĂRI TOAST ---
         function showToast(message, type = "info") {
             const container = document.getElementById("toast-container");
             const toast = document.createElement("div");
@@ -1959,9 +1986,6 @@
             }, 3000);
         }
 
-        // =========================================================================
-        // 6. INIȚIALIZARE LA ÎNCĂRCAREA PAGINII
-        // =========================================================================
         window.addEventListener("DOMContentLoaded", () => {
             loadData();
             populateFilterOptions();
@@ -1970,6 +1994,3 @@
     </script>
 </body>
 </html>
-```
-
-Eu am codul acesta ,unde il pot pune să pot generea aplicația

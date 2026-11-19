@@ -1529,4 +1529,526 @@
                                                         ${shift.end ? `<div class="text-[10px] font-bold text-purple-700 mt-0.5">${shift.end}</div>` : ''}
                                                     </div>
                                                     <button type="button" onclick="openDeleteEmployeeModal('${emp.id}', '${safeName}')" title="Șterge ${emp.name}"
-                                                        class="p-1.5 rounded-lg text-slate-40
+                                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer">
+                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join("")
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderAll() {
+            renderWeekTabs();
+            renderStatsAndChart();
+            if (viewMode === "table" || isFocusMode) {
+                document.getElementById("table-view-container").classList.remove("hidden");
+                document.getElementById("cards-view-container").classList.add("hidden");
+                renderTable();
+            } else {
+                document.getElementById("table-view-container").classList.add("hidden");
+                document.getElementById("cards-view-container").classList.remove("hidden");
+                renderCardsView();
+            }
+            safeRefreshIcons();
+        }
+
+        function applyRotationClass() {
+            const shell = document.getElementById("fullscreen-overlay-shell");
+            shell.classList.remove("rotated-cw", "rotated-ccw");
+            if (isFocusMode) {
+                shell.classList.add(rotationMode === "cw" ? "rotated-cw" : "rotated-ccw");
+            }
+        }
+
+        function cycleRotationDirection() {
+            rotationMode = rotationMode === "ccw" ? "cw" : "ccw";
+            applyRotationClass();
+            showToast(rotationMode === "ccw" ? "Rotit invers (-90°)." : "Rotit în sens orar (+90°).", "info");
+        }
+
+        function enterFullscreenSchedule() {
+            if (isFocusMode) return;
+            isFocusMode = true;
+            if (viewMode !== "table") viewMode = "table";
+
+            const shell = document.getElementById("fullscreen-overlay-shell");
+            const fsTopBar = document.getElementById("fullscreen-top-bar");
+            const tableContainer = document.getElementById("table-view-container");
+            const scrollWrapper = document.getElementById("table-scroll-wrapper");
+
+            document.body.classList.add("fullscreen-schedule-active");
+            shell.classList.add("active");
+            applyRotationClass();
+            fsTopBar.classList.remove("hidden");
+
+            tableContainer.classList.remove("rounded-2xl", "border");
+            tableContainer.classList.add("rounded-none", "border-0");
+
+            scrollWrapper.classList.remove("max-h-[78vh]");
+            scrollWrapper.style.height = "100%";
+            scrollWrapper.style.maxHeight = "none";
+
+            const fsSearch = document.getElementById("fs-filter-search");
+            if (fsSearch) fsSearch.value = document.getElementById("filter-search").value;
+
+            renderAll();
+            showToast("Ecran complet: toate zilele încap fără scroll lateral.", "info");
+        }
+
+        function exitFullscreenSchedule() {
+            if (!isFocusMode) return;
+            isFocusMode = false;
+
+            const shell = document.getElementById("fullscreen-overlay-shell");
+            const fsTopBar = document.getElementById("fullscreen-top-bar");
+            const tableContainer = document.getElementById("table-view-container");
+            const scrollWrapper = document.getElementById("table-scroll-wrapper");
+
+            document.body.classList.remove("fullscreen-schedule-active");
+            shell.classList.remove("active", "rotated-cw", "rotated-ccw");
+            fsTopBar.classList.add("hidden");
+
+            tableContainer.classList.add("rounded-2xl", "border");
+            tableContainer.classList.remove("rounded-none", "border-0");
+
+            scrollWrapper.style.height = "";
+            scrollWrapper.style.maxHeight = "";
+            scrollWrapper.classList.add("max-h-[78vh]");
+
+            renderAll();
+        }
+
+        function syncFullscreenSearch(val) {
+            document.getElementById("filter-search").value = val;
+            applyFilters();
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                const modals = ["edit-cell-modal", "employee-detail-modal", "add-employee-modal", "delete-employee-modal", "reset-modal"];
+                for (const id of modals) {
+                    const el = document.getElementById(id);
+                    if (el && !el.classList.contains("hidden")) {
+                        el.classList.add("hidden");
+                        el.classList.remove("flex");
+                        return;
+                    }
+                }
+                if (isFocusMode) exitFullscreenSchedule();
+            }
+        });
+
+        function setTableZoom(zoomLevel) {
+            tableZoom = zoomLevel;
+            ["normal", "large", "xlarge"].forEach(lvl => {
+                const btn = document.getElementById(`btn-zoom-${lvl}`);
+                if (btn) {
+                    btn.className = lvl === zoomLevel
+                        ? "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm"
+                        : "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
+                }
+            });
+            if (viewMode === "table" || isFocusMode) {
+                renderTable();
+                safeRefreshIcons();
+            }
+        }
+
+        function openEmployeeDetailModal(personName) {
+            const modal = document.getElementById("employee-detail-modal");
+            const body = document.getElementById("emp-modal-body");
+            document.getElementById("emp-modal-name").textContent = personName;
+            document.getElementById("emp-modal-avatar").textContent = personName.slice(0, 2).toUpperCase();
+
+            let foundMeta = [];
+            let weeksHtml = "";
+            const activeYear = scheduleData[activeWeekId]?.year || 2026;
+            const relevantWeeks = Object.values(scheduleData).filter(w =>
+                w.year === activeYear && w.employees.some(e => e.name.toLowerCase() === personName.toLowerCase())
+            ).slice(0, 12);
+
+            relevantWeeks.forEach(week => {
+                const emp = week.employees.find(e => e.name.toLowerCase() === personName.toLowerCase());
+                if (!emp) return;
+
+                if (emp.department && emp.department !== "General" && !foundMeta.includes(emp.department)) foundMeta.push(emp.department);
+                if (emp.group && !foundMeta.includes(`Grupa ${emp.group}`)) foundMeta.push(`Grupa ${emp.group}`);
+
+                const workedCount = emp.shifts.filter(isWorkingShift).length;
+
+                weeksHtml += `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
+                        <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                            <div>
+                                <span class="text-base font-extrabold text-slate-900">${week.title}</span>
+                                <span class="text-xs text-slate-500 ml-2">${week.subtitle}</span>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                ${workedCount} zile lucrate
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-7 gap-2">
+                            ${week.days.map((day, dIdx) => {
+                                const shift = emp.shifts[dIdx];
+                                const style = getShiftBadgeStyle(shift);
+                                return `
+                                    <div onclick="closeEmployeeDetailModal(); switchWeek('${week.id}'); openEditModal('${emp.id}', ${dIdx});"
+                                        class="p-2.5 rounded-xl border ${style.bg} ${style.border} text-center cursor-pointer hover:ring-2 hover:ring-indigo-400 transition">
+                                        <div class="text-[11px] font-bold text-slate-700">${day.ro}</div>
+                                        <div class="text-[10px] text-slate-500 mb-1">${day.shortDate}</div>
+                                        <div class="text-sm font-extrabold ${style.text}">${style.label}</div>
+                                        ${shift.end ? `<div class="text-[10px] font-bold text-purple-700 mt-0.5">${shift.end}</div>` : ''}
+                                    </div>
+                                `;
+                            }).join("")}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById("emp-modal-meta").textContent = foundMeta.length > 0 ? foundMeta.join(" • ") : `Program ${activeYear}`;
+            body.innerHTML = weeksHtml || `<p class="text-sm text-slate-500">Nu s-au găsit date pentru această persoană.</p>`;
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            safeRefreshIcons();
+        }
+
+        function closeEmployeeDetailModal() {
+            const modal = document.getElementById("employee-detail-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function switchWeek(weekId) {
+            if (!scheduleData[weekId]) return;
+            activeWeekId = weekId;
+            selectedCardDayIdx = 0;
+            populateFilterOptions();
+            renderAll();
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            const btnTable = document.getElementById("btn-view-table");
+            const btnCards = document.getElementById("btn-view-cards");
+
+            if (mode === "table") {
+                btnTable.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm";
+                btnCards.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
+            } else {
+                btnCards.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm";
+                btnTable.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
+            }
+            renderAll();
+        }
+
+        function selectCardDay(dayIdx) {
+            selectedCardDayIdx = dayIdx;
+            renderCardsView();
+            safeRefreshIcons();
+        }
+
+        function applyFilters() {
+            const searchVal = document.getElementById("filter-search").value;
+            const clearBtn = document.getElementById("clear-search-btn");
+            if (searchVal.length > 0) clearBtn.classList.remove("hidden");
+            else clearBtn.classList.add("hidden");
+
+            const dayFilter = document.getElementById("filter-day").value;
+            if (dayFilter !== "ALL") selectedCardDayIdx = parseInt(dayFilter, 10);
+
+            renderAll();
+        }
+
+        function clearSearch() {
+            document.getElementById("filter-search").value = "";
+            applyFilters();
+        }
+
+        function resetAllFilters() {
+            document.getElementById("filter-search").value = "";
+            document.getElementById("filter-dept").value = "ALL";
+            document.getElementById("filter-day").value = "ALL";
+            document.getElementById("filter-status").value = "ALL";
+            applyFilters();
+        }
+
+        function toggleDayFilterFromChart(dayIdx) {
+            const daySelect = document.getElementById("filter-day");
+            if (daySelect.value === String(dayIdx)) daySelect.value = "ALL";
+            else {
+                daySelect.value = String(dayIdx);
+                selectedCardDayIdx = dayIdx;
+            }
+            applyFilters();
+        }
+
+        function openEditModal(empId, dayIdx) {
+            const week = scheduleData[activeWeekId];
+            const emp = week.employees.find(e => e.id === empId);
+            if (!emp) return;
+
+            currentlyEditing = { empId, dayIdx };
+            const shift = emp.shifts[dayIdx];
+            const day = week.days[dayIdx];
+
+            document.getElementById("modal-edit-title").textContent = `Editare Program: ${emp.name}`;
+            document.getElementById("modal-edit-subtitle").textContent = `${day.ro} (${day.nl}) • ${day.date} • ${week.title} ${week.year}`;
+            document.getElementById("edit-begin").value = shift.begin || "";
+            document.getElementById("edit-end").value = shift.end || "";
+
+            const modal = document.getElementById("edit-cell-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            document.getElementById("edit-begin").focus();
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById("edit-cell-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            currentlyEditing = null;
+        }
+
+        function applyQuickPreset(beginVal, endVal) {
+            document.getElementById("edit-begin").value = beginVal;
+            if (endVal !== undefined) document.getElementById("edit-end").value = endVal;
+        }
+
+        function saveShiftEdit(event) {
+            event.preventDefault();
+            if (!currentlyEditing) return;
+
+            const { empId, dayIdx } = currentlyEditing;
+            const week = scheduleData[activeWeekId];
+            const emp = week.employees.find(e => e.id === empId);
+            if (emp) {
+                emp.shifts[dayIdx] = {
+                    begin: document.getElementById("edit-begin").value.trim(),
+                    end: document.getElementById("edit-end").value.trim()
+                };
+                saveData();
+                renderAll();
+                showToast(`Program actualizat pentru ${emp.name} (${week.days[dayIdx].ro})`, "success");
+            }
+            closeEditModal();
+        }
+
+        function openAddEmployeeModal() {
+            const week = scheduleData[activeWeekId];
+            document.getElementById("modal-add-week-label").textContent = `${week.title} (${week.subtitle})`;
+
+            const groupField = document.getElementById("new-emp-group-field");
+            const deptField = document.getElementById("new-emp-dept-field");
+            const deptSelect = document.getElementById("new-emp-dept");
+
+            if (week.hasGroupColumn) {
+                groupField.classList.remove("hidden");
+                deptField.classList.add("hidden");
+            } else {
+                groupField.classList.add("hidden");
+                deptField.classList.remove("hidden");
+                deptSelect.innerHTML = (week.departments || ["General / Fără categorie"]).map(d => `<option value="${d}">${d}</option>`).join("");
+            }
+
+            document.getElementById("new-emp-name").value = "";
+            const modal = document.getElementById("add-employee-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            document.getElementById("new-emp-name").focus();
+        }
+
+        function closeAddEmployeeModal() {
+            const modal = document.getElementById("add-employee-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function createShiftsFromDefault(defaultShift) {
+            return Array.from({ length: 7 }, (_, idx) => {
+                if (defaultShift === "07:00" || defaultShift === "08:00") {
+                    return idx < 5 ? { begin: defaultShift, end: "" } : { begin: "Vrij", end: "" };
+                }
+                return { begin: defaultShift, end: "" };
+            });
+        }
+
+        function handleAddEmployee(event) {
+            event.preventDefault();
+            const week = scheduleData[activeWeekId];
+            const name = document.getElementById("new-emp-name").value.trim();
+            if (!name) return;
+
+            const group = week.hasGroupColumn ? document.getElementById("new-emp-group").value : "";
+            const department = week.hasDepartments ? document.getElementById("new-emp-dept").value : "General";
+            const defaultShift = document.getElementById("new-emp-default-shift").value;
+            const scope = document.getElementById("new-emp-scope").value;
+
+            if (scope === "all") {
+                Object.values(scheduleData).forEach(w => {
+                    const targetDept = w.hasDepartments
+                        ? (w.departments && w.departments.includes(department) ? department : (w.departments?.[0] || "General / Fără categorie"))
+                        : "General";
+                    w.employees.push({
+                        id: `${w.id}-${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+                        name,
+                        group: w.hasGroupColumn ? group : "",
+                        department: targetDept,
+                        shifts: createShiftsFromDefault(defaultShift)
+                    });
+                });
+                showToast(`${name} a fost adăugat în toate săptămânile (2026 & 2027).`, "success");
+            } else {
+                week.employees.push({
+                    id: `${activeWeekId}-${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+                    name,
+                    group,
+                    department,
+                    shifts: createShiftsFromDefault(defaultShift)
+                });
+                showToast(`${name} a fost adăugat în ${week.title}.`, "success");
+            }
+
+            saveData();
+            closeAddEmployeeModal();
+            renderAll();
+        }
+
+        function openDeleteEmployeeModal(empId, empName) {
+            pendingDeleteEmployee = { empId, empName };
+            document.getElementById("delete-emp-name").textContent = empName;
+            document.getElementById("delete-emp-subtitle").textContent = scheduleData[activeWeekId]?.title || "";
+            const modal = document.getElementById("delete-employee-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            safeRefreshIcons();
+        }
+
+        function closeDeleteEmployeeModal() {
+            const modal = document.getElementById("delete-employee-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            pendingDeleteEmployee = null;
+        }
+
+        function confirmDeleteEmployee(scope) {
+            if (!pendingDeleteEmployee) return;
+            const { empId, empName } = pendingDeleteEmployee;
+
+            if (scope === "all") {
+                Object.values(scheduleData).forEach(w => {
+                    w.employees = w.employees.filter(e => e.name.toLowerCase() !== empName.toLowerCase());
+                });
+                showToast(`${empName} a fost șters din toate săptămânile.`, "success");
+            } else {
+                const week = scheduleData[activeWeekId];
+                week.employees = week.employees.filter(e => e.id !== empId);
+                showToast(`${empName} a fost șters din ${week.title}.`, "success");
+            }
+
+            saveData();
+            closeDeleteEmployeeModal();
+            renderAll();
+        }
+
+        function openResetModal() {
+            const modal = document.getElementById("reset-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeResetModal() {
+            const modal = document.getElementById("reset-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function confirmResetData() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
+            scheduleData = buildInitialScheduleData();
+            activeWeekId = "y2026-w47";
+            populateFilterOptions();
+            renderAll();
+            closeResetModal();
+            showToast("Datele au fost resetate la versiunea inițială (2026 & 2027).", "info");
+        }
+
+        function exportToCSV() {
+            const week = scheduleData[activeWeekId];
+            if (!week) return;
+
+            const headers = ["An", "Săptămână", "Departament", "Group", "Persoană", ...week.days.map(d => `${d.ro} (${d.date})`)];
+            const rows = [headers.join(",")];
+
+            week.employees.forEach(emp => {
+                const shiftCells = emp.shifts.map(s => {
+                    const b = s.begin || "-";
+                    const e = s.end ? ` [${s.end}]` : "";
+                    return `"${b}${e}"`;
+                });
+                rows.push([
+                    `"${week.year}"`,
+                    `"${week.title}"`,
+                    `"${emp.department || ""}"`,
+                    `"${emp.group || ""}"`,
+                    `"${emp.name}"`,
+                    ...shiftCells
+                ].join(","));
+            });
+
+            const csvContent = "\uFEFF" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Program_${week.year}_${week.title.replace(/\s+/g, "_")}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast(`CSV exportat pentru ${week.title} (${week.year}).`, "success");
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+
+            const colors = {
+                success: "bg-slate-900 text-white border-emerald-500",
+                info: "bg-slate-900 text-white border-indigo-500"
+            };
+
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border-l-4 text-xs sm:text-sm font-medium transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle-2' : 'info'}" class="w-4 h-4 ${type === 'success' ? 'text-emerald-400' : 'text-indigo-400'} shrink-0"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+            safeRefreshIcons();
+
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "translate-y-2");
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadData();
+            populateFilterOptions();
+            renderAll();
+        });
+    </script>
+</body>
+</html>

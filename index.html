@@ -1,89 +1,728 @@
+```html
 <!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planificator Ture & Program de Lucru</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#172033',
-                            950: '#0a0f1c'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Planificator Ture & Program de Lucru (2026 & 2027)</title>
     <style>
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        /* =====================================================================
+           1. RESET & VARIABILE DE DESIGN (100% AUTONOM, FĂRĂ CDN EXTERN)
+           ===================================================================== */
+        :root {
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --border-color: #e2e8f0;
+            --border-strong: #cbd5e1;
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+
+            --indigo-50: #eef2ff;
+            --indigo-100: #e0e7ff;
+            --indigo-200: #c7d2fe;
+            --indigo-600: #4f46e5;
+            --indigo-700: #4338ca;
+
+            --amber-50: #fffbeb;
+            --amber-100: #fef3c7;
+            --amber-200: #fde68a;
+            --amber-700: #b45309;
+            --amber-800: #92400e;
+
+            --emerald-50: #ecfdf5;
+            --emerald-100: #d1fae5;
+            --emerald-200: #a7f3d0;
+            --emerald-700: #047857;
+            --emerald-800: #065f46;
+
+            --rose-50: #fff1f2;
+            --rose-100: #ffe4e6;
+            --rose-200: #fecdd3;
+            --rose-600: #e11d48;
+            --rose-700: #be123c;
+
+            --sky-50: #f0f9ff;
+            --sky-100: #e0f2fe;
+            --sky-200: #bae6fd;
+            --sky-800: #075985;
+
+            --purple-50: #faf5ff;
+            --purple-100: #f3e8ff;
+            --purple-200: #e9d5ff;
+            --purple-800: #6b21a8;
+
+            --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+            --shadow-xl: 0 20px 35px -10px rgba(15, 23, 42, 0.25);
         }
 
-        .sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 20;
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .sticky-thead th {
-            position: sticky;
-            top: 0;
-            z-index: 15;
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.4;
         }
-        .sticky-thead th.sticky-col {
-            z-index: 25;
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         body.fullscreen-schedule-active {
             overflow: hidden !important;
         }
 
+        button, select, input {
+            font-family: inherit;
+        }
+
+        /* Scrollbar fin */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* =====================================================================
+           2. HEADER & BARA DE CONTROALE
+           ===================================================================== */
+        .app-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            padding: 12px 16px;
+        }
+
+        .header-inner {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 6px 10px;
+            margin-left: -10px;
+            border-radius: 14px;
+            transition: background-color 0.2s ease, transform 0.15s ease;
+            user-select: none;
+        }
+
+        .brand-trigger:hover {
+            background-color: var(--indigo-50);
+        }
+
+        .brand-trigger:active {
+            transform: scale(0.99);
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--indigo-600), var(--indigo-700));
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.28);
+        }
+
+        .brand-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: underline;
+            text-decoration-color: var(--indigo-200);
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+        }
+
+        .brand-trigger:hover .brand-title {
+            color: var(--indigo-700);
+        }
+
+        .year-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: var(--indigo-50);
+            color: var(--indigo-700);
+            border: 1px solid var(--indigo-200);
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* Navigare Săptămână */
+        .week-navigator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-subtle);
+            padding: 5px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #f8fafc;
+            border-color: var(--border-strong);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-icon {
+            padding: 8px;
+        }
+
+        .btn-primary {
+            background: var(--indigo-600);
+            color: #ffffff;
+            border-color: var(--indigo-600);
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--indigo-700);
+            border-color: var(--indigo-700);
+        }
+
+        .btn-soft-indigo {
+            background: var(--indigo-50);
+            color: var(--indigo-700);
+            border-color: var(--indigo-200);
+        }
+
+        .btn-soft-indigo:hover {
+            background: var(--indigo-100);
+        }
+
+        .btn-danger-soft {
+            background: var(--rose-50);
+            color: var(--rose-700);
+            border-color: var(--rose-200);
+        }
+
+        .btn-danger-soft:hover {
+            background: var(--rose-100);
+        }
+
+        .select-control {
+            padding: 7px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-strong);
+            background: #ffffff;
+            color: var(--text-main);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .select-control:focus {
+            border-color: var(--indigo-600);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* =====================================================================
+           3. BARA DE LEGENDĂ & STATISTICI RAPIDE
+           ===================================================================== */
+        .sub-toolbar {
+            max-width: 1600px;
+            width: 100%;
+            margin: 12px auto 0;
+            padding: 0 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .legend-list {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.73rem;
+        }
+
+        .legend-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 9px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: 1px solid transparent;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            background: #ffffff;
+            padding: 6px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-bar strong {
+            color: var(--text-main);
+            font-weight: 800;
+        }
+
+        /* =====================================================================
+           4. CONTAINER TABEL PRINCIPAL (TOATE CELE 7 ZILE VIZIBILE COMPLET)
+           ===================================================================== */
+        .main-workspace {
+            flex: 1;
+            max-width: 1600px;
+            width: 100%;
+            margin: 12px auto 20px;
+            padding: 0 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #fullscreen-overlay-shell {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #fullscreen-rotated-stage {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        /* Bara vizibilă în modul Fullscreen 90° */
+        #fullscreen-top-bar {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 14px;
+            background: #0f172a;
+            color: #ffffff;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
+
+        #fullscreen-overlay-shell.active #fullscreen-top-bar {
+            display: flex;
+        }
+
+        .fs-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .fs-actions-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fs-btn {
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border: 1px solid #475569;
+            background: #1e293b;
+            color: #f8fafc;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .fs-btn:hover {
+            background: #334155;
+        }
+
+        .fs-btn-exit {
+            background: #e11d48;
+            border-color: #e11d48;
+            color: #ffffff;
+        }
+
+        .fs-btn-exit:hover {
+            background: #be123c;
+        }
+
+        #table-scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        table.schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            min-width: 760px; /* Pe ecrane foarte înguste permite scroll orizontal lin fără a strivi textul */
+        }
+
+        /* Lățimi procentuale exacte: 17% Angajat + 7 * 10.6% Zile + 8.8% Zile Lucrate = 100% */
+        col.col-employee { width: 17%; }
+        col.col-day      { width: 10.6%; }
+        col.col-days-cnt { width: 8.8%; }
+
+        .schedule-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 15;
+            background: #f1f5f9;
+            border-bottom: 2px solid var(--border-strong);
+            border-right: 1px solid var(--border-color);
+            padding: 10px 4px;
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .schedule-table thead th.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 25;
+            text-align: left;
+            padding-left: 12px;
+            background: #e2e8f0;
+        }
+
+        .schedule-table thead th.weekend-col {
+            background: var(--amber-100);
+            color: var(--amber-800);
+            border-bottom-color: #f59e0b;
+        }
+
+        .schedule-table thead th.today-col {
+            background: var(--indigo-100);
+            color: var(--indigo-700);
+            border-bottom-color: var(--indigo-600);
+        }
+
+        .day-name {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .day-date {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .schedule-table tbody td {
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 5px 4px;
+            vertical-align: middle;
+            text-align: center;
+            height: 60px;
+        }
+
+        .schedule-table tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        /* Coloana Angajat (Fixă la stânga) */
+        .schedule-table tbody td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            background: #ffffff;
+            text-align: left;
+            padding: 6px 8px 6px 12px;
+            border-right: 2px solid var(--border-strong);
+        }
+
+        .schedule-table tbody tr:hover td.sticky-col {
+            background: #f1f5f9;
+        }
+
+        .emp-cell-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .emp-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .emp-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .emp-role {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .emp-del-btn {
+            opacity: 0;
+            background: var(--rose-50);
+            color: var(--rose-600);
+            border: 1px solid var(--rose-200);
+            border-radius: 6px;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: opacity 0.15s ease;
+        }
+
+        .schedule-table tbody tr:hover .emp-del-btn {
+            opacity: 1;
+        }
+
+        /* Fundal discret weekend pe celule */
+        .schedule-table tbody td.weekend-cell {
+            background-color: rgba(254, 243, 199, 0.28);
+        }
+
+        /* Celula de program zilnic (o singură tură -> afișează ora de început sau statusul) */
+        .shift-slot {
+            width: 100%;
+            height: 100%;
+            min-height: 46px;
+            border-radius: 10px;
+            padding: 4px 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+        }
+
+        .shift-slot:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+        }
+
+        .shift-empty {
+            border: 1px dashed #cbd5e1;
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.6);
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .shift-empty:hover {
+            border-color: var(--indigo-600);
+            color: var(--indigo-600);
+            background: var(--indigo-50);
+        }
+
+        .shift-work {
+            background: var(--emerald-50);
+            border-color: var(--emerald-200);
+            color: var(--emerald-800);
+        }
+
+        .shift-extra {
+            background: var(--amber-50);
+            border-color: var(--amber-200);
+            color: var(--amber-800);
+        }
+
+        .shift-vrij {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+
+        .shift-vakantie {
+            background: var(--rose-50);
+            border-color: var(--rose-200);
+            color: var(--rose-700);
+        }
+
+        .shift-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .shift-sub {
+            font-size: 0.64rem;
+            font-weight: 700;
+            opacity: 0.9;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+
+        /* Coloana Zile Lucrate (fără ore) */
+        .days-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            background: var(--indigo-50);
+            color: var(--indigo-700);
+            border: 1px solid var(--indigo-200);
+        }
+
+        /* Rând Sumar Jos (tfoot) */
+        .schedule-table tfoot td {
+            background: #f8fafc;
+            border-top: 2px solid var(--border-strong);
+            border-right: 1px solid var(--border-color);
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .schedule-table tfoot td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            background: #f1f5f9;
+            text-align: left;
+            padding-left: 12px;
+            color: var(--text-main);
+            border-right: 2px solid var(--border-strong);
+        }
+
+        /* =====================================================================
+           5. MOD ECRAN COMPLET ROTIT LA 90° (FIT-TO-SCREEN TOATE CELE 7 ZILE)
+           ===================================================================== */
         #fullscreen-overlay-shell.active {
             position: fixed;
             inset: 0;
-            z-index: 45;
+            z-index: 50;
             width: 100vw;
-            width: 100dvw;
             height: 100vh;
-            height: 100dvh;
             background: #0f172a;
             overflow: hidden;
         }
 
-        #fullscreen-rotated-stage {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            background: #f8fafc;
-            overflow: hidden;
+        #fullscreen-overlay-shell.active #fullscreen-rotated-stage {
+            border-radius: 0;
+            border: none;
             transition: transform 0.25s ease;
         }
 
@@ -93,9 +732,7 @@
             top: 50%;
             left: 50%;
             width: 100vh;
-            width: 100dvh;
             height: 100vw;
-            height: 100dvw;
         }
 
         #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage {
@@ -106,63 +743,300 @@
             transform: translate(-50%, -50%) rotate(90deg);
         }
 
-        /* Fit-to-screen full 7 days without horizontal scrolling in fullscreen mode */
+        /* Încadrează toate cele 7 zile fără scroll orizontal în modul 90° */
         #fullscreen-overlay-shell.active #table-scroll-wrapper {
             overflow-x: hidden !important;
             overflow-y: auto !important;
-            width: 100% !important;
-            max-width: 100% !important;
         }
 
-        #fullscreen-overlay-shell.active table {
+        #fullscreen-overlay-shell.active table.schedule-table {
+            min-width: 0 !important;
             width: 100% !important;
-            max-width: 100% !important;
             table-layout: fixed !important;
         }
 
-        /* Evidențiere clară a numelui angajatului în modul 90° tot ecranul */
+        #fullscreen-overlay-shell.active .schedule-table thead th {
+            padding: 6px 2px;
+            font-size: 0.7rem;
+        }
+
+        #fullscreen-overlay-shell.active .schedule-table tbody td {
+            padding: 3px 2px;
+            height: 46px;
+        }
+
+        #fullscreen-overlay-shell.active .shift-slot {
+            min-height: 38px;
+            padding: 2px;
+            border-radius: 7px;
+        }
+
+        #fullscreen-overlay-shell.active .shift-title {
+            font-size: 0.68rem;
+        }
+
+        #fullscreen-overlay-shell.active .shift-time {
+            font-size: 0.58rem;
+        }
+
         #fullscreen-overlay-shell.active td.sticky-col {
             background: linear-gradient(90deg, #eef2ff 0%, #ffffff 100%) !important;
             border-right: 2px solid #6366f1 !important;
-            box-shadow: 2px 0 8px rgba(79, 70, 229, 0.12);
+            box-shadow: 2px 0 8px rgba(79, 70, 229, 0.14);
         }
 
-        #fullscreen-overlay-shell.active tr:hover td.sticky-col {
-            background: linear-gradient(90deg, #e0e7ff 0%, #f8fafc 100%) !important;
-        }
-
-        /* Ascunde complet bara și butoanele pe telefon în modul tot ecranul */
+        /* Pe telefon (<768px) ascunde bara de sus în modul tot ecranul (ieșire prin dublu-tap) */
         @media (max-width: 767px) {
-            #fullscreen-overlay-shell.active #fullscreen-top-bar,
-            #fullscreen-overlay-shell.active .no-print {
+            #fullscreen-overlay-shell.active #fullscreen-top-bar {
                 display: none !important;
             }
         }
 
+        /* =====================================================================
+           6. MODALE (EDITARE TURĂ & ADĂUGARE ANGAJAT) + TOAST
+           ===================================================================== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        /* Când suntem în modul 90° pe tot ecranul, modalele sunt mutate și rotite în #fullscreen-rotated-stage */
+        #fullscreen-rotated-stage .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            z-index: 75;
+            padding: 10px;
+        }
+
+        #fullscreen-rotated-stage .modal-card {
+            max-height: 92%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #fullscreen-rotated-stage .modal-body {
+            padding: 12px 14px;
+            gap: 10px;
+            max-height: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        #fullscreen-rotated-stage .preset-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        #fullscreen-rotated-stage .preset-btn {
+            padding: 6px 8px;
+        }
+
+        #fullscreen-rotated-stage .modal-header,
+        #fullscreen-rotated-stage .modal-footer {
+            padding: 10px 14px;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            animation: modalPop 0.16s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.96); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+        }
+
+        .modal-title {
+            font-size: 0.98rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .modal-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .preset-btn {
+            padding: 9px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.12s ease;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--indigo-600);
+            background: var(--indigo-50);
+        }
+
+        .preset-btn strong {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-main);
+        }
+
+        .preset-btn span {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-strong);
+            font-size: 0.84rem;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--indigo-600);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid var(--border-color);
+            background: #f8fafc;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* Toast container */
+        #toast-container {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 80;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        /* Când este activ modul 90°, notificările apar tot în interiorul scenei rotite la 90° */
+        #fullscreen-rotated-stage #toast-container {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            z-index: 90;
+        }
+
+        .toast-item {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =====================================================================
+           7. STILURI PENTRU PRINTARE
+           ===================================================================== */
         @media print {
-            body {
-                background: white !important;
-                color: black !important;
-                font-size: 11px !important;
-            }
-            .no-print {
+            .app-header, .sub-toolbar, .emp-del-btn, #fullscreen-top-bar {
                 display: none !important;
             }
-            .print-full {
-                width: 100% !important;
-                max-width: none !important;
-                box-shadow: none !important;
-                border: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
+            .main-workspace {
+                margin: 0;
+                padding: 0;
+                max-width: none;
             }
-            table {
-                border-collapse: collapse !important;
-                width: 100% !important;
+            #fullscreen-rotated-stage {
+                box-shadow: none;
+                border: none;
             }
-            th, td {
-                border: 1px solid #cbd5e1 !important;
-                padding: 4px 6px !important;
+            table.schedule-table {
+                min-width: 0 !important;
+                width: 100% !important;
             }
             .sticky-col {
                 position: static !important;
@@ -170,38 +1044,1107 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+<body>
 
-    <!-- Notificare Toast -->
-    <div id="toast-container" class="fixed bottom-4 right-4 z-[70] flex flex-col gap-2 pointer-events-none"></div>
+    <!-- Notificări Toast -->
+    <div id="toast-container"></div>
 
-    <!-- Header Principal -->
-    <header id="main-header" class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print transition-all">
-        <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-3">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                <!-- Logo și Titlu Interactiv "Programul de muncă" -->
-                <div class="flex items-center justify-between gap-3">
-                    <div onclick="enterFullscreenSchedule()" role="button" tabindex="0" onkeydown="if(event.key==='Enter') enterFullscreenSchedule()"
-                        title="Click pentru a deschide Programul de muncă la 90° pe tot ecranul"
-                        class="flex items-center gap-3 group cursor-pointer rounded-xl p-1 -ml-1 hover:bg-indigo-50/70 transition">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-600 group-hover:bg-indigo-700 text-white flex items-center justify-center shadow-md shadow-indigo-200 shrink-0 transition">
-                            <i data-lucide="calendar-clock" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 group-hover:text-indigo-700 tracking-tight underline decoration-indigo-300 decoration-2 underline-offset-4 transition">
-                                    Programul de muncă
-                                </h1>
-                                <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100">
-                                    2026 & 2027
-                                </span>
-                            </div>
-                            <p id="header-subtitle" class="text-xs text-slate-500">Click pe „Programul de muncă” pentru deschidere directă la 90°</p>
-                        </div>
+    <!-- HEADER PRINCIPAL -->
+    <header class="app-header">
+        <div class="header-inner">
+            <!-- Titlu Interactiv -> activează modul Fullscreen 90° -->
+            <div class="brand-trigger" onclick="enterFullscreenSchedule()" role="button" tabindex="0"
+                 onkeydown="if(event.key==='Enter') enterFullscreenSchedule()"
+                 title="Click pentru a deschide Programul de muncă rotit la 90° pe tot ecranul">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <path d="M12 14v4l2 1"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title-row">
+                        <h1 class="brand-title">Programul de muncă</h1>
+                        <span class="year-badge">2026 &amp; 2027</span>
+                    </div>
+                    <p class="brand-subtitle">Click pe orice celulă pentru editare • Click pe titlu pentru ecran 90°</p>
+                </div>
+            </div>
+
+            <!-- Selector An + Săptămână (Luni - Duminică) -->
+            <div class="week-navigator">
+                <button type="button" class="btn btn-icon" onclick="changeWeek(-1)" title="Săptămâna anterioară">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <select id="year-select" class="select-control" onchange="onYearChange()" aria-label="Selectează anul">
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                </select>
+
+                <select id="week-select" class="select-control" onchange="onWeekChange()" aria-label="Selectează săptămâna"></select>
+
+                <button type="button" class="btn btn-icon" onclick="changeWeek(1)" title="Săptămâna următoare">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+
+                <button type="button" class="btn btn-soft-indigo" onclick="goToWeek47()" title="Mergi la Week 47 (16–22 Nov 2026)">
+                    Week 47
+                </button>
+            </div>
+
+            <!-- Butoane Acțiuni -->
+            <div class="header-actions">
+                <button type="button" class="btn btn-primary" onclick="openAddEmployeeModal()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Angajat</span>
+                </button>
+
+                <button type="button" class="btn" onclick="copyPreviousWeek()" title="Copiază programul din săptămâna anterioară">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>Copiază Săpt. Ant.</span>
+                </button>
+
+                <button type="button" class="btn btn-soft-indigo" onclick="enterFullscreenSchedule()" title="Vizualizare rotită la 90° pe tot ecranul">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <span>Ecran 90°</span>
+                </button>
+
+                <button type="button" class="btn" onclick="window.print()" title="Printează sau salvează PDF">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span>Printează</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- BARA DE LEGENDĂ (FĂRĂ TURE ȘI FĂRĂ ORE) ȘI SUMAR PREZENȚE -->
+    <section class="sub-toolbar">
+        <div class="legend-list">
+            <span class="legend-pill shift-work"><span class="legend-dot" style="background:#059669"></span>Program (ex. 07:00 / 08:00 / 10:00)</span>
+            <span class="legend-pill shift-extra"><span class="legend-dot" style="background:#d97706"></span>Extra</span>
+            <span class="legend-pill shift-vrij"><span class="legend-dot" style="background:#64748b"></span>Vrij / Liber</span>
+            <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span>Vakantie / CO</span>
+        </div>
+
+        <div class="stats-bar">
+            <span>Angajați: <strong id="stat-emp-count">0</strong></span>
+            <span>•</span>
+            <span>Zile lucrate / săpt.: <strong id="stat-total-days">0 zile</strong></span>
+        </div>
+    </section>
+
+    <!-- ZONA PRINCIPALĂ CU TABELUL (LUNI - DUMINICĂ) -->
+    <main class="main-workspace">
+        <div id="fullscreen-overlay-shell">
+            <div id="fullscreen-rotated-stage" ondblclick="handleStageDoubleClick()">
+                <!-- Bara de control în modul Fullscreen 90° -->
+                <div id="fullscreen-top-bar">
+                    <div class="fs-title-group">
+                        <span>Programul de muncă</span>
+                        <span id="fs-week-label" style="color:#a5b4fc; font-weight:600;"></span>
+                    </div>
+                    <div class="fs-actions-group">
+                        <button type="button" class="fs-btn" onclick="changeWeek(-1)">◀ Săpt. ant.</button>
+                        <button type="button" class="fs-btn" onclick="changeWeek(1)">Săpt. urm. ▶</button>
+                        <button type="button" class="fs-btn" onclick="toggleRotationDirection()">↻ Rotește ±90°</button>
+                        <button type="button" class="fs-btn fs-btn-exit" onclick="exitFullscreenSchedule()">✕ Ieșire (ESC)</button>
                     </div>
                 </div>
 
-                <!-- Selector Rapid An + Săptămână -->
-                <div class="flex items-center gap-2">
-                    <select id="quick-year-select" onchange="onYearOrWeekDropdownChange()"
-                        class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 text-slate-800 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor
+                <!-- Tabelul complet: Angajat + Luni, Marți, Miercuri, Joi, Vineri, Sâmbătă, Duminică + Total -->
+                <div id="table-scroll-wrapper">
+                    <table class="schedule-table">
+                        <colgroup>
+                            <col class="col-employee">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-days-cnt">
+                        </colgroup>
+                        <thead>
+                            <tr id="table-head-row">
+                                <!-- Generat dinamic din JS cu Luni -> Duminică -->
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Generat dinamic din JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr id="table-foot-row">
+                                <!-- Sumar prezență zilnică Luni -> Duminică -->
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- =========================================================================
+         MODAL 1: EDITARE PROGRAM ZILNIC (O SINGURĂ TURĂ, FĂRĂ ORE)
+         ========================================================================= -->
+    <div id="shift-modal" class="modal-backdrop" onclick="if(event.target===this) closeShiftModal()">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="shift-modal-title">Setare Program Zilnic</div>
+                    <div class="modal-subtitle" id="shift-modal-subtitle">Angajat • Ziua</div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeShiftModal()" aria-label="Închide">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div>
+                    <div style="font-size:0.74rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">
+                        Alege rapid ora de începere sau statusul zilei:
+                    </div>
+                    <div class="preset-grid">
+                        <button type="button" class="preset-btn" onclick="selectPreset('work', '07:00', false)">
+                            <strong>07:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" onclick="selectPreset('work', '08:00', false)">
+                            <strong>08:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" onclick="selectPreset('work', '09:00', false)">
+                            <strong>09:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" onclick="selectPreset('work', '10:00', false)">
+                            <strong>10:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" onclick="selectPreset('extra', '07:00', true)">
+                            <strong>07:00 • Extra</strong>
+                            <span>Zi lucrătoare suplimentară</span>
+                        </button>
+                        <button type="button" class="preset-btn" onclick="selectPreset('extra', '08:00', true)">
+                            <strong>08:00 • Extra</strong>
+                            <span>Zi lucrătoare suplimentară</span>
+                        </button>
+                        <button type="button" class="preset-btn" onclick="selectPreset('vrij', 'Vrij', false)">
+                            <strong>Vrij</strong>
+                            <span>Zi liberă (nu se numără ca zi lucrată)</span>
+                        </button>
+                        <button type="button" class="preset-btn" onclick="selectPreset('vakantie', 'Vakantie', false)">
+                            <strong>Vakantie</strong>
+                            <span>Concediu (nu se numără ca zi lucrată)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr style="border:none; border-top:1px solid var(--border-color);">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="custom-label">Oră început sau status</label>
+                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, Vrij, Vakantie">
+                    </div>
+                    <div class="form-group">
+                        <label for="custom-status-type">Tip zi</label>
+                        <select id="custom-status-type" class="form-input">
+                            <option value="work">Zi lucrătoare</option>
+                            <option value="extra">Extra (suplimentar)</option>
+                            <option value="vrij">Vrij / Liber</option>
+                            <option value="vakantie">Vakantie / Concediu</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="custom-note">Mențiune opțională (ex: Extra, Grup A)</label>
+                    <input type="text" id="custom-note" class="form-input" placeholder="Ex: Extra">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn btn-danger-soft" onclick="clearCurrentCell()">Șterge</button>
+                    <button type="button" class="btn btn-soft-indigo" onclick="applyToMonFri()">Aplică L–V</button>
+                </div>
+                <div style="display:flex; gap:6px;">
+                    <button type="button" class="btn" onclick="closeShiftModal()">Anulează</button>
+                    <button type="button" class="btn btn-primary" onclick="saveShiftModal()">Salvează</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 2: ADĂUGARE ANGAJAT
+         ========================================================================= -->
+    <div id="emp-modal" class="modal-backdrop" onclick="if(event.target===this) closeAddEmployeeModal()">
+        <div class="modal-card" style="max-width:400px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">Adaugă Angajat Nou</div>
+                    <div class="modal-subtitle">Va apărea imediat în tabelul săptămânal</div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeAddEmployeeModal()" aria-label="Închide">✕</button>
+            </div>
+            <form onsubmit="submitNewEmployee(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="new-emp-name">Nume și Prenume *</label>
+                        <input type="text" id="new-emp-name" class="form-input" placeholder="Ex: Popescu Andrei" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-emp-role">Funcție / Grup (opțional)</label>
+                        <input type="text" id="new-emp-role" class="form-input" placeholder="Ex: Grup A, Grup B, Grup C...">
+                    </div>
+                </div>
+                <div class="modal-footer" style="justify-content:flex-end;">
+                    <button type="button" class="btn" onclick="closeAddEmployeeModal()">Anulează</button>
+                    <button type="submit" class="btn btn-primary">Adaugă în program</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        /* =====================================================================
+           1. STARE GLOBALĂ & PERSISTENȚĂ SIGURĂ (FĂRĂ ERORI ÎN IFRAME SANDBOX)
+           ===================================================================== */
+        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v1';
+        const DAY_NAMES = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'];
+        const MONTH_SHORT = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        let memoryStorageFallback = null;
+
+        function safeGetStorage(key) {
+            try {
+                return window.localStorage.getItem(key);
+            } catch (e) {
+                return memoryStorageFallback;
+            }
+        }
+
+        function safeSetStorage(key, val) {
+            try {
+                window.localStorage.setItem(key, val);
+            } catch (e) {
+                memoryStorageFallback = val;
+            }
+        }
+
+        const state = {
+            year: 2026,
+            week: 47,
+            employees: [],
+            schedules: {}, // { "2026-W47": { "emp_daniel": { "0": { type, label, note }, ... } } }
+            editingCell: null, // { empId, dayIndex }
+            isFullscreen: false,
+            rotationClass: 'rotated-ccw' // 'rotated-ccw' (-90deg) sau 'rotated-cw' (+90deg)
+        };
+
+        /* =====================================================================
+           2. UTILITARE CALENDARISTICE ISO (2026 & 2027)
+           ===================================================================== */
+        function getISOWeekInfo(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const week = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return { year: d.getUTCFullYear(), week: week };
+        }
+
+        function getWeeksCountInYear(year) {
+            const dec28 = new Date(Date.UTC(year, 11, 28));
+            return getISOWeekInfo(dec28).week;
+        }
+
+        function getDatesOfISOWeek(year, week) {
+            const jan4 = new Date(Date.UTC(year, 0, 4));
+            const jan4Day = jan4.getUTCDay() || 7;
+            const mondayWeek1 = new Date(jan4);
+            mondayWeek1.setUTCDate(jan4.getUTCDate() - (jan4Day - 1));
+
+            const days = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(mondayWeek1);
+                d.setUTCDate(mondayWeek1.getUTCDate() + (week - 1) * 7 + i);
+                days.push(d);
+            }
+            return days;
+        }
+
+        function formatShortDate(utcDate) {
+            const day = String(utcDate.getUTCDate()).padStart(2, '0');
+            const month = MONTH_SHORT[utcDate.getUTCMonth()];
+            return `${day} ${month}`;
+        }
+
+        function getWeekKey(year, week) {
+            return `${year}-W${String(week).padStart(2, '0')}`;
+        }
+
+        function isTodayUTC(utcDate) {
+            const now = new Date();
+            return utcDate.getUTCFullYear() === now.getFullYear() &&
+                   utcDate.getUTCMonth() === now.getMonth() &&
+                   utcDate.getUTCDate() === now.getDate();
+        }
+
+        /* =====================================================================
+           3. INIȚIALIZARE & DATE DIN FIȘIERUL EXCEL (WEEK 47, WEEK 51, WEEK 52)
+           ===================================================================== */
+        function createSlot(type, label, note = '') {
+            return { type, label, note };
+        }
+
+        function getDefaultWorkbookSchedules() {
+            // WEEK 47 (16.11.2026 – 22.11.2026) din fișierul încărcat (foaia 1)
+            const w47 = {
+                emp_daniel: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_druvis: {
+                    0: createSlot('vrij', 'Vrij'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('work', '09:00'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_ghenadie: {
+                    0: createSlot('work', '10:00'),
+                    1: createSlot('work', '10:00'),
+                    2: createSlot('work', '10:00'),
+                    3: createSlot('work', '10:00'),
+                    4: createSlot('work', '10:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_evelina: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('work', '07:00'),
+                    6: createSlot('work', '07:00')
+                },
+                emp_andrei: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('extra', '07:00', 'Extra'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_albert: {
+                    0: createSlot('vakantie', 'Vakantie'),
+                    1: createSlot('vakantie', 'Vakantie'),
+                    2: createSlot('vakantie', 'Vakantie'),
+                    3: createSlot('vakantie', 'Vakantie'),
+                    4: createSlot('vakantie', 'Vakantie'),
+                    5: createSlot('vakantie', 'Vakantie'),
+                    6: createSlot('vakantie', 'Vakantie')
+                },
+                emp_iulian: {
+                    0: createSlot('work', '08:00'),
+                    1: createSlot('work', '08:00'),
+                    2: createSlot('extra', '08:00', 'Extra'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '08:00'),
+                    5: createSlot('work', '07:00'),
+                    6: createSlot('work', '07:00')
+                }
+            };
+
+            // WEEK 51 (14.12.2026 – 20.12.2026) din foaia 2 a registrului
+            const w51 = {
+                emp_daniel: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_druvis: {
+                    0: createSlot('vrij', 'Vrij'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('work', '07:00'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_ghenadie: {
+                    0: createSlot('work', '10:00'),
+                    1: createSlot('work', '10:00'),
+                    2: createSlot('work', '10:00'),
+                    3: createSlot('work', '10:00'),
+                    4: createSlot('work', '10:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_evelina: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('work', '07:00'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_andrei: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_albert: {
+                    0: createSlot('work', '08:00'),
+                    1: createSlot('work', '08:00'),
+                    2: createSlot('work', '08:00'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '08:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_iulian: {
+                    0: createSlot('work', '08:00'),
+                    1: createSlot('work', '08:00'),
+                    2: createSlot('work', '08:00'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '08:00'),
+                    5: createSlot('work', '07:00'),
+                    6: createSlot('vrij', 'Vrij')
+                }
+            };
+
+            // WEEK 52 (21.12.2026 – 27.12.2026) din foaia 3 a registrului
+            const w52 = {
+                emp_daniel: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_druvis: {
+                    0: createSlot('vrij', 'Vrij'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_ghenadie: {
+                    0: createSlot('work', '10:00'),
+                    1: createSlot('work', '10:00'),
+                    2: createSlot('work', '10:00'),
+                    3: createSlot('work', '10:00'),
+                    4: createSlot('work', '10:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_evelina: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('work', '07:00'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_andrei: {
+                    0: createSlot('work', '07:00'),
+                    1: createSlot('work', '07:00'),
+                    2: createSlot('work', '07:00'),
+                    3: createSlot('work', '07:00'),
+                    4: createSlot('work', '07:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_albert: {
+                    0: createSlot('work', '08:00'),
+                    1: createSlot('work', '08:00'),
+                    2: createSlot('work', '08:00'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '08:00'),
+                    5: createSlot('vrij', 'Vrij'),
+                    6: createSlot('vrij', 'Vrij')
+                },
+                emp_iulian: {
+                    0: createSlot('work', '08:00'),
+                    1: createSlot('work', '08:00'),
+                    2: createSlot('work', '08:00'),
+                    3: createSlot('vrij', 'Vrij'),
+                    4: createSlot('work', '08:00'),
+                    5: createSlot('work', '07:00'),
+                    6: createSlot('vrij', 'Vrij')
+                }
+            };
+
+            return {
+                '2026-W47': w47,
+                '2026-W51': w51,
+                '2026-W52': w52
+            };
+        }
+
+        function loadAppState() {
+            state.year = 2026;
+            state.week = 47;
+
+            const raw = safeGetStorage(STORAGE_KEY);
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed.employees) && parsed.employees.length > 0) {
+                        state.employees = parsed.employees;
+                        state.schedules = parsed.schedules || getDefaultWorkbookSchedules();
+                        return;
+                    }
+                } catch (err) {
+                    // Folosește datele implicite dacă JSON-ul este invalid
+                }
+            }
+
+            state.employees = [
+                { id: 'emp_daniel', name: 'Daniel', role: '' },
+                { id: 'emp_druvis', name: 'Druvis', role: '' },
+                { id: 'emp_ghenadie', name: 'Ghenadie', role: '' },
+                { id: 'emp_evelina', name: 'Evelina', role: 'Grup A' },
+                { id: 'emp_andrei', name: 'Andrei', role: 'Grup B' },
+                { id: 'emp_albert', name: 'Albert', role: 'Grup C' },
+                { id: 'emp_iulian', name: 'Iulian', role: 'Grup A' }
+            ];
+
+            state.schedules = getDefaultWorkbookSchedules();
+            saveAppState();
+        }
+
+        function saveAppState() {
+            const payload = JSON.stringify({
+                employees: state.employees,
+                schedules: state.schedules
+            });
+            safeSetStorage(STORAGE_KEY, payload);
+        }
+
+        /* =====================================================================
+           4. SELECTOARE AN & SĂPTĂMÂNĂ
+           ===================================================================== */
+        function populateWeekDropdown() {
+            const yearSelect = document.getElementById('year-select');
+            const weekSelect = document.getElementById('week-select');
+
+            yearSelect.value = String(state.year);
+            const totalWeeks = getWeeksCountInYear(state.year);
+            if (state.week > totalWeeks) state.week = totalWeeks;
+
+            weekSelect.innerHTML = '';
+            for (let w = 1; w <= totalWeeks; w++) {
+                const days = getDatesOfISOWeek(state.year, w);
+                const opt = document.createElement('option');
+                opt.value = String(w);
+                opt.textContent = `Săpt. ${String(w).padStart(2, '0')} (${formatShortDate(days[0])} – ${formatShortDate(days[6])})`;
+                if (w === state.week) opt.selected = true;
+                weekSelect.appendChild(opt);
+            }
+        }
+
+        function onYearChange() {
+            state.year = parseInt(document.getElementById('year-select').value, 10);
+            populateWeekDropdown();
+            renderScheduleTable();
+        }
+
+        function onWeekChange() {
+            state.week = parseInt(document.getElementById('week-select').value, 10);
+            renderScheduleTable();
+        }
+
+        function changeWeek(delta) {
+            let y = state.year;
+            let w = state.week + delta;
+
+            if (w < 1) {
+                if (y > 2026) {
+                    y -= 1;
+                    w = getWeeksCountInYear(y);
+                } else {
+                    showToast('Ai ajuns la prima săptămână din 2026.');
+                    return;
+                }
+            } else {
+                const maxW = getWeeksCountInYear(y);
+                if (w > maxW) {
+                    if (y < 2027) {
+                        y += 1;
+                        w = 1;
+                    } else {
+                        showToast('Ai ajuns la ultima săptămână din 2027.');
+                        return;
+                    }
+                }
+            }
+
+            state.year = y;
+            state.week = w;
+            populateWeekDropdown();
+            renderScheduleTable();
+        }
+
+        function goToWeek47() {
+            state.year = 2026;
+            state.week = 47;
+            populateWeekDropdown();
+            renderScheduleTable();
+            showToast('Afișat Week 47 (16 – 22 Noiembrie 2026).');
+        }
+
+        /* =====================================================================
+           5. RANDARE TABEL COMPLET (ANGAJAT + LUNI..DUMINICĂ + ZILE LUCRATE)
+           ===================================================================== */
+        function escapeHTML(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function isWorkingDaySlot(slot) {
+            if (!slot || !slot.label) return false;
+            const t = (slot.type || '').toLowerCase();
+            if (t === 'vrij' || t === 'vakantie') return false;
+            const upper = slot.label.trim().toUpperCase();
+            if (upper === 'VRIJ' || upper === 'LIBER' || upper === 'VAKANTIE' || upper === 'CO' || upper === 'CM') {
+                return false;
+            }
+            return true;
+        }
+
+        function renderScheduleTable() {
+            const days = getDatesOfISOWeek(state.year, state.week);
+            const weekKey = getWeekKey(state.year, state.week);
+            const weekData = state.schedules[weekKey] || {};
+
+            const fsLabel = document.getElementById('fs-week-label');
+            if (fsLabel) {
+                fsLabel.textContent = `Săpt. ${String(state.week).padStart(2, '0')} • ${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
+            }
+
+            // 1. Randare Antet (Angajat + Cele 7 zile Luni-Duminică + Zile)
+            const headRow = document.getElementById('table-head-row');
+            let headHTML = `<th class="sticky-col">Angajat</th>`;
+
+            for (let i = 0; i < 7; i++) {
+                const isWeekend = (i === 5 || i === 6);
+                const isToday = isTodayUTC(days[i]);
+                let cls = '';
+                if (isToday) cls = 'today-col';
+                else if (isWeekend) cls = 'weekend-col';
+
+                headHTML += `
+                    <th class="${cls}">
+                        <span class="day-name">${DAY_NAMES[i]}</span>
+                        <span class="day-date">${formatShortDate(days[i])}</span>
+                    </th>
+                `;
+            }
+
+            headHTML += `<th>Zile</th>`;
+            headRow.innerHTML = headHTML;
+
+            // 2. Randare Rânduri Angajați
+            const tbody = document.getElementById('table-body');
+            let bodyHTML = '';
+            let grandTotalDays = 0;
+            const dailyWorkingCount = [0, 0, 0, 0, 0, 0, 0];
+
+            if (state.employees.length === 0) {
+                bodyHTML = `
+                    <tr>
+                        <td colspan="9" style="padding:36px 16px; text-align:center; color:var(--text-muted);">
+                            Nu există angajați adăugați. Apasă pe butonul <strong>+ Angajat</strong> pentru a începe.
+                        </td>
+                    </tr>
+                `;
+            } else {
+                state.employees.forEach(emp => {
+                    const empSchedule = weekData[emp.id] || {};
+                    let empWorkedDays = 0;
+
+                    let cellsHTML = `
+                        <td class="sticky-col">
+                            <div class="emp-cell-wrap">
+                                <div class="emp-info">
+                                    <div class="emp-name" title="${escapeHTML(emp.name)}">${escapeHTML(emp.name)}</div>
+                                    ${emp.role ? `<div class="emp-role" title="${escapeHTML(emp.role)}">${escapeHTML(emp.role)}</div>` : ''}
+                                </div>
+                                <button type="button" class="emp-del-btn" onclick="deleteEmployee('${emp.id}')" title="Elimină angajatul">✕</button>
+                            </div>
+                        </td>
+                    `;
+
+                    for (let d = 0; d < 7; d++) {
+                        const isWeekend = (d === 5 || d === 6);
+                        const slot = empSchedule[d];
+                        const tdClass = isWeekend ? 'weekend-cell' : '';
+
+                        if (slot && slot.label) {
+                            const worked = isWorkingDaySlot(slot);
+                            if (worked) {
+                                empWorkedDays += 1;
+                                dailyWorkingCount[d] += 1;
+                            }
+
+                            const typeClass = `shift-${slot.type || (worked ? 'work' : 'vrij')}`;
+                            const subText = slot.note ? slot.note : '';
+
+                            cellsHTML += `
+                                <td class="${tdClass}">
+                                    <div class="shift-slot ${typeClass}" onclick="openShiftModal('${emp.id}', ${d})">
+                                        <span class="shift-title">${escapeHTML(slot.label)}</span>
+                                        ${subText ? `<span class="shift-sub">${escapeHTML(subText)}</span>` : ''}
+                                    </div>
+                                </td>
+                            `;
+                        } else {
+                            cellsHTML += `
+                                <td class="${tdClass}">
+                                    <div class="shift-slot shift-empty" onclick="openShiftModal('${emp.id}', ${d})" title="Click pentru a seta programul">
+                                        +
+                                    </div>
+                                </td>
+                            `;
+                        }
+                    }
+
+                    grandTotalDays += empWorkedDays;
+
+                    cellsHTML += `
+                        <td>
+                            <span class="days-count-badge">${empWorkedDays} ${empWorkedDays === 1 ? 'zi' : 'zile'}</span>
+                        </td>
+                    `;
+
+                    bodyHTML += `<tr>${cellsHTML}</tr>`;
+                });
+            }
+
+            tbody.innerHTML = bodyHTML;
+
+            // 3. Randare Sumar Jos (Prezenți pe zi Luni - Duminică)
+            const footRow = document.getElementById('table-foot-row');
+            let footHTML = `<td class="sticky-col">Prezenți / zi</td>`;
+            for (let d = 0; d < 7; d++) {
+                footHTML += `<td>${dailyWorkingCount[d]}</td>`;
+            }
+            footHTML += `<td>${grandTotalDays}</td>`;
+            footRow.innerHTML = footHTML;
+
+            // 4. Actualizare statistici de sus
+            document.getElementById('stat-emp-count').textContent = String(state.employees.length);
+            document.getElementById('stat-total-days').textContent = `${grandTotalDays} zile`;
+        }
+
+        /* =====================================================================
+           6. EDITARE PROGRAM ZILNIC (MODAL CELULĂ)
+           ===================================================================== */
+        function openShiftModal(empId, dayIndex) {
+            const emp = state.employees.find(e => e.id === empId);
+            if (!emp) return;
+
+            state.editingCell = { empId, dayIndex };
+            const days = getDatesOfISOWeek(state.year, state.week);
+            const weekKey = getWeekKey(state.year, state.week);
+            const currentSlot = state.schedules[weekKey]?.[empId]?.[dayIndex];
+
+            document.getElementById('shift-modal-title').textContent = `Program • ${DAY_NAMES[dayIndex]}`;
+            document.getElementById('shift-modal-subtitle').textContent = `${emp.name} (${formatShortDate(days[dayIndex])} ${state.year})`;
+
+            if (currentSlot) {
+                document.getElementById('custom-label').value = currentSlot.label || '';
+                document.getElementById('custom-status-type').value = currentSlot.type || 'work';
+                document.getElementById('custom-note').value = currentSlot.note || '';
+            } else {
+                document.getElementById('custom-label').value = '07:00';
+                document.getElementById('custom-status-type').value = 'work';
+                document.getElementById('custom-note').value = '';
+            }
+
+            document.getElementById('shift-modal').classList.add('open');
+        }
+
+        function closeShiftModal() {
+            document.getElementById('shift-modal').classList.remove('open');
+            state.editingCell = null;
+        }
+
+        function selectPreset(type, label, isExtra) {
+            document.getElementById('custom-status-type').value = type;
+            document.getElementById('custom-label').value = label;
+            document.getElementById('custom-note').value = isExtra ? 'Extra' : '';
+        }
+
+        function getModalShiftObject() {
+            const label = document.getElementById('custom-label').value.trim() || '07:00';
+            const note = document.getElementById('custom-note').value.trim();
+            let type = document.getElementById('custom-status-type').value;
+
+            const upper = label.toUpperCase();
+            if (upper === 'VRIJ' || upper === 'LIBER') {
+                type = 'vrij';
+            } else if (upper === 'VAKANTIE' || upper === 'CO' || upper === 'CM') {
+                type = 'vakantie';
+            } else if (note.toUpperCase() === 'EXTRA' || upper.includes('EXTRA')) {
+                type = 'extra';
+            }
+
+            return { type, label, note };
+        }
+
+        function saveShiftModal() {
+            if (!state.editingCell) return;
+            const { empId, dayIndex } = state.editingCell;
+            const weekKey = getWeekKey(state.year, state.week);
+
+            if (!state.schedules[weekKey]) state.schedules[weekKey] = {};
+            if (!state.schedules[weekKey][empId]) state.schedules[weekKey][empId] = {};
+
+            state.schedules[weekKey][empId][dayIndex] = getModalShiftObject();
+            saveAppState();
+            closeShiftModal();
+            renderScheduleTable();
+            showToast('Programul zilei a fost salvat.');
+        }
+
+        function applyToMonFri() {
+            if (!state.editingCell) return;
+            const { empId } = state.editingCell;
+            const weekKey = getWeekKey(state.year, state.week);
+            const shiftObj = getModalShiftObject();
+
+            if (!state.schedules[weekKey]) state.schedules[weekKey] = {};
+            if (!state.schedules[weekKey][empId]) state.schedules[weekKey][empId] = {};
+
+            for (let d = 0; d < 5; d++) {
+                state.schedules[weekKey][empId][d] = { ...shiftObj };
+            }
+            saveAppState();
+            closeShiftModal();
+            renderScheduleTable();
+            showToast('Program aplicat pentru Luni – Vineri.');
+        }
+
+        function clearCurrentCell() {
+            if (!state.editingCell) return;
+            const { empId, dayIndex } = state.editingCell;
+            const weekKey = getWeekKey(state.year, state.week);
+
+            if (state.schedules[weekKey]?.[empId]) {
+                delete state.schedules[weekKey][empId][dayIndex];
+            }
+            saveAppState();
+            closeShiftModal();
+            renderScheduleTable();
+            showToast('Celula a fost golită.');
+        }
+
+        /* =====================================================================
+           7. GESTIONARE ANGAJAȚI & COPIERE SĂPTĂMÂNĂ
+           ===================================================================== */
+        function openAddEmployeeModal() {
+            document.getElementById('new-emp-name').value = '';
+            document.getElementById('new-emp-role').value = '';
+            document.getElementById('emp-modal').classList.add('open');
+            setTimeout(() => document.getElementById('new-emp-name').focus(), 50);
+        }
+
+        function closeAddEmployeeModal() {
+            document.getElementById('emp-modal').classList.remove('open');
+        }
+
+        function submitNewEmployee(event) {
+            event.preventDefault();
+            const nameInput = document.getElementById('new-emp-name');
+            const roleInput = document.getElementById('new-emp-role');
+            const name = nameInput.value.trim();
+            if (!name) return;
+
+            const newEmp = {
+                id: 'emp_' + Date.now(),
+                name: name,
+                role: roleInput.value.trim() || 'Angajat'
+            };
+
+            state.employees.push(newEmp);
+            saveAppState();
+            closeAddEmployeeModal();
+            renderScheduleTable();
+            showToast(`Angajatul ${name} a fost adăugat.`);
+        }
+
+        function deleteEmployee(empId) {
+            state.employees = state.employees.filter(e => e.id !== empId);
+            saveAppState();
+            renderScheduleTable();
+            showToast('Angajatul a fost eliminat din listă.');
+        }
+
+        function copyPreviousWeek() {
+            let prevY = state.year;
+            let prevW = state.week - 1;
+            if (prevW < 1) {
+                if (prevY > 2026) {
+                    prevY -= 1;
+                    prevW = getWeeksCountInYear(prevY);
+                } else {
+                    showToast('Nu există o săptămână anterioară disponibilă.');
+                    return;
+                }
+            }
+
+            const prevKey = getWeekKey(prevY, prevW);
+            const currKey = getWeekKey(state.year, state.week);
+            const prevData = state.schedules[prevKey];
+
+            if (!prevData || Object.keys(prevData).length === 0) {
+                showToast(`Săptămâna ${String(prevW).padStart(2, '0')} nu are ture salvate.`);
+                return;
+            }
+
+            state.schedules[currKey] = JSON.parse(JSON.stringify(prevData));
+            saveAppState();
+            renderScheduleTable();
+            showToast(`Programul din Săpt. ${String(prevW).padStart(2, '0')} a fost copiat.`);
+        }
+
+        /* =====================================================================
+           8. MOD ECRAN COMPLET ROTIT LA 90°
+           ===================================================================== */
+        function syncPortalsToFullscreenStage(intoStage) {
+            const stage = document.getElementById('fullscreen-rotated-stage');
+            const shiftModal = document.getElementById('shift-modal');
+            const empModal = document.getElementById('emp-modal');
+            const toastContainer = document.getElementById('toast-container');
+
+            if (intoStage && stage) {
+                if (shiftModal && shiftModal.parentElement !== stage) stage.appendChild(shiftModal);
+                if (empModal && empModal.parentElement !== stage) stage.appendChild(empModal);
+                if (toastContainer && toastContainer.parentElement !== stage) stage.appendChild(toastContainer);
+            } else {
+                if (shiftModal && shiftModal.parentElement !== document.body) document.body.appendChild(shiftModal);
+                if (empModal && empModal.parentElement !== document.body) document.body.appendChild(empModal);
+                if (toastContainer && toastContainer.parentElement !== document.body) document.body.appendChild(toastContainer);
+            }
+        }
+
+        function enterFullscreenSchedule() {
+            state.isFullscreen = true;
+            document.body.classList.add('fullscreen-schedule-active');
+            const shell = document.getElementById('fullscreen-overlay-shell');
+            shell.classList.add('active', state.rotationClass);
+            syncPortalsToFullscreenStage(true);
+            showToast('Ecran complet 90° activat (modalele și notificările sunt la 90°).');
+        }
+
+        function exitFullscreenSchedule() {
+            state.isFullscreen = false;
+            syncPortalsToFullscreenStage(false);
+            document.body.classList.remove('fullscreen-schedule-active');
+            const shell = document.getElementById('fullscreen-overlay-shell');
+            shell.classList.remove('active', 'rotated-ccw', 'rotated-cw');
+        }
+
+        function toggleRotationDirection() {
+            const shell = document.getElementById('fullscreen-overlay-shell');
+            shell.classList.remove(state.rotationClass);
+            state.rotationClass = (state.rotationClass === 'rotated-ccw') ? 'rotated-cw' : 'rotated-ccw';
+            shell.classList.add(state.rotationClass);
+        }
+
+        function handleStageDoubleClick() {
+            if (state.isFullscreen && window.innerWidth < 768) {
+                exitFullscreenSchedule();
+            }
+        }
+
+        /* =====================================================================
+           9. NOTIFICĂRI TOAST & PORNIRE APLICAȚIE
+           ===================================================================== */
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = 'toast-item';
+            el.textContent = message;
+            container.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.25s ease';
+                setTimeout(() => el.remove(), 260);
+            }, 2600);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (document.getElementById('shift-modal').classList.contains('open')) {
+                    closeShiftModal();
+                } else if (document.getElementById('emp-modal').classList.contains('open')) {
+                    closeAddEmployeeModal();
+                } else if (state.isFullscreen) {
+                    exitFullscreenSchedule();
+                }
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAppState();
+            populateWeekDropdown();
+            renderScheduleTable();
+        });
+    </script>
+</body>
+</html>
+```

@@ -482,3 +482,1509 @@
             background: #0369a1;
         }
 
+        .fs-btn-exit {
+            background: #e11d48;
+            border-color: #e11d48;
+            color: #ffffff;
+        }
+
+        .fs-btn-exit:hover {
+            background: #be123c;
+        }
+
+        #table-scroll-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        table.schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            min-width: 760px;
+            direction: ltr;
+        }
+
+        col.col-employee { width: 19%; }
+        col.col-day      { width: 10.4%; }
+        col.col-days-cnt { width: 8.2%; }
+
+        .schedule-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 15;
+            background: #f1f5f9;
+            border-bottom: 2px solid var(--border-strong);
+            border-right: 1px solid var(--border-color);
+            padding: 10px 4px;
+            text-align: center;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .schedule-table thead th.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 25;
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: left;
+            padding-left: 12px;
+            background: var(--indigo-600);
+            color: #ffffff;
+            border-right: 2px solid var(--indigo-700);
+        }
+
+        .schedule-table thead th.weekend-col {
+            background: var(--amber-100);
+            color: var(--amber-800);
+            border-bottom-color: #f59e0b;
+        }
+
+        .schedule-table thead th.today-col {
+            background: var(--indigo-100);
+            color: var(--indigo-700);
+            border-bottom-color: var(--indigo-600);
+        }
+
+        .day-name {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .day-date {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        .schedule-table tbody td {
+            border-bottom: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 5px 4px;
+            vertical-align: middle;
+            text-align: center;
+            height: 64px;
+        }
+
+        .schedule-table tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+
+        .schedule-table tbody td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            direction: ltr;
+            unicode-bidi: isolate;
+            background: linear-gradient(90deg, var(--indigo-50) 0%, #ffffff 100%);
+            text-align: left;
+            padding: 6px 8px 6px 12px;
+            border-left: 4px solid var(--indigo-600);
+            border-right: 2px solid var(--indigo-200);
+            box-shadow: 2px 0 6px rgba(79, 70, 229, 0.08);
+        }
+
+        .schedule-table tbody tr:hover td.sticky-col {
+            background: linear-gradient(90deg, var(--indigo-100) 0%, var(--indigo-50) 100%);
+        }
+
+        .emp-cell-wrap {
+            display: flex;
+            flex-direction: row;
+            direction: ltr;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .emp-info {
+            min-width: 0;
+            flex: 1;
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: left;
+        }
+
+        .emp-name {
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: left;
+            font-size: 0.96rem;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            color: #1e1b4b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+
+        .emp-role {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: left;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: #ffffff;
+            background: var(--indigo-600);
+            border: 1px solid var(--indigo-700);
+            border-radius: 6px;
+            padding: 1px 7px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 3px;
+            max-width: 100%;
+        }
+
+        .emp-del-btn {
+            opacity: 0;
+            background: var(--rose-50);
+            color: var(--rose-600);
+            border: 1px solid var(--rose-200);
+            border-radius: 6px;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: opacity 0.15s ease;
+        }
+
+        .schedule-table tbody tr:hover .emp-del-btn {
+            opacity: 1;
+        }
+
+        .schedule-table tbody td.weekend-cell {
+            background-color: rgba(254, 243, 199, 0.28);
+        }
+
+        .shift-slot {
+            width: 100%;
+            height: 100%;
+            min-height: 46px;
+            border-radius: 10px;
+            padding: 4px 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+        }
+
+        .shift-slot:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+        }
+
+        .shift-empty {
+            border: 1px dashed #cbd5e1;
+            color: #94a3b8;
+            background: rgba(255, 255, 255, 0.6);
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        .shift-empty:hover {
+            border-color: var(--indigo-600);
+            color: var(--indigo-600);
+            background: var(--indigo-50);
+        }
+
+        .shift-work {
+            background: var(--emerald-50);
+            border-color: var(--emerald-200);
+            color: var(--emerald-800);
+        }
+
+        .shift-extra {
+            background: var(--amber-50);
+            border-color: var(--amber-200);
+            color: var(--amber-800);
+        }
+
+        .shift-vrij {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #475569;
+        }
+
+        .shift-vakantie {
+            background: var(--rose-50);
+            border-color: var(--rose-200);
+            color: var(--rose-700);
+        }
+
+        .shift-title {
+            font-size: 0.8rem;
+            font-weight: 800;
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .shift-sub {
+            font-size: 0.64rem;
+            font-weight: 700;
+            opacity: 0.9;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+
+        .days-count-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            background: var(--indigo-50);
+            color: var(--indigo-700);
+            border: 1px solid var(--indigo-200);
+        }
+
+        .schedule-table tfoot td {
+            background: #f8fafc;
+            border-top: 2px solid var(--border-strong);
+            border-right: 1px solid var(--border-color);
+            padding: 8px 4px;
+            text-align: center;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .schedule-table tfoot td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            direction: ltr;
+            unicode-bidi: isolate;
+            background: #f1f5f9;
+            text-align: left;
+            padding-left: 12px;
+            color: var(--text-main);
+            border-right: 2px solid var(--border-strong);
+        }
+
+        /* =====================================================================
+           5. 90-DEGREE ROTATED FULLSCREEN SCHEDULE MODE
+           ===================================================================== */
+        #fullscreen-overlay-shell.active {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: #0f172a;
+            overflow: hidden;
+        }
+
+        #fullscreen-overlay-shell.active #fullscreen-rotated-stage {
+            border-radius: 0;
+            border: none;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            transition: transform 0.25s ease;
+        }
+
+        #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage,
+        #fullscreen-overlay-shell.active.rotated-cw #fullscreen-rotated-stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100dvh;
+            height: 100vw;
+            max-width: none;
+            max-height: none;
+        }
+
+        #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage {
+            transform: translate(-50%, -50%) rotate(-90deg);
+        }
+
+        #fullscreen-overlay-shell.active.rotated-cw #fullscreen-rotated-stage {
+            transform: translate(-50%, -50%) rotate(90deg);
+        }
+
+        #fullscreen-overlay-shell.active #table-scroll-wrapper {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            flex: 1 1 auto;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+        }
+
+        #fullscreen-overlay-shell.active table.schedule-table {
+            min-width: 0 !important;
+            width: 100% !important;
+            height: auto;
+            table-layout: fixed !important;
+            direction: ltr !important;
+            border-collapse: collapse !important;
+        }
+
+        #fullscreen-overlay-shell.active col.col-employee { width: 26%; }
+        #fullscreen-overlay-shell.active col.col-day      { width: 9.2%; }
+        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.6%; }
+
+        #fullscreen-overlay-shell.active .schedule-table thead th,
+        #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col,
+        #fullscreen-overlay-shell.active .schedule-table tbody td,
+        #fullscreen-overlay-shell.active .schedule-table tbody td.sticky-col,
+        #fullscreen-overlay-shell.active .schedule-table tfoot td,
+        #fullscreen-overlay-shell.active .schedule-table tfoot td.sticky-col {
+            position: static !important;
+            top: auto !important;
+            left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+        }
+
+        #fullscreen-overlay-shell.active .schedule-table thead th {
+            padding: 5px 2px;
+            font-size: 0.68rem;
+        }
+
+        #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col {
+            direction: ltr !important;
+            unicode-bidi: isolate;
+            text-align: left !important;
+            padding-left: 8px;
+            background: var(--indigo-600);
+            color: #ffffff;
+            border-right: 2px solid var(--indigo-700);
+        }
+
+        #fullscreen-overlay-shell.active .schedule-table tbody td {
+            padding: 3px 2px;
+            height: auto;
+            min-height: 44px;
+            overflow: visible;
+        }
+
+        #fullscreen-overlay-shell.active td.sticky-col {
+            direction: ltr !important;
+            unicode-bidi: isolate;
+            text-align: left !important;
+            background: linear-gradient(90deg, var(--indigo-100) 0%, #ffffff 100%) !important;
+            border-left: 4px solid var(--indigo-600) !important;
+            border-right: 2px solid var(--indigo-600) !important;
+            padding: 4px 5px 4px 7px !important;
+            box-shadow: 2px 0 8px rgba(79, 70, 229, 0.16);
+        }
+
+        #fullscreen-overlay-shell.active .emp-cell-wrap {
+            display: flex !important;
+            flex-direction: row !important;
+            direction: ltr !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            width: 100%;
+        }
+
+        #fullscreen-overlay-shell.active .emp-info,
+        #fullscreen-overlay-shell.active .emp-name,
+        #fullscreen-overlay-shell.active .emp-role {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            direction: ltr !important;
+            unicode-bidi: isolate;
+            text-align: left !important;
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            word-break: normal;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        #fullscreen-overlay-shell.active .emp-name {
+            font-size: 0.86rem;
+            font-weight: 900;
+            line-height: 1.15;
+            color: #1e1b4b !important;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        #fullscreen-overlay-shell.active .emp-role {
+            display: inline-block !important;
+            font-size: 0.62rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: #ffffff !important;
+            background: var(--indigo-600) !important;
+            border: none !important;
+            border-radius: 5px;
+            padding: 1px 5px;
+            margin-top: 2px;
+        }
+
+        #fullscreen-overlay-shell.active .emp-del-btn {
+            display: none !important;
+        }
+
+        #fullscreen-overlay-shell.active .shift-slot {
+            min-height: 36px;
+            padding: 2px;
+            border-radius: 7px;
+        }
+
+        #fullscreen-overlay-shell.active .shift-title {
+            font-size: 0.68rem;
+        }
+
+        #fullscreen-overlay-shell.active .shift-sub {
+            font-size: 0.56rem;
+        }
+
+        #fullscreen-overlay-shell.active .days-count-badge {
+            padding: 3px 5px;
+            font-size: 0.66rem;
+        }
+
+        @media (max-width: 767px) {
+            #fullscreen-overlay-shell.active #fullscreen-top-bar {
+                display: none !important;
+            }
+        }
+
+        /* =====================================================================
+           6. MODALS & TOAST NOTIFICATIONS
+           ===================================================================== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        #fullscreen-rotated-stage .modal-backdrop {
+            position: absolute;
+            inset: 0;
+            z-index: 75;
+            padding: 10px;
+        }
+
+        #fullscreen-rotated-stage .modal-card {
+            max-height: 92%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #fullscreen-rotated-stage .modal-body {
+            padding: 12px 14px;
+            gap: 10px;
+            max-height: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        #fullscreen-rotated-stage .preset-grid {
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        #fullscreen-rotated-stage .preset-btn {
+            padding: 6px 8px;
+        }
+
+        #fullscreen-rotated-stage .modal-header,
+        #fullscreen-rotated-stage .modal-footer {
+            padding: 10px 14px;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            animation: modalPop 0.16s ease-out;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.96); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+        }
+
+        .modal-title {
+            font-size: 0.98rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .modal-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .modal-close {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 75vh;
+            overflow-y: auto;
+        }
+
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .preset-btn {
+            padding: 9px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.12s ease;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--indigo-600);
+            background: var(--indigo-50);
+        }
+
+        .preset-btn strong {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-main);
+        }
+
+        .preset-btn span {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border-strong);
+            font-size: 0.84rem;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--indigo-600);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+        }
+
+        .modal-footer {
+            padding: 12px 18px;
+            border-top: 1px solid var(--border-color);
+            background: #f8fafc;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .png-preview-box {
+            background: #f1f5f9;
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+            max-height: 46vh;
+            overflow: auto;
+        }
+
+        .png-preview-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            background: #ffffff;
+        }
+
+        .share-helper-note {
+            background: var(--indigo-50);
+            border: 1px solid var(--indigo-200);
+            color: var(--indigo-700);
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
+        #toast-container {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            z-index: 80;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+            max-width: 360px;
+        }
+
+        #fullscreen-rotated-stage #toast-container {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            z-index: 90;
+        }
+
+        .toast-item {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =====================================================================
+           7. PRINT STYLES
+           ===================================================================== */
+        @media print {
+            .app-header, .sub-toolbar, .emp-del-btn, #fullscreen-top-bar {
+                display: none !important;
+            }
+            .main-workspace {
+                margin: 0;
+                padding: 0;
+                max-width: none;
+            }
+            #fullscreen-rotated-stage {
+                box-shadow: none;
+                border: none;
+            }
+            .schedule-table tbody td.sticky-col,
+            .schedule-table thead th.sticky-col,
+            .schedule-table tfoot td.sticky-col {
+                position: static;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP HEADER BAR -->
+    <header class="app-header">
+        <div class="header-inner">
+            <button type="button" id="brand-trigger-btn" class="brand-trigger" title="Click pentru a deschide Programul de muncă rotit la 90° pe tot ecranul">
+                <div class="brand-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                        <circle cx="12" cy="15" r="2"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <div class="brand-title-row">
+                        <h1 class="brand-title">Programul de muncă</h1>
+                        <span class="year-badge">2026 &amp; 2027</span>
+                    </div>
+                    <p class="brand-subtitle">Click pe orice celulă pentru editare • Click pe titlu pentru ecran 90°</p>
+                </div>
+            </button>
+
+            <!-- Year + Week Navigation + Language Switcher -->
+            <div class="week-navigator">
+                <button type="button" id="prev-week-btn" class="btn btn-icon" title="Săptămâna anterioară">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <select id="year-select" class="select-control" aria-label="Selectează anul">
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                </select>
+
+                <select id="week-select" class="select-control" aria-label="Selectează săptămâna"></select>
+
+                <button type="button" id="next-week-btn" class="btn btn-icon" title="Săptămâna următoare">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+
+                <button type="button" id="week-47-btn" class="btn btn-soft-indigo" title="Mergi la Week 47 (16–22 Nov 2026)">
+                    Week 47
+                </button>
+
+                <select id="lang-select" class="select-control" aria-label="Selectează limba">
+                    <option value="ro">🇷🇴 Română</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="tr">🇹🇷 Türkçe</option>
+                    <option value="nl">🇳🇱 Nederlands</option>
+                </select>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="header-actions">
+                <button type="button" id="add-emp-btn" class="btn btn-primary">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>+ Angajat</span>
+                </button>
+
+                <button type="button" id="copy-prev-week-btn" class="btn" title="Copiază programul din săptămâna anterioară">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>Copiază Săpt. Ant.</span>
+                </button>
+
+                <button type="button" id="fullscreen-90-btn" class="btn btn-soft-indigo" title="Vizualizare rotită la 90° pe tot ecranul">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <span>Ecran 90°</span>
+                </button>
+
+                <button type="button" id="print-btn" class="btn" title="Printează sau salvează PDF">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span>Printează</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- LEGEND, SHARE ACTIONS & STATS BAR -->
+    <section class="sub-toolbar">
+        <div class="legend-list">
+            <span class="legend-pill shift-work"><span class="legend-dot" style="background:#059669"></span><span id="legend-work-text">Program (ex. 07:00 / 08:00 / 10:00)</span></span>
+            <span class="legend-pill shift-extra"><span class="legend-dot" style="background:#d97706"></span><span id="legend-extra-text">Extra</span></span>
+            <span class="legend-pill shift-vrij"><span class="legend-dot" style="background:#64748b"></span><span id="legend-vrij-text">Vrij / Liber</span></span>
+            <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span><span id="legend-vakantie-text">Vakantie / CO</span></span>
+        </div>
+
+        <div class="right-toolbar-group">
+            <div class="share-group">
+                <button type="button" id="share-wa-btn" class="btn btn-whatsapp" title="Trimite tot tabelul programului pe WhatsApp">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                    </svg>
+                    <span>WhatsApp</span>
+                </button>
+
+                <button type="button" id="share-email-btn" class="btn btn-email" title="Trimite tot tabelul programului pe Email">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <span>Email</span>
+                </button>
+
+                <button type="button" id="copy-text-btn" class="btn" title="Copiază întregul tabel în format text">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>Copiază Text</span>
+                </button>
+            </div>
+
+            <div class="stats-bar">
+                <span>Angajați: <strong id="stat-emp-count">0</strong></span>
+                <span>•</span>
+                <span>Zile lucrate / săpt.: <strong id="stat-total-days">0 zile</strong></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN SCHEDULE WORKSPACE -->
+    <main class="main-workspace">
+        <div id="fullscreen-overlay-shell">
+            <div id="fullscreen-rotated-stage">
+                <div id="fullscreen-top-bar">
+                    <div class="fs-title-group">
+                        <span>Programul de muncă</span>
+                        <span id="fs-week-label" style="color:#a5b4fc; font-weight:600;"></span>
+                    </div>
+                    <div class="fs-actions-group">
+                        <button type="button" id="fs-wa-btn" class="fs-btn fs-btn-wa">WhatsApp</button>
+                        <button type="button" id="fs-mail-btn" class="fs-btn fs-btn-mail">Email</button>
+                        <button type="button" id="fs-prev-btn" class="fs-btn">◀ Săpt. ant.</button>
+                        <button type="button" id="fs-next-btn" class="fs-btn">Săpt. urm. ▶</button>
+                        <button type="button" id="fs-rotate-btn" class="fs-btn">↻ Rotește ±90°</button>
+                        <button type="button" id="fs-exit-btn" class="fs-btn fs-btn-exit">✕ Ieșire (ESC)</button>
+                    </div>
+                </div>
+
+                <div id="table-scroll-wrapper">
+                    <table class="schedule-table">
+                        <colgroup>
+                            <col class="col-employee">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-day">
+                            <col class="col-days-cnt">
+                        </colgroup>
+                        <thead>
+                            <tr id="table-head-row"></tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                        <tfoot>
+                            <tr id="table-foot-row"></tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL 1: DAILY SHIFT / STATUS EDITOR -->
+    <div id="shift-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="shift-modal-title">Setare Program Zilnic</div>
+                    <div class="modal-subtitle" id="shift-modal-subtitle">Angajat • Ziua</div>
+                </div>
+                <button type="button" id="close-shift-modal-btn" class="modal-close" aria-label="Închide">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div>
+                    <div id="quick-presets-label" style="font-size:0.74rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">
+                        Alege rapid ora de începere sau statusul zilei:
+                    </div>
+                    <div class="preset-grid">
+                        <button type="button" class="preset-btn" data-preset-type="work" data-preset-label="07:00" data-preset-extra="0">
+                            <strong>07:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-preset-type="work" data-preset-label="08:00" data-preset-extra="0">
+                            <strong>08:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-preset-type="work" data-preset-label="09:00" data-preset-extra="0">
+                            <strong>09:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-preset-type="work" data-preset-label="10:00" data-preset-extra="0">
+                            <strong>10:00</strong>
+                            <span>Zi lucrătoare</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-preset-type="extra" data-preset-label="07:00" data-preset-extra="1">
+                            <strong>07:00 • Extra</strong>
+                            <span>Zi lucrătoare suplimentară</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-preset-type="extra" data-preset-label="08:00" data-preset-extra="1">
+                            <strong>08:00 • Extra</strong>
+                            <span>Zi lucrătoare suplimentară</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-preset-type="vrij" data-preset-label="Vrij" data-preset-extra="0">
+                            <strong>Vrij</strong>
+                            <span>Zi liberă (nu se numără ca zi lucrată)</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-preset-type="vakantie" data-preset-label="Vakantie" data-preset-extra="0">
+                            <strong>Vakantie</strong>
+                            <span>Concediu (nu se numără ca zi lucrată)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr style="border:none; border-top:1px solid var(--border-color);">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="custom-label">Oră început sau status</label>
+                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, Vrij, Vakantie">
+                    </div>
+                    <div class="form-group">
+                        <label for="custom-status-type">Tip zi</label>
+                        <select id="custom-status-type" class="form-input">
+                            <option value="work">Zi lucrătoare</option>
+                            <option value="extra">Extra (suplimentar)</option>
+                            <option value="vrij">Vrij / Liber</option>
+                            <option value="vakantie">Vakantie / Concediu</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="custom-note">Mențiune opțională (ex: Extra, Grup A)</label>
+                    <input type="text" id="custom-note" class="form-input" placeholder="Ex: Extra">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div style="display:flex; gap:6px;">
+                    <button type="button" id="clear-cell-btn" class="btn btn-danger-soft">Șterge</button>
+                    <button type="button" id="apply-mon-fri-btn" class="btn btn-soft-indigo">Aplică L–V</button>
+                </div>
+                <div style="display:flex; gap:6px;">
+                    <button type="button" id="cancel-shift-btn" class="btn">Anulează</button>
+                    <button type="button" id="save-shift-btn" class="btn btn-primary">Salvează</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD EMPLOYEE -->
+    <div id="emp-modal" class="modal-backdrop">
+        <div class="modal-card" style="max-width:400px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="add-emp-title">Adaugă Angajat Nou</div>
+                    <div class="modal-subtitle" id="add-emp-subtitle">Va apărea imediat în tabelul săptămânal</div>
+                </div>
+                <button type="button" id="close-emp-modal-btn" class="modal-close" aria-label="Închide">✕</button>
+            </div>
+            <form id="add-emp-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="new-emp-name">Nume și Prenume *</label>
+                        <input type="text" id="new-emp-name" class="form-input" placeholder="Ex: Popescu Andrei" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-emp-role">Funcție / Grup (opțional)</label>
+                        <input type="text" id="new-emp-role" class="form-input" placeholder="Ex: Grup A, Grup B, Grup C...">
+                    </div>
+                </div>
+                <div class="modal-footer" style="justify-content:flex-end;">
+                    <button type="button" id="cancel-emp-btn" class="btn">Anulează</button>
+                    <button type="submit" id="submit-emp-btn" class="btn btn-primary">Adaugă în program</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PNG TABLE PREVIEW & SHARE -->
+    <div id="share-image-modal" class="modal-backdrop">
+        <div class="modal-card" style="max-width: 680px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="share-image-modal-title">Imagine Tabel Program (.PNG)</div>
+                    <div class="modal-subtitle" id="share-image-modal-subtitle">Previzualizare imagine completă pentru WhatsApp &amp; Email</div>
+                </div>
+                <button type="button" id="close-share-modal-btn" class="modal-close" aria-label="Închide">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="share-helper-note" id="share-image-helper-text">
+                    Imaginea conține tot tabelul (angajați, detalii, zilele Luni–Duminică, mențiuni, total zile și prezenți/zi). Pe dispozitivele compatibile poți atașa direct fișierul PNG în WhatsApp sau Email.
+                </div>
+
+                <div class="png-preview-box" id="png-preview-container">
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Se generează imaginea tabelului...</span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                    <button type="button" id="download-png-btn" class="btn btn-soft-indigo">⬇ Descarcă PNG</button>
+                    <button type="button" id="copy-png-btn" class="btn">📋 Copiază Imagine</button>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                    <button type="button" id="modal-wa-image-btn" class="btn btn-whatsapp">WhatsApp (Imagine)</button>
+                    <button type="button" id="modal-mail-image-btn" class="btn btn-email">Email (Imagine)</button>
+                    <button type="button" id="close-share-footer-btn" class="btn">Închide</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <script>
+        /* =====================================================================
+           1. STORAGE & MULTI-LANGUAGE DICTIONARY (RO, DE, EN, RU, TR, NL)
+           ===================================================================== */
+        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v1';
+        const LANG_STORAGE_KEY = 'planificator_program_lang_2026_2027_v1';
+        let memoryStorageFallback = null;
+        let langMemoryFallback = null;
+
+        function safeGetStorage(key) {
+            try {
+                return window.localStorage.getItem(key);
+            } catch (err) {
+                return key === LANG_STORAGE_KEY ? langMemoryFallback : memoryStorageFallback;
+            }
+        }
+
+        function safeSetStorage(key, val) {
+            try {
+                window.localStorage.setItem(key, val);
+            } catch (err) {
+                if (key === LANG_STORAGE_KEY) {
+                    langMemoryFallback = val;
+                } else {
+                    memoryStorageFallback = val;
+                }
+            }
+        }
+
+        const TRANSLATIONS = {
+            ro: {
+                pageTitle: 'Programul de muncă (2026 & 2027)',
+                brandTitle: 'Programul de muncă',
+                brandSubtitle: 'Click pe orice celulă pentru editare • Click pe titlu pentru ecran 90°',
+                brandTooltip: 'Click pentru a deschide Programul de muncă rotit la 90° pe tot ecranul',
+                prevWeekTitle: 'Săptămâna anterioară',
+                nextWeekTitle: 'Săptămâna următoare',
+                yearAria: 'Selectează anul',
+                weekAria: 'Selectează săptămâna',
+                langAria: 'Selectează limba',
+                weekPrefix: 'Săpt.',
+                week47Btn: 'Week 47',
+                week47Title: 'Mergi la Week 47 (16–22 Nov 2026)',
+                addEmployeeBtn: '+ Angajat',
+                copyPrevWeekBtn: 'Copiază Săpt. Ant.',
+                copyPrevWeekTitle: 'Copiază programul din săptămâna anterioară',
+                fullscreen90Btn: 'Ecran 90°',
+                fullscreen90Title: 'Vizualizare rotită la 90° pe tot ecranul',
+                printBtn: 'Printează',
+                printTitle: 'Printează sau salvează PDF',
+                legendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
+                legendExtra: 'Extra',
+                legendVrij: 'Vrij / Liber',
+                legendVakantie: 'Vakantie / CO',
+                whatsappBtn: 'WhatsApp',
+                whatsappTitle: 'Trimite tot tabelul programului pe WhatsApp',
+                emailBtn: 'Email',
+                emailTitle: 'Trimite tot tabelul programului pe Email',
+                copyTextBtn: 'Copiază Text',
+                copyTextTitle: 'Copiază întregul tabel în format text',
+                statsEmployees: 'Angajați:',
+                statsWorkedDays: 'Zile lucrate / săpt.:',
+                daySingular: 'zi',
+                dayPlural: 'zile',
+                fsPrevWeek: '◀ Săpt. ant.',
+                fsNextWeek: 'Săpt. urm. ▶',
+                fsRotate: '↻ Rotește ±90°',
+                fsExit: '✕ Ieșire (ESC)',
+                colEmployee: 'Angajat',
+                colEmployeeDetails: 'ANGAJAT & DETALII',
+                colDays: 'Zile',
+                colDaysUpper: 'ZILE',
+                presentPerDay: 'Prezenți / zi',
+                noEmployeesTable: 'Nu există angajați adăugați. Apasă pe butonul <strong>+ Angajat</strong> pentru a începe.',
+                noEmployeesCanvas: 'Nu există angajați adăugați pentru această săptămână.',
+                removeEmployeeTitle: 'Elimină angajatul',
+                setCellTitle: 'Click pentru a seta programul',
+                days: ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'],
+                daysShort: ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du'],
+                monthsShort: ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                shiftModalTitleDay: 'Program • {day}',
+                shiftModalSubtitle: '{name} ({date} {year})',
+                closeModalAria: 'Închide',
+                quickPresetsLabel: 'Alege rapid ora de începere sau statusul zilei:',
+                presetWorkDesc: 'Zi lucrătoare',
+                presetExtraTitle: '{time} • Extra',
+                presetExtraDesc: 'Zi lucrătoare suplimentară',
+                presetVrijTitle: 'Vrij',
+                presetVrijDesc: 'Zi liberă (nu se numără ca zi lucrată)',
+                presetVakantieTitle: 'Vakantie',
+                presetVakantieDesc: 'Concediu (nu se numără ca zi lucrată)',
+                customLabelField: 'Oră început sau status',
+                customLabelPlaceholder: 'Ex: 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customTypeField: 'Tip zi',
+                typeWorkOption: 'Zi lucrătoare',
+                typeExtraOption: 'Extra (suplimentar)',
+                typeVrijOption: 'Vrij / Liber',
+                typeVakantieOption: 'Vakantie / Concediu',
+                customNoteField: 'Mențiune opțională (ex: Extra, Grup A)',
+                customNotePlaceholder: 'Ex: Extra',
+                deleteCellBtn: 'Șterge',
+                applyMonFriBtn: 'Aplică L–V',
+                cancelBtn: 'Anulează',
+                saveBtn: 'Salvează',
+                addEmpModalTitle: 'Adaugă Angajat Nou',
+                addEmpModalSubtitle: 'Va apărea imediat în tabelul săptămânal',
+                empNameLabel: 'Nume și Prenume *',
+                empNamePlaceholder: 'Ex: Popescu Andrei',
+                empRoleLabel: 'Funcție / Grup (opțional)',
+                empRolePlaceholder: 'Ex: Grup A, Grup B, Grup C...',
+                empDefaultRole: 'Angajat',
+                addEmpSubmitBtn: 'Adaugă în program',
+                shareModalTitle: 'Imagine Tabel Program (.PNG)',
+                shareModalSubtitle: 'Săpt. {week} ({range}) • Imagine PNG gata de trimis',
+                shareError: 'Nu s-a putut genera imaginea PNG a tabelului.',
+                shareHelperNative: 'Dispozitivul tău suportă atașarea directă a fișierului PNG! Apasă pe WhatsApp (Imagine) sau Email (Imagine) pentru a trimite direct imaginea tabelului.',
+                shareHelperFallback: 'Apasă „Descarcă PNG” sau „Copiază Imagine” pentru a atașa/lipi direct imaginea tabelului în WhatsApp sau Email, ori folosește butoanele rapide de mai jos.',
+                downloadPngBtn: '⬇ Descarcă PNG',
+                copyImageBtn: '📋 Copiază Imagine',
+                waImageBtn: 'WhatsApp (Imagine)',
+                mailImageBtn: 'Email (Imagine)',
+                closeBtn: 'Închide',
+                canvasBannerTitle: 'PROGRAMUL DE MUNCĂ • SĂPTĂMÂNA {week} ({range})',
+                canvasBannerStats: 'Angajați: {count}   •   Total zile lucrate: {days} zile',
+                canvasLegendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
+                canvasLegendExtra: 'Extra',
+                canvasLegendVrij: 'Vrij / Liber',
+                canvasLegendVakantie: 'Vakantie / CO',
+                shareTextTitle: 'PROGRAMUL DE MUNCĂ - Săpt. {week} ({range})',
+                shareTextDaysLine: 'Zile: {daysLine}',
+                shareTextNoEmp: 'Nu există angajați în program pentru această săptămână.',
+                shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
+                shareTextPresentLine: 'Prezenți / zi: {presentLine}',
+                shareTextTotalLine: 'Total zile lucrate în săptămână: {days} zile ({count} angajați)',
+                shareAttachNote: '{title} — atașez imaginea tabelului PNG.',
+                shareMailBody: '{title}\n\nImaginea PNG a tabelului a fost descărcată pentru a fi atașată la email.',
+                toastFirstWeek2026: 'Ai ajuns la prima săptămână din 2026.',
+                toastLastWeek2027: 'Ai ajuns la ultima săptămână din 2027.',
+                toastWeek47: 'Afișat Week 47 (16 – 22 Noiembrie 2026).',
+                toastShiftSaved: 'Programul zilei a fost salvat.',
+                toastAppliedMonFri: 'Program aplicat pentru Luni – Vineri.',
+                toastCellCleared: 'Celula a fost golită.',
+                toastEmpAdded: 'Angajatul {name} a fost adăugat.',
+                toastEmpRemoved: 'Angajatul a fost eliminat din listă.',
+                toastNoPrevWeek: 'Nu există o săptămână anterioară disponibilă.',
+                toastPrevWeekEmpty: 'Săptămâna {week} nu are ture salvate.',
+                toastWeekCopied: 'Programul din Săpt. {week} a fost copiat.',
+                toastTextCopied: 'Tot tabelul programului a fost copiat în clipboard.',
+                toastTextCopyFail: 'Nu s-a putut copia automat; poți folosi butoanele WhatsApp sau Email.',
+                toastPngNotReady: 'Imaginea PNG nu a putut fi pregătită.',
+                toastPngDownloaded: 'Imaginea {filename} a fost descărcată.',
+                toastPngOpenFail: 'Deschide imaginea din previzualizare pentru a o salva.',
+                toastNoPng: 'Nu există o imagine PNG generată.',
+                toastImgCopied: 'Imaginea tabelului a fost copiată în clipboard! O poți lipi direct în WhatsApp sau Email.',
+                toastImgCopyFallback: 'Browserul nu permite copierea directă a imaginii; PNG-ul a fost descărcat pentru atașare.',
+                toastNoPngGen: 'Nu s-a putut genera imaginea PNG.',
+                toastSharedWa: 'Imaginea PNG a fost trimisă către meniul de partajare / WhatsApp.',
+                toastSharedMail: 'Imaginea PNG a fost trimisă către meniul de partajare / Email.',
+                toastShareCancelled: 'Partajarea imaginii a fost anulată.',
+                toastOpenedWa: 'Am descărcat imaginea PNG și am deschis WhatsApp pentru a o atașa.',
+                toastOpenedMail: 'Am descărcat imaginea PNG și am deschis Email pentru a o atașa.',
+                toastFsActive: 'Ecran complet 90° activat • Apasă Înapoi pentru pagina principală.'
+            },
+            de: {
+                pageTitle: 'Arbeitsplan & Schichten (2026 & 2027)',
+                brandTitle: 'Arbeitsplan',
+                brandSubtitle: 'Auf eine Zelle klicken zum Bearbeiten • Auf Titel klicken für 90°-Ansicht',
+                brandTooltip: 'Klicken, um den Arbeitsplan um 90° gedreht im Vollbild zu öffnen',
+                prevWeekTitle: 'Vorherige Woche',
+                nextWeekTitle: 'Nächste Woche',
+                yearAria: 'Jahr auswählen',
+                weekAria: 'Woche auswählen',
+                langAria: 'Sprache auswählen',
+                weekPrefix: 'KW',
+                week47Btn: 'KW 47',
+                week47Title: 'Zu KW 47 wechseln (16.–22. Nov 2026)',
+                addEmployeeBtn: '+ Mitarbeiter',
+                copyPrevWeekBtn: 'Vorwoche kopieren',
+                copyPrevWeekTitle: 'Plan der vorherigen Woche kopieren',
+                fullscreen90Btn: 'Vollbild 90°',
+                fullscreen90Title: 'Um 90° gedrehte Vollbildansicht',
+                printBtn: 'Drucken',
+                printTitle: 'Drucken oder als PDF speichern',
+                legendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
+                legendExtra: 'Extra',
+                legendVrij: 'Frei / Vrij',
+                legendVakantie: 'Urlaub / Vakantie',
+                whatsappBtn: 'WhatsApp',
+                whatsappTitle: 'Gesamten Plan über WhatsApp teilen',
+                emailBtn: 'E-Mail',
+                emailTitle: 'Gesamten Plan per E-Mail senden',
+                copyTextBtn: 'Text kopieren',
+                copyTextTitle: 'Gesamte Tabelle als Text kopieren',
+                statsEmployees: 'Mitarbeiter:',
+                statsWorkedDays: 'Arbeitstage / Wo.:',
+                daySingular: 'Tag',
+                dayPlural: 'Tage',
+                fsPrevWeek: '◀ Vorwoche',
+                fsNextWeek: 'Nächste Wo. ▶',
+                fsRotate: '↻ Drehen ±90°',
+                fsExit: '✕ Beenden (ESC)',
+                colEmployee: 'Mitarbeiter',
+                colEmployeeDetails: 'MITARBEITER & DETAILS',
+                colDays: 'Tage',
+                colDaysUpper: 'TAGE',
+                presentPerDay: 'Anwesend / Tag',
+                noEmployeesTable: 'Keine Mitarbeiter vorhanden. Klicken Sie auf <strong>+ Mitarbeiter</strong>, um zu starten.',
+                noEmployeesCanvas: 'Für diese Woche sind keine Mitarbeiter eingetragen.',
+                removeEmployeeTitle: 'Mitarbeiter entfernen',
+                setCellTitle: 'Klicken, um Arbeitszeit festzulegen',
+                days: ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'],
+                daysShort: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+                monthsShort: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+                shiftModalTitleDay: 'Plan • {day}',
+                shiftModalSubtitle: '{name} ({date} {year})',
+                closeModalAria: 'Schließen',
+                quickPresetsLabel: 'Startzeit oder Status schnell wählen:',
+                presetWorkDesc: 'Arbeitstag',
+                presetExtraTitle: '{time} • Extra',
+                presetExtraDesc: 'Zusätzlicher Arbeitstag',
+                presetVrijTitle: 'Vrij',
+                presetVrijDesc: 'Freier Tag (zählt nicht als Arbeitstag)',
+                presetVakantieTitle: 'Vakantie',
+                presetVakantieDesc: 'Urlaub (zählt nicht als Arbeitstag)',
+                customLabelField: 'Startzeit oder Status',
+                customLabelPlaceholder: 'Z. B. 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customTypeField: 'Tagestyp',
+                typeWorkOption: 'Arbeitstag',
+                typeExtraOption: 'Extra (zusätzlich)',
+                typeVrijOption: 'Frei / Vrij',
+                typeVakantieOption: 'Urlaub / Vakantie',
+                customNoteField: 'Optionale Notiz (z. B. Extra, Gruppe A)',
+                customNotePlaceholder: 'Z. B. Extra',
+                deleteCellBtn: 'Löschen',
+                applyMonFriBtn: 'Mo–Fr anwenden',
+                cancelBtn: 'Abbrechen',
+                saveBtn: 'Speichern',
+                addEmpModalTitle: 'Neuen Mitarbeiter hinzufügen',
+                addEmpModalSubtitle: 'Erscheint sofort im Wochenplan',
+                empNameLabel: 'Vor- und Nachname *',
+                empNamePlaceholder: 'Z. B. Max Mustermann',
+                empRoleLabel: 'Funktion / Gruppe (optional)',
+                empRolePlaceholder: 'Z. B. Gruppe A, Gruppe B...',
+                empDefaultRole: 'Mitarbeiter',
+                addEmpSubmitBtn: 'Zum Plan hinzufügen',
+                shareModalTitle: 'Arbeitsplan-Bild (.PNG)',
+                shareModalSubtitle: 'KW {week} ({range}) • PNG-Bild bereit zum Teilen',
+                shareError: 'Das PNG-Bild der Tabelle konnte nicht erstellt werden.',
+                shareHelperNative: 'Ihr Gerät unterstützt das direkte Anhängen von PNG-Dateien! Tippen Sie auf WhatsApp (Bild) oder E-Mail (Bild), um das Bild direkt zu senden.',
+                shareHelperFallback: 'Klicken Sie auf „PNG herunterladen“ oder „Bild kopieren“, um das Bild in WhatsApp oder E-Mail anzuhängen/einzufügen, oder nutzen Sie die Schnellaktionen.',
+                downloadPngBtn: '⬇ PNG herunterladen',
+                copyImageBtn: '📋 Bild kopieren',
+                waImageBtn: 'WhatsApp (Bild)',
+                mailImageBtn: 'E-Mail (Bild)',
+                closeBtn: 'Schließen',
+                canvasBannerTitle: 'ARBEITSPLAN • KALENDERWOCHE {week} ({range})',
+                canvasBannerStats: 'Mitarbeiter: {count}   •   Arbeitstage gesamt: {days} Tage',
+                canvasLegendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
+                canvasLegendExtra: 'Extra',
+                canvasLegendVrij: 'Frei / Vrij',
+                canvasLegendVakantie: 'Urlaub / Vakantie',
+                shareTextTitle: 'ARBEITSPLAN - KW {week} ({range})',
+                shareTextDaysLine: 'Tage: {daysLine}',
+                shareTextNoEmp: 'Keine Mitarbeiter für diese Woche eingetragen.',
+                shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
+                shareTextPresentLine: 'Anwesend / Tag: {presentLine}',
+                shareTextTotalLine: 'Arbeitstage gesamt in der Woche: {days} Tage ({count} Mitarbeiter)',
+                shareAttachNote: '{title} — PNG-Tabellenbild im Anhang.',
+                shareMailBody: '{title}\n\nDas PNG-Bild der Tabelle wurde zum Anhängen an die E-Mail heruntergeladen.',
+                toastFirstWeek2026: 'Erste Woche von 2026 erreicht.',
+                toastLastWeek2027: 'Letzte Woche von 2027 erreicht.',
+                toastWeek47: 'KW 47 angezeigt (16.–22. November 2026).',
+                toastShiftSaved: 'Tagesplan gespeichert.',
+                toastAppliedMonFri: 'Plan auf Montag–Freitag angewendet.',
+                toastCellCleared: 'Zelle geleert.',
+                toastEmpAdded: 'Mitarbeiter {name} hinzugefügt.',
+                toastEmpRemoved: 'Mitarbeiter aus der Liste entfernt.',
+                toastNoPrevWeek: 'Keine vorherige Woche verfügbar.',
+                toastPrevWeekEmpty: 'In KW {week} sind keine Einträge gespeichert.',
+                toastWeekCopied: 'Plan aus KW {week} kopiert.',
+                toastTextCopied: 'Gesamter Plan als Text in die Zwischenablage kopiert.',
+                toastTextCopyFail: 'Automatisches Kopieren nicht möglich; bitte WhatsApp oder E-Mail nutzen.',
+                toastPngNotReady: 'PNG-Bild konnte nicht vorbereitet werden.',
+                toastPngDownloaded: 'Bild {filename} heruntergeladen.',
+                toastPngOpenFail: 'Öffnen Sie das Bild in der Vorschau, um es zu speichern.',
+                toastNoPng: 'Kein PNG-Bild vorhanden.',
+                toastImgCopied: 'Tabellenbild in die Zwischenablage kopiert! Sie können es direkt in WhatsApp oder E-Mail einfügen.',
+                toastImgCopyFallback: 'Bildkopie wird vom Browser nicht unterstützt; PNG wurde zum Anhängen heruntergeladen.',
+                toastNoPngGen: 'PNG-Bild konnte nicht erzeugt werden.',
+                toastSharedWa: 'PNG-Bild an Freigabemenü / WhatsApp gesendet.',
+                toastSharedMail: 'PNG-Bild an Freigabemenü / E-Mail gesendet.',
+                toastShareCancelled: 'Teilen des Bildes abgebrochen.',
+                toastOpenedWa: 'PNG-Bild heruntergeladen und WhatsApp zum Anhängen geöffnet.',
+                toastOpenedMail: 'PNG-Bild heruntergeladen und E-Mail zum Anhängen geöffnet.',
+                toastFsActive: '90°-Vollbild aktiv • Zurück drücken für Hauptansicht.'
+            },
+            en: {
+                pageTitle: 'Work Schedule & Shifts (2026 & 2027)',
+                brandTitle: 'Work Schedule',
+                brandSubtitle: 'Click any cell to edit • Click title for 90° fullscreen',
+                brandTooltip: 'Click to open Work Schedule rotated 90° in fullscreen',
+                prevWeekTitle: 'Previous week',
+                nextWeekTitle: 'Next week',
+                yearAria: 'Select year',
+                weekAria: 'Select week',
+                langAria: 'Select language',
+                weekPrefix: 'Week',
+                week47Btn: 'Week 47',
+                week47Title: 'Go to Week 47 (16–22 Nov 2026)',
+                addEmployeeBtn: '+ Employee',
+                copyPrevWeekBtn: 'Copy Prev. Week',
+                copyPrevWeekTitle: 'Copy schedule from previous week',
+                fullscreen90Btn: '90° Screen',
+                fullscreen90Title: '90° rotated fullscreen view',
+                printBtn: 'Print',
+                printTitle: 'Print or save as PDF',
+                legendWork: 'Schedule (e.g. 07:00 / 08:00 / 10:00)',
+                legendExtra: 'Extra',
+                legendVrij: 'Day off / Vrij',
+                legendVakantie: 'Vacation / Vakantie',
+                whatsappBtn: 'WhatsApp',
+                whatsappTitle: 'Share full schedule table on WhatsApp',
+                emailBtn: 'Email',
+                emailTitle: 'Send full schedule table by Email',
+                copyTextBtn: 'Copy Text',
+                copyTextTitle: 'Copy full table as text',
+                statsEmployees: 'Employees:',
+                statsWorkedDays: 'Worked days / wk:',
+                daySingular: 'day',
+                dayPlural: 'days',
+                fsPrevWeek: '◀ Prev. wk',
+                fsNextWeek: 'Next wk ▶',
+                fsRotate: '↻ Rotate ±90°',
+                fsExit: '✕ Exit (ESC)',
+                colEmployee: 'Employee',
+                colEmployeeDetails: 'EMPLOYEE & DETAILS',
+                colDays: 'Days',
+                colDaysUpper: 'DAYS',
+                presentPerDay: 'Present / day',
+                noEmployeesTable: 'No employees added yet. Click <strong>+ Employee</strong> to get started.',
+                noEmployeesCanvas: 'No employees added for this week.',
+                removeEmployeeTitle: 'Remove employee',
+                setCellTitle: 'Click to set schedule',
+                days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                daysShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                shiftModalTitleDay: 'Schedule • {day}',
+                shiftModalSubtitle: '{name} ({date} {year})',
+                closeModalAria: 'Close',
+                quickPresetsLabel: 'Quickly pick start time or day status:',
+                presetWorkDesc: 'Working day',
+                presetExtraTitle: '{time} • Extra',
+                presetExtraDesc: 'Extra working day',
+                presetVrijTitle: 'Vrij',
+                presetVrijDesc: 'Day off (not counted as worked day)',
+                presetVakantieTitle: 'Vakantie',
+                presetVakantieDesc: 'Vacation (not counted as worked day)',
+                customLabelField: 'Start time or status',
+                customLabelPlaceholder: 'E.g. 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customTypeField: 'Day type',
+                typeWorkOption: 'Working day',
+                typeExtraOption: 'Extra (additional)',
+                typeVrijOption: 'Day off / Vrij',
+                typeVakantieOption: 'Vacation / Vakantie',
+                customNoteField: 'Optional note (e.g. Extra, Group A)',
+                customNotePlaceholder: 'E.g. Extra',
+                deleteCellBtn: 'Delete',
+                applyMonFriBtn: 'Apply Mon–Fri',
+                cancelBtn: 'Cancel',
+                saveBtn: 'Save',
+                addEmpModalTitle: 'Add New Employee',
+                addEmpModalSubtitle: 'Will appear immediately in the weekly table',
+                empNameLabel: 'Full Name *',
+                empNamePlaceholder: 'E.g. Alex Morgan',
+                empRoleLabel: 'Role / Group (optional)',
+                empRolePlaceholder: 'E.g. Group A, Group B, Group C...',
+                empDefaultRole: 'Employee',
+                addEmpSubmitBtn: 'Add to schedule',
+                shareModalTitle: 'Schedule Table Image (.PNG)',
+                shareModalSubtitle: 'Week {week} ({range}) • PNG image ready to share',
+                shareError: 'Could not generate PNG image of the table.',
+                shareHelperNative: 'Your device supports attaching PNG files directly! Tap WhatsApp (Image) or Email (Image) to send the table image directly.',
+                shareHelperFallback: 'Click "Download PNG" or "Copy Image" to attach/paste the table image into WhatsApp or Email, or use the quick share buttons below.',
+                downloadPngBtn: '⬇ Download PNG',
+                copyImageBtn: '📋 Copy Image',
+                waImageBtn: 'WhatsApp (Image)',
+                mailImageBtn: 'Email (Image)',
+                closeBtn: 'Close',
+                canvasBannerTitle: 'WORK SCHEDULE • WEEK {week} ({range})',
+                canvasBannerStats: 'Employees: {count}   •   Total worked days: {days} days',
+                canvasLegendWork: 'Schedule (e.g.

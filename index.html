@@ -1162,6 +1162,39 @@
             gap: 8px;
         }
 
+        /* Modal previzualizare imagine PNG a tabelului */
+        .png-preview-box {
+            background: #f1f5f9;
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+            max-height: 46vh;
+            overflow: auto;
+        }
+
+        .png-preview-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            background: #ffffff;
+        }
+
+        .share-helper-note {
+            background: var(--indigo-50);
+            border: 1px solid var(--indigo-200);
+            color: var(--indigo-700);
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1.35;
+        }
+
         /* Toast container */
         #toast-container {
             position: fixed;
@@ -1528,6 +1561,41 @@
         </div>
     </div>
 
+    <!-- MODAL 3: PREVIEW & DISTRIBUIRE IMAGINE PNG A TABELULUI -->
+    <div id="share-image-modal" class="modal-backdrop" onclick="if(event.target===this) closeShareImageModal()">
+        <div class="modal-card" style="max-width: 680px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title" id="share-image-modal-title">Imagine Tabel Program (.PNG)</div>
+                    <div class="modal-subtitle" id="share-image-modal-subtitle">Previzualizare imagine completă pentru WhatsApp &amp; Email</div>
+                </div>
+                <button type="button" class="modal-close" onclick="closeShareImageModal()" aria-label="Închide">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="share-helper-note" id="share-image-helper-text">
+                    Imaginea conține tot tabelul (angajați, detalii, zilele Luni–Duminică, mențiuni, total zile și prezenți/zi). Pe dispozitivele compatibile poți atașa direct fișierul PNG în WhatsApp sau Email.
+                </div>
+
+                <div class="png-preview-box" id="png-preview-container">
+                    <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Se generează imaginea tabelului...</span>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                    <button type="button" class="btn btn-soft-indigo" onclick="downloadRenderedSchedulePNG()">⬇ Descarcă PNG</button>
+                    <button type="button" class="btn" id="copy-png-btn" onclick="copyRenderedScheduleImage()">📋 Copiază Imagine</button>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                    <button type="button" class="btn btn-whatsapp" id="modal-wa-image-btn" onclick="shareRenderedScheduleImage('whatsapp')">WhatsApp (Imagine)</button>
+                    <button type="button" class="btn btn-email" id="modal-mail-image-btn" onclick="shareRenderedScheduleImage('email')">Email (Imagine)</button>
+                    <button type="button" class="btn" onclick="closeShareImageModal()">Închide</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         /* =====================================================================
            1. STARE GLOBALĂ & PERSISTENȚĂ SIGURĂ (LOCALSTORAGE + FALLBACK MEMORIE)
@@ -1563,7 +1631,10 @@
             editingCell: null,
             isFullscreen: false,
             pushedFullscreenState: false,
-            rotationClass: 'rotated-ccw'
+            rotationClass: 'rotated-ccw',
+            lastPngDataUrl: '',
+            lastPngBlob: null,
+            lastPngFilename: ''
         };
 
         /* =====================================================================
@@ -2342,35 +2413,503 @@
         }
 
         function shareScheduleWhatsApp() {
-            const text = buildScheduleShareText();
-            copyTextFallback(text);
-            const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
-            try {
-                const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
-                if (win) {
-                    showToast('WhatsApp s-a deschis cu tot programul (textul este și copiat).');
-                } else {
-                    showToast('Programul complet a fost copiat — lipește-l direct în WhatsApp.');
-                }
-            } catch (err) {
-                showToast('Programul complet a fost copiat — lipește-l direct în WhatsApp.');
-            }
+            openShareImageModal('whatsapp');
         }
 
         function shareScheduleEmail() {
+            openShareImageModal('email');
+        }
+
+        /* =====================================================================
+           8B. RANDARE DEDICATĂ TABEL -> IMAGINE PNG (HTML5 CANVAS) & DISTRIBUIRE
+           ===================================================================== */
+        function getSlotColors(slot, isWorked) {
+            const type = slot ? (slot.type || (isWorked ? 'work' : 'vrij')) : 'empty';
+            if (type === 'work') {
+                return { bg: '#ecfdf5', border: '#a7f3d0', text: '#065f46', sub: '#047857' };
+            }
+            if (type === 'extra') {
+                return { bg: '#fffbeb', border: '#fde68a', text: '#92400e', sub: '#b45309' };
+            }
+            if (type === 'vakantie') {
+                return { bg: '#fff1f2', border: '#fecdd3', text: '#be123c', sub: '#e11d48' };
+            }
+            if (type === 'vrij') {
+                return { bg: '#f1f5f9', border: '#cbd5e1', text: '#475569', sub: '#64748b' };
+            }
+            return { bg: '#f8fafc', border: '#e2e8f0', text: '#94a3b8', sub: '#94a3b8' };
+        }
+
+        function drawRoundedRect(ctx, x, y, w, h, r) {
+            const radius = Math.min(r, w / 2, h / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.arcTo(x + w, y, x + w, y + h, radius);
+            ctx.arcTo(x + w, y + h, x, y + h, radius);
+            ctx.arcTo(x, y + h, x, y, radius);
+            ctx.arcTo(x, y, x + w, y, radius);
+            ctx.closePath();
+        }
+
+        function renderScheduleToPNG() {
+            try {
+                const days = getDatesOfISOWeek(state.year, state.week);
+                const weekKey = getWeekKey(state.year, state.week);
+                const weekData = state.schedules[weekKey] || {};
+                const weekNumStr = String(state.week).padStart(2, '0');
+                const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
+
+                const scale = 2; // Rezoluție crispă HiDPI
+                const padX = 24;
+                const padTop = 22;
+                const bannerHeight = 68;
+                const tableTop = padTop + bannerHeight + 14;
+                const headerHeight = 52;
+                const rowHeight = 56;
+                const footerHeight = 44;
+                const legendHeight = 36;
+
+                const empRowsCount = Math.max(state.employees.length, 1);
+                const tableHeight = headerHeight + (empRowsCount * rowHeight) + footerHeight;
+                const totalWidth = 1140;
+                const totalHeight = tableTop + tableHeight + legendHeight + 24;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = totalWidth * scale;
+                canvas.height = totalHeight * scale;
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return null;
+
+                ctx.scale(scale, scale);
+
+                // Fundal general
+                ctx.fillStyle = '#f8fafc';
+                ctx.fillRect(0, 0, totalWidth, totalHeight);
+
+                // Banner antet program
+                ctx.fillStyle = '#0f172a';
+                drawRoundedRect(ctx, padX, padTop, totalWidth - padX * 2, bannerHeight, 12);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`PROGRAMUL DE MUNCĂ • SĂPTĂMÂNA ${weekNumStr} (${rangeStr})`, padX + 18, padTop + 25);
+
+                let grandTotalDays = 0;
+                const dailyWorkingCount = [0, 0, 0, 0, 0, 0, 0];
+
+                state.employees.forEach(emp => {
+                    const empSchedule = weekData[emp.id] || {};
+                    for (let d = 0; d < 7; d++) {
+                        const slot = empSchedule[d];
+                        if (slot && slot.label && isWorkingDaySlot(slot)) {
+                            grandTotalDays += 1;
+                            dailyWorkingCount[d] += 1;
+                        }
+                    }
+                });
+
+                ctx.fillStyle = '#cbd5e1';
+                ctx.font = '600 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                ctx.fillText(
+                    `Angajați: ${state.employees.length}   •   Total zile lucrate: ${grandTotalDays} zile`,
+                    padX + 18,
+                    padTop + 49
+                );
+
+                // Dimensiuni coloane
+                const innerW = totalWidth - padX * 2;
+                const empColW = Math.round(innerW * 0.21);
+                const daysCntColW = Math.round(innerW * 0.09);
+                const dayColW = Math.floor((innerW - empColW - daysCntColW) / 7);
+                const adjustedDaysCntW = innerW - empColW - (dayColW * 7);
+
+                const colX = [padX];
+                for (let i = 0; i < 7; i++) {
+                    colX.push(colX[colX.length - 1] + dayColW);
+                }
+                colX.push(colX[colX.length - 1] + adjustedDaysCntW);
+
+                const colWidths = [empColW, dayColW, dayColW, dayColW, dayColW, dayColW, dayColW, dayColW, adjustedDaysCntW];
+
+                // Card tabel
+                ctx.fillStyle = '#ffffff';
+                drawRoundedRect(ctx, padX, tableTop, innerW, tableHeight, 12);
+                ctx.fill();
+
+                // Header coloane
+                for (let c = 0; c < 9; c++) {
+                    const x = colX[c];
+                    const w = colWidths[c];
+
+                    if (c === 0) {
+                        ctx.fillStyle = '#4f46e5';
+                    } else if (c === 6 || c === 7) {
+                        ctx.fillStyle = '#fef3c7';
+                    } else if (c >= 1 && c <= 5 && isTodayUTC(days[c - 1])) {
+                        ctx.fillStyle = '#e0e7ff';
+                    } else {
+                        ctx.fillStyle = '#f1f5f9';
+                    }
+
+                    ctx.fillRect(x, tableTop, w, headerHeight);
+                    ctx.strokeStyle = '#cbd5e1';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, tableTop, w, headerHeight);
+
+                    if (c === 0) {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = '800 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('ANGAJAT & DETALII', x + 12, tableTop + headerHeight / 2);
+                    } else if (c >= 1 && c <= 7) {
+                        const dayIdx = c - 1;
+                        ctx.fillStyle = (c === 6 || c === 7) ? '#92400e' : '#0f172a';
+                        ctx.font = '800 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(DAY_NAMES[dayIdx], x + w / 2, tableTop + 19);
+
+                        ctx.fillStyle = (c === 6 || c === 7) ? '#b45309' : '#64748b';
+                        ctx.font = '600 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                        ctx.fillText(formatShortDate(days[dayIdx]), x + w / 2, tableTop + 37);
+                    } else {
+                        ctx.fillStyle = '#0f172a';
+                        ctx.font = '800 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('ZILE', x + w / 2, tableTop + headerHeight / 2);
+                    }
+                }
+
+                // Rânduri angajați
+                if (state.employees.length === 0) {
+                    const y = tableTop + headerHeight;
+                    ctx.strokeStyle = '#e2e8f0';
+                    ctx.strokeRect(padX, y, innerW, rowHeight);
+                    ctx.fillStyle = '#64748b';
+                    ctx.font = '600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('Nu există angajați adăugați pentru această săptămână.', padX + innerW / 2, y + rowHeight / 2);
+                } else {
+                    state.employees.forEach((emp, rIdx) => {
+                        const y = tableTop + headerHeight + rIdx * rowHeight;
+                        const empSchedule = weekData[emp.id] || {};
+                        let empWorkedDays = 0;
+
+                        // Celula angajat
+                        ctx.fillStyle = rIdx % 2 === 0 ? '#ffffff' : '#f8fafc';
+                        ctx.fillRect(colX[0], y, colWidths[0], rowHeight);
+                        ctx.strokeStyle = '#e2e8f0';
+                        ctx.strokeRect(colX[0], y, colWidths[0], rowHeight);
+
+                        ctx.fillStyle = '#4f46e5';
+                        ctx.fillRect(colX[0], y, 4, rowHeight);
+
+                        ctx.fillStyle = '#0f172a';
+                        ctx.font = '800 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'middle';
+                        const nameY = emp.role ? y + 20 : y + rowHeight / 2;
+                        ctx.fillText(emp.name, colX[0] + 12, nameY);
+
+                        if (emp.role) {
+                            ctx.fillStyle = '#4f46e5';
+                            ctx.font = '700 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                            ctx.fillText(emp.role, colX[0] + 12, y + 38);
+                        }
+
+                        // Celulele zilelor Luni - Duminică
+                        for (let d = 0; d < 7; d++) {
+                            const cx = colX[d + 1];
+                            const cw = colWidths[d + 1];
+                            const slot = empSchedule[d];
+
+                            ctx.fillStyle = (d === 5 || d === 6) ? 'rgba(254, 243, 199, 0.28)' : (rIdx % 2 === 0 ? '#ffffff' : '#f8fafc');
+                            ctx.fillRect(cx, y, cw, rowHeight);
+                            ctx.strokeStyle = '#e2e8f0';
+                            ctx.strokeRect(cx, y, cw, rowHeight);
+
+                            const isWorked = !!(slot && slot.label && isWorkingDaySlot(slot));
+                            if (isWorked) empWorkedDays += 1;
+
+                            const colors = getSlotColors(slot, isWorked);
+                            const badgePad = 5;
+                            const bx = cx + badgePad;
+                            const by = y + badgePad;
+                            const bw = cw - badgePad * 2;
+                            const bh = rowHeight - badgePad * 2;
+
+                            ctx.fillStyle = colors.bg;
+                            ctx.strokeStyle = colors.border;
+                            ctx.lineWidth = 1;
+                            drawRoundedRect(ctx, bx, by, bw, bh, 8);
+                            ctx.fill();
+                            ctx.stroke();
+
+                            if (slot && slot.label) {
+                                const hasNote = Boolean(slot.note);
+                                ctx.fillStyle = colors.text;
+                                ctx.font = '800 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText(slot.label, bx + bw / 2, hasNote ? by + bh / 2 - 7 : by + bh / 2);
+
+                                if (hasNote) {
+                                    ctx.fillStyle = colors.sub;
+                                    ctx.font = '700 10px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                                    ctx.fillText(slot.note, bx + bw / 2, by + bh / 2 + 8);
+                                }
+                            } else {
+                                ctx.fillStyle = '#94a3b8';
+                                ctx.font = '700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'middle';
+                                ctx.fillText('—', bx + bw / 2, by + bh / 2);
+                            }
+                        }
+
+                        // Coloana Zile lucrate
+                        const cntX = colX[8];
+                        const cntW = colWidths[8];
+                        ctx.fillStyle = rIdx % 2 === 0 ? '#ffffff' : '#f8fafc';
+                        ctx.fillRect(cntX, y, cntW, rowHeight);
+                        ctx.strokeStyle = '#e2e8f0';
+                        ctx.strokeRect(cntX, y, cntW, rowHeight);
+
+                        ctx.fillStyle = '#eef2ff';
+                        ctx.strokeStyle = '#c7d2fe';
+                        drawRoundedRect(ctx, cntX + 8, y + 12, cntW - 16, rowHeight - 24, 7);
+                        ctx.fill();
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#4338ca';
+                        ctx.font = '800 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(`${empWorkedDays} ${empWorkedDays === 1 ? 'zi' : 'zile'}`, cntX + cntW / 2, y + rowHeight / 2);
+                    });
+                }
+
+                // Rând sumar jos (Prezenți / zi)
+                const footY = tableTop + headerHeight + empRowsCount * rowHeight;
+                for (let c = 0; c < 9; c++) {
+                    const fx = colX[c];
+                    const fw = colWidths[c];
+                    ctx.fillStyle = '#f1f5f9';
+                    ctx.fillRect(fx, footY, fw, footerHeight);
+                    ctx.strokeStyle = '#cbd5e1';
+                    ctx.strokeRect(fx, footY, fw, footerHeight);
+
+                    ctx.fillStyle = '#0f172a';
+                    ctx.font = '800 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                    ctx.textBaseline = 'middle';
+
+                    if (c === 0) {
+                        ctx.textAlign = 'left';
+                        ctx.fillText('Prezenți / zi', fx + 12, footY + footerHeight / 2);
+                    } else if (c >= 1 && c <= 7) {
+                        ctx.textAlign = 'center';
+                        ctx.fillText(String(dailyWorkingCount[c - 1]), fx + fw / 2, footY + footerHeight / 2);
+                    } else {
+                        ctx.textAlign = 'center';
+                        ctx.fillText(String(grandTotalDays), fx + fw / 2, footY + footerHeight / 2);
+                    }
+                }
+
+                // Legendă jos
+                const legY = tableTop + tableHeight + 14;
+                const legendItems = [
+                    { text: 'Program (ex. 07:00 / 08:00 / 10:00)', color: '#059669' },
+                    { text: 'Extra', color: '#d97706' },
+                    { text: 'Vrij / Liber', color: '#64748b' },
+                    { text: 'Vakantie / CO', color: '#e11d48' }
+                ];
+
+                let lx = padX + 4;
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = 'left';
+                ctx.font = '600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
+                legendItems.forEach(item => {
+                    ctx.fillStyle = item.color;
+                    ctx.beginPath();
+                    ctx.arc(lx + 5, legY + 10, 5, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#475569';
+                    ctx.fillText(item.text, lx + 15, legY + 10);
+                    lx += ctx.measureText(item.text).width + 32;
+                });
+
+                const dataUrl = canvas.toDataURL('image/png');
+                const filename = `program-munca-${state.year}-W${weekNumStr}.png`;
+                state.lastPngDataUrl = dataUrl;
+                state.lastPngFilename = filename;
+
+                // Convertim dataUrl în Blob fără rețea
+                const byteString = atob(dataUrl.split(',')[1]);
+                const mimeString = dataUrl.split(',')[0].split(':')[1].split(';')[0];
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+                state.lastPngBlob = new Blob([ab], { type: mimeString });
+
+                return { dataUrl, blob: state.lastPngBlob, filename };
+            } catch (err) {
+                return null;
+            }
+        }
+
+        function openShareImageModal(preferredChannel = 'whatsapp') {
+            const rendered = renderScheduleToPNG();
+            const container = document.getElementById('png-preview-container');
+            const helper = document.getElementById('share-image-helper-text');
+            const subtitle = document.getElementById('share-image-modal-subtitle');
+
             const days = getDatesOfISOWeek(state.year, state.week);
             const weekNumStr = String(state.week).padStart(2, '0');
             const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
-            const subject = `Programul de muncă - Săpt. ${weekNumStr} (${rangeStr})`;
-            const body = buildScheduleShareText();
-            copyTextFallback(body);
+            subtitle.textContent = `Săpt. ${weekNumStr} (${rangeStr}) • Imagine PNG gata de trimis`;
 
-            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            if (!rendered || !rendered.dataUrl) {
+                container.innerHTML = `<span style="font-size:0.8rem; color:#be123c; font-weight:700;">Nu s-a putut genera imaginea PNG a tabelului.</span>`;
+            } else {
+                container.innerHTML = `<img src="${rendered.dataUrl}" alt="Imagine tabel program de muncă" class="png-preview-img">`;
+            }
+
+            const canShareFile = typeof navigator !== 'undefined' &&
+                typeof navigator.share === 'function' &&
+                typeof File !== 'undefined' &&
+                rendered && rendered.blob &&
+                (!navigator.canShare || navigator.canShare({ files: [new File([rendered.blob], rendered.filename, { type: 'image/png' })] }));
+
+            if (canShareFile) {
+                helper.textContent = 'Dispozitivul tău suportă atașarea directă a fișierului PNG! Apasă pe WhatsApp (Imagine) sau Email (Imagine) pentru a trimite direct imaginea tabelului.';
+            } else {
+                helper.textContent = 'Apasă „Descarcă PNG” sau „Copiază Imagine” pentru a atașa/lipi direct imaginea tabelului în WhatsApp sau Email, ori folosește butoanele rapide de mai jos.';
+            }
+
+            document.getElementById('share-image-modal').classList.add('open');
+
+            if (preferredChannel === 'whatsapp' && canShareFile) {
+                shareRenderedScheduleImage('whatsapp');
+            } else if (preferredChannel === 'email' && canShareFile) {
+                shareRenderedScheduleImage('email');
+            }
+        }
+
+        function closeShareImageModal() {
+            document.getElementById('share-image-modal').classList.remove('open');
+        }
+
+        function downloadRenderedSchedulePNG() {
+            const rendered = (state.lastPngDataUrl && state.lastPngFilename)
+                ? { dataUrl: state.lastPngDataUrl, filename: state.lastPngFilename }
+                : renderScheduleToPNG();
+
+            if (!rendered || !rendered.dataUrl) {
+                showToast('Imaginea PNG nu a putut fi pregătită.');
+                return;
+            }
+
             try {
-                window.location.href = mailtoUrl;
-                showToast('S-a deschis clientul de Email cu tot programul (și copiat în clipboard).');
+                const link = document.createElement('a');
+                link.href = rendered.dataUrl;
+                link.download = rendered.filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast(`Imaginea ${rendered.filename} a fost descărcată.`);
             } catch (err) {
-                showToast('Programul complet a fost copiat — lipește-l în Email.');
+                showToast('Deschide imaginea din previzualizare pentru a o salva.');
+            }
+        }
+
+        async function copyRenderedScheduleImage() {
+            const rendered = (state.lastPngBlob)
+                ? { blob: state.lastPngBlob }
+                : renderScheduleToPNG();
+
+            if (!rendered || !rendered.blob) {
+                showToast('Nu există o imagine PNG generată.');
+                return;
+            }
+
+            try {
+                if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                    const item = new ClipboardItem({ 'image/png': rendered.blob });
+                    await navigator.clipboard.write([item]);
+                    showToast('Imaginea tabelului a fost copiată în clipboard! O poți lipi direct în WhatsApp sau Email.');
+                    return;
+                }
+            } catch (err) {
+                // Fallback la descărcare dacă clipboard-ul de imagini este restricționat
+            }
+
+            downloadRenderedSchedulePNG();
+            showToast('Browserul nu permite copierea directă a imaginii; PNG-ul a fost descărcat pentru atașare.');
+        }
+
+        async function shareRenderedScheduleImage(channel = 'whatsapp') {
+            const rendered = (state.lastPngBlob && state.lastPngFilename)
+                ? { dataUrl: state.lastPngDataUrl, blob: state.lastPngBlob, filename: state.lastPngFilename }
+                : renderScheduleToPNG();
+
+            if (!rendered || !rendered.blob) {
+                showToast('Nu s-a putut genera imaginea PNG.');
+                return;
+            }
+
+            const days = getDatesOfISOWeek(state.year, state.week);
+            const weekNumStr = String(state.week).padStart(2, '0');
+            const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
+            const title = `Programul de muncă - Săpt. ${weekNumStr} (${rangeStr})`;
+
+            try {
+                if (typeof navigator.share === 'function' && typeof File !== 'undefined') {
+                    const pngFile = new File([rendered.blob], rendered.filename, { type: 'image/png' });
+                    const sharePayload = {
+                        title: title,
+                        text: title,
+                        files: [pngFile]
+                    };
+
+                    if (!navigator.canShare || navigator.canShare({ files: [pngFile] })) {
+                        await navigator.share(sharePayload);
+                        showToast(channel === 'whatsapp'
+                            ? 'Imaginea PNG a fost trimisă către meniul de partajare / WhatsApp.'
+                            : 'Imaginea PNG a fost trimisă către meniul de partajare / Email.');
+                        return;
+                    }
+                }
+            } catch (err) {
+                if (err && err.name === 'AbortError') {
+                    showToast('Partajarea imaginii a fost anulată.');
+                    return;
+                }
+            }
+
+            // Fallback pe desktop sau iframe fără navigator.share cu fișiere: descărcăm PNG-ul și deschidem canalul ales
+            downloadRenderedSchedulePNG();
+            if (channel === 'whatsapp') {
+                const waUrl = `https://wa.me/?text=${encodeURIComponent(title + ' — atașez imaginea tabelului PNG.')}`;
+                try {
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                } catch (err) {}
+                showToast('Am descărcat imaginea PNG și am deschis WhatsApp pentru a o atașa.');
+            } else {
+                const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(title + '\n\nImaginea PNG a tabelului a fost descărcată pentru a fi atașată la email.')}`;
+                try {
+                    window.location.href = mailtoUrl;
+                } catch (err) {}
+                showToast('Am descărcat imaginea PNG și am deschis Email pentru a o atașa.');
             }
         }
 
@@ -2381,15 +2920,18 @@
             const stage = document.getElementById('fullscreen-rotated-stage');
             const shiftModal = document.getElementById('shift-modal');
             const empModal = document.getElementById('emp-modal');
+            const shareImageModal = document.getElementById('share-image-modal');
             const toastContainer = document.getElementById('toast-container');
 
             if (intoStage && stage) {
                 if (shiftModal && shiftModal.parentElement !== stage) stage.appendChild(shiftModal);
                 if (empModal && empModal.parentElement !== stage) stage.appendChild(empModal);
+                if (shareImageModal && shareImageModal.parentElement !== stage) stage.appendChild(shareImageModal);
                 if (toastContainer && toastContainer.parentElement !== stage) stage.appendChild(toastContainer);
             } else {
                 if (shiftModal && shiftModal.parentElement !== document.body) document.body.appendChild(shiftModal);
                 if (empModal && empModal.parentElement !== document.body) document.body.appendChild(empModal);
+                if (shareImageModal && shareImageModal.parentElement !== document.body) document.body.appendChild(shareImageModal);
                 if (toastContainer && toastContainer.parentElement !== document.body) document.body.appendChild(toastContainer);
             }
         }
@@ -2425,6 +2967,9 @@
             }
             if (document.getElementById('emp-modal').classList.contains('open')) {
                 closeAddEmployeeModal();
+            }
+            if (document.getElementById('share-image-modal').classList.contains('open')) {
+                closeShareImageModal();
             }
 
             const hadPushedState = state.pushedFullscreenState;
@@ -2505,6 +3050,21 @@
                 return;
             }
 
+            if (document.getElementById('share-image-modal').classList.contains('open')) {
+                closeShareImageModal();
+                if (state.isFullscreen) {
+                    try {
+                        window.history.pushState(
+                            { scheduleFullscreen90: true, year: state.year, week: state.week },
+                            '',
+                            window.location.href
+                        );
+                        state.pushedFullscreenState = true;
+                    } catch (err) {}
+                }
+                return;
+            }
+
             if (state.isFullscreen) {
                 exitFullscreenSchedule(true);
             }
@@ -2516,6 +3076,8 @@
                     closeShiftModal();
                 } else if (document.getElementById('emp-modal').classList.contains('open')) {
                     closeAddEmployeeModal();
+                } else if (document.getElementById('share-image-modal').classList.contains('open')) {
+                    closeShareImageModal();
                 } else if (state.isFullscreen) {
                     exitFullscreenSchedule(false);
                 }

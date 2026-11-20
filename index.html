@@ -9,7 +9,7 @@
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -118,25 +118,6 @@
             width: 100% !important;
             max-width: 100% !important;
             table-layout: fixed !important;
-        }
-
-        /* Evidențiere clară a numelui persoanei în modul Tot Ecranul */
-        #fullscreen-overlay-shell.active td.sticky-col {
-            background: linear-gradient(90deg, #eef2ff 0%, #ffffff 100%) !important;
-            border-right: 2px solid #818cf8 !important;
-            box-shadow: 2px 0 6px -2px rgba(79, 70, 229, 0.22);
-        }
-
-        #fullscreen-overlay-shell.active tr:hover td.sticky-col {
-            background: linear-gradient(90deg, #e0e7ff 0%, #f8fafc 100%) !important;
-        }
-
-        .fs-person-highlight {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding-left: 5px;
-            border-left: 3px solid #4f46e5;
         }
 
         /* Ascunde complet bara și butoanele pe telefon în modul tot ecranul */
@@ -452,4 +433,1640 @@
                         </button>
 
                         <button type="button" onclick="exitFullscreenSchedule()"
-                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg
+                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 transition shadow-sm cursor-pointer">
+                            <span>✕ Ieși</span>
+                        </button>
+                    </div>
+                </div>
+
+                <section id="table-view-container" class="bg-white rounded-2xl border border-slate-300/90 shadow-md overflow-hidden flex-1 flex flex-col w-full">
+                    <div id="table-scroll-wrapper" class="overflow-auto max-h-[78vh] w-full flex-1">
+                        <table class="w-full text-left border-collapse">
+                            <thead id="schedule-thead" class="bg-slate-900 text-white sticky-thead"></thead>
+                            <tbody id="schedule-tbody" class="divide-y divide-slate-200"></tbody>
+                            <tfoot id="schedule-tfoot" class="bg-slate-100 border-t-2 border-slate-300 font-bold text-slate-900"></tfoot>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- VIZUALIZARE 2: CARDURI PE ZILE -->
+        <section id="cards-view-container" class="hidden space-y-4">
+            <div id="cards-day-pills" class="flex items-center gap-2 overflow-x-auto pb-1"></div>
+            <div id="cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+            <p>Toate săptămânile din <strong>2026 & 2027</strong>. Modificările, adăugările și ștergerile se salvează automat în browser.</p>
+            <p>Termeni: <span class="font-medium text-slate-700">Maandag</span>=Luni, <span class="font-medium text-slate-700">Vrij</span>=Liber, <span class="font-medium text-slate-700">Vakantie</span>=Concediu</p>
+        </div>
+    </footer>
+
+    <!-- MODAL 1: EDITARE CELULĂ TURĂ -->
+    <div id="edit-cell-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden">
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900" id="modal-edit-title">Editare Tură</h3>
+                    <p class="text-xs text-slate-500" id="modal-edit-subtitle">Persoană • Ziua</p>
+                </div>
+                <button type="button" onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="edit-shift-form" onsubmit="saveShiftEdit(event)" class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Selectare Rapidă Status / Oră</label>
+                    <div class="grid grid-cols-4 gap-1.5">
+                        <button type="button" onclick="applyQuickPreset('06:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-cyan-50 text-cyan-800 border border-cyan-200 hover:bg-cyan-100 cursor-pointer">06:00</button>
+                        <button type="button" onclick="applyQuickPreset('07:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 cursor-pointer">07:00</button>
+                        <button type="button" onclick="applyQuickPreset('08:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 hover:bg-indigo-100 cursor-pointer">08:00</button>
+                        <button type="button" onclick="applyQuickPreset('10:00', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 cursor-pointer">10:00</button>
+                        <button type="button" onclick="applyQuickPreset('Vrij', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-slate-100 text-slate-700 border border-slate-300 hover:bg-slate-200 cursor-pointer">Vrij (Liber)</button>
+                        <button type="button" onclick="applyQuickPreset('Vakantie', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100 cursor-pointer">Vakantie</button>
+                        <button type="button" onclick="applyQuickPreset('07:00', 'Extra')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-purple-50 text-purple-700 border border-purple-200 hover:bg-purple-100 cursor-pointer">+ Extra</button>
+                        <button type="button" onclick="applyQuickPreset('', '')" class="px-2 py-1.5 text-xs font-medium rounded-lg bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 cursor-pointer">Gol (-)</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="edit-begin" class="block text-xs font-semibold text-slate-700 mb-1">Oră Început / Status</label>
+                        <input type="text" id="edit-begin" placeholder="ex. 07:00, Vrij, Vakantie"
+                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label for="edit-end" class="block text-xs font-semibold text-slate-700 mb-1">Oră Sfârșit / Notă</label>
+                        <input type="text" id="edit-end" placeholder="ex. 16:00, Extra, TAS"
+                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">Anulează</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm cursor-pointer">Salvează Modificarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADAUGĂ PERSOANĂ NOUĂ -->
+    <div id="add-employee-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full overflow-hidden">
+            <div class="px-5 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Adaugă Persoană în Program</h3>
+                    <p class="text-xs text-slate-500" id="modal-add-week-label">Week 47</p>
+                </div>
+                <button type="button" onclick="closeAddEmployeeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAddEmployee(event)" class="p-5 space-y-4">
+                <div>
+                    <label for="new-emp-name" class="block text-xs font-semibold text-slate-700 mb-1">Nume Persoană *</label>
+                    <input type="text" id="new-emp-name" required placeholder="ex. Alexandru"
+                        class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div id="new-emp-group-field">
+                    <label for="new-emp-group" class="block text-xs font-semibold text-slate-700 mb-1">Grupă (A, B, C - opțional)</label>
+                    <select id="new-emp-group" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="">Fără grupă</option>
+                        <option value="A">Grupa A</option>
+                        <option value="B">Grupa B</option>
+                        <option value="C">Grupa C</option>
+                    </select>
+                </div>
+
+                <div id="new-emp-dept-field">
+                    <label for="new-emp-dept" class="block text-xs font-semibold text-slate-700 mb-1">Departament / Secțiune</label>
+                    <select id="new-emp-dept" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"></select>
+                </div>
+
+                <div>
+                    <label for="new-emp-default-shift" class="block text-xs font-semibold text-slate-700 mb-1">Program implicit (Luni - Vineri)</label>
+                    <select id="new-emp-default-shift" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="07:00">07:00 (L-V), Vrij (S-D)</option>
+                        <option value="08:00">08:00 (L-V), Vrij (S-D)</option>
+                        <option value="Vrij">Vrij toată săptămâna</option>
+                        <option value="">Celule goale (-)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="new-emp-scope" class="block text-xs font-semibold text-slate-700 mb-1">Unde se adaugă?</label>
+                    <select id="new-emp-scope" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="current">Doar în săptămâna curentă</option>
+                        <option value="all">În toate săptămânile din 2026 și 2027</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAddEmployeeModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">Anulează</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm cursor-pointer">Adaugă Persoană</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ȘTERGERE PERSOANĂ -->
+    <div id="delete-employee-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full p-5 space-y-4">
+            <div class="flex items-center gap-3 text-rose-600">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
+                    <i data-lucide="user-minus" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Șterge Persoană</h3>
+                    <p class="text-xs text-slate-500" id="delete-emp-subtitle">Eliminare din program</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600">
+                Vrei să ștergi persoana <strong id="delete-emp-name" class="text-slate-900"></strong>?
+            </p>
+            <div class="flex flex-col gap-2 pt-1">
+                <button type="button" onclick="confirmDeleteEmployee('current')" class="w-full px-4 py-2.5 text-sm font-semibold text-white bg-rose-600 rounded-xl hover:bg-rose-700 shadow-sm cursor-pointer">
+                    Șterge doar din săptămâna curentă
+                </button>
+                <button type="button" onclick="confirmDeleteEmployee('all')" class="w-full px-4 py-2.5 text-sm font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 cursor-pointer">
+                    Șterge din TOATE săptămânile (2026 & 2027)
+                </button>
+                <button type="button" onclick="closeDeleteEmployeeModal()" class="w-full px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">
+                    Anulează
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: CONFIRMARE RESETARE -->
+    <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 p-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-sm w-full p-5 space-y-4">
+            <div class="flex items-center gap-3 text-rose-600">
+                <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
+                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Resetare Date</h3>
+                    <p class="text-xs text-slate-500">Revenire la datele inițiale</p>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600">
+                Ești sigur că vrei să ștergi toate modificările locale și să restaurezi programul inițial?
+            </p>
+            <div class="flex items-center justify-end gap-2 pt-1">
+                <button type="button" onclick="closeResetModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 cursor-pointer">Anulează</button>
+                <button type="button" onclick="confirmResetData()" class="px-4 py-2 text-sm font-medium text-white bg-rose-600 rounded-xl hover:bg-rose-700 shadow-sm cursor-pointer">Da, Resetează</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: FIȘA PERSOANEI -->
+    <div id="employee-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="emp-modal-avatar" class="w-11 h-11 rounded-xl bg-indigo-500 text-white font-bold text-lg flex items-center justify-center shadow-inner">A</div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white" id="emp-modal-name">Nume Persoană</h3>
+                        <p class="text-xs text-slate-300" id="emp-modal-meta">Departament • Grupă</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeEmployeeDetailModal()" class="text-slate-300 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 cursor-pointer">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div id="emp-modal-body" class="p-5 sm:p-6 overflow-y-auto space-y-5 bg-slate-50/60"></div>
+
+            <div class="px-6 py-3.5 bg-white border-t border-slate-200 flex items-center justify-between">
+                <span class="text-xs text-slate-500">Click pe orice zi din fișă pentru a edita ora sau statusul.</span>
+                <button type="button" onclick="closeEmployeeDetailModal()" class="px-4 py-2 text-sm font-semibold text-white bg-slate-900 rounded-xl hover:bg-slate-800 cursor-pointer">Închide</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function safeRefreshIcons() {
+            try {
+                if (window.lucide && typeof window.lucide.createIcons === "function") {
+                    window.lucide.createIcons();
+                }
+            } catch (e) {}
+        }
+
+        const NL_DAYS = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag"];
+        const RO_DAYS = ["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"];
+        const MONTHS_SHORT = ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        const BASE_WEEK47_EMPLOYEES = [
+            {
+                id: "w47-1", name: "Daniel", group: "", department: "General",
+                shifts: [
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "Vrij", end: "" }, { begin: "Vrij", end: "" }
+                ]
+            },
+            {
+                id: "w47-2", name: "Druvis", group: "", department: "General",
+                shifts: [
+                    { begin: "Vrij", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "09:00", end: "" }, { begin: "Vrij", end: "" }
+                ]
+            },
+            {
+                id: "w47-3", name: "Ghenadie", group: "", department: "General",
+                shifts: [
+                    { begin: "10:00", end: "" }, { begin: "10:00", end: "" }, { begin: "10:00", end: "" },
+                    { begin: "10:00", end: "" }, { begin: "10:00", end: "" }, { begin: "Vrij", end: "" }, { begin: "Vrij", end: "" }
+                ]
+            },
+            {
+                id: "w47-4", name: "Evelina", group: "A", department: "General",
+                shifts: [
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "Vrij", end: "" },
+                    { begin: "Vrij", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }
+                ]
+            },
+            {
+                id: "w47-5", name: "Andrei", group: "B", department: "General",
+                shifts: [
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" },
+                    { begin: "07:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "Extra" }, { begin: "Vrij", end: "" }
+                ]
+            },
+            {
+                id: "w47-6", name: "Albert", group: "C", department: "General",
+                shifts: [
+                    { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" },
+                    { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }, { begin: "Vakantie", end: "" }
+                ]
+            },
+            {
+                id: "w47-7", name: "Iulian", group: "A", department: "General",
+                shifts: [
+                    { begin: "08:00", end: "" }, { begin: "08:00", end: "" }, { begin: "08:00", end: "Extra" },
+                    { begin: "Vrij", end: "" }, { begin: "08:00", end: "" }, { begin: "07:00", end: "" }, { begin: "07:00", end: "" }
+                ]
+            }
+        ];
+
+        function pad2(n) { return String(n).padStart(2, "0"); }
+
+        function formatDateRO(d) {
+            return `${pad2(d.getDate())}-${pad2(d.getMonth() + 1)}-${d.getFullYear()}`;
+        }
+
+        function formatShortDate(d) {
+            return `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]}`;
+        }
+
+        function getISOWeekNumber(date) {
+            const temp = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = temp.getUTCDay() || 7;
+            temp.setUTCDate(temp.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(temp.getUTCFullYear(), 0, 1));
+            const weekNo = Math.ceil((((temp - yearStart) / 86400000) + 1) / 7);
+            return { year: temp.getUTCFullYear(), week: weekNo };
+        }
+
+        function getFirstMondayOfYear(year) {
+            const d = new Date(year, 0, 1);
+            const day = d.getDay();
+            const diff = day === 0 ? 1 : (day === 1 ? 0 : 8 - day);
+            d.setDate(d.getDate() + diff);
+            d.setHours(12, 0, 0, 0);
+            return d;
+        }
+
+        function buildYearWeeks(year) {
+            const weeksMap = {};
+            const startMonday = getFirstMondayOfYear(year);
+            let currentMonday = new Date(startMonday);
+
+            for (let i = 0; i < 53; i++) {
+                const iso = getISOWeekNumber(currentMonday);
+                if (i > 0 && iso.year > year) break;
+
+                const weekNum = i + 1;
+                const weekId = `y${year}-w${weekNum}`;
+                const days = [];
+                for (let dIdx = 0; dIdx < 7; dIdx++) {
+                    const dayDate = new Date(currentMonday);
+                    dayDate.setDate(currentMonday.getDate() + dIdx);
+                    days.push({
+                        nl: NL_DAYS[dIdx],
+                        ro: RO_DAYS[dIdx],
+                        date: formatDateRO(dayDate),
+                        shortDate: formatShortDate(dayDate)
+                    });
+                }
+
+                const sundayDate = new Date(currentMonday);
+                sundayDate.setDate(currentMonday.getDate() + 6);
+
+                weeksMap[weekId] = {
+                    id: weekId,
+                    year: year,
+                    weekNumber: weekNum,
+                    title: `Week ${weekNum}`,
+                    subtitle: `${formatShortDate(currentMonday)} - ${formatShortDate(sundayDate)} ${year}`,
+                    hasGroupColumn: true,
+                    hasDepartments: false,
+                    activeGroups: ["AB", "AB", "BC", "BC", "AC", "AC", "AB"],
+                    note: "",
+                    days,
+                    employees: BASE_WEEK47_EMPLOYEES.map(emp => ({
+                        id: `${weekId}-${emp.name.toLowerCase()}`,
+                        name: emp.name,
+                        group: emp.group,
+                        department: emp.department,
+                        shifts: emp.shifts.map(s => ({ ...s }))
+                    }))
+                };
+
+                currentMonday.setDate(currentMonday.getDate() + 7);
+            }
+
+            return weeksMap;
+        }
+
+        function buildInitialScheduleData() {
+            const data = {
+                ...buildYearWeeks(2026),
+                ...buildYearWeeks(2027)
+            };
+
+            if (data["y2026-w47"]) {
+                data["y2026-w47"].note = "Albert vakantie 18-11-2026 > 21-11-2026";
+                data["y2026-w47"].employees = JSON.parse(JSON.stringify(BASE_WEEK47_EMPLOYEES));
+            }
+
+            const w51_52_depts = [
+                "General / Fără categorie",
+                "Edeka / Superunie",
+                "Daghandel",
+                "Binnenkomst / Kleinpak 3",
+                "Metro/Real",
+                "TAS"
+            ];
+
+            if (data["y2026-w51"]) {
+                data["y2026-w51"].hasGroupColumn = false;
+                data["y2026-w51"].hasDepartments = true;
+                data["y2026-w51"].activeGroups = null;
+                data["y2026-w51"].departments = w51_52_depts;
+                data["y2026-w51"].employees = [
+                    { id: "w51-1", name: "Anneke", group: "", department: "General / Fără categorie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-2", name: "Serge", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"11:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-3", name: "Sander", group: "", department: "General / Fără categorie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-4", name: "Franny", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-5", name: "Wesley", group: "", department: "General / Fără categorie", shifts: [{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"07:00",end:""},{begin:"08:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w51-6", name: "Devin", group: "", department: "General / Fără categorie", shifts: [{begin:"11:00",end:""},{begin:"13:00",end:""},{begin:"11:00",end:""},{begin:"13:00",end:""},{begin:"13:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w51-7", name: "Daniel", group: "", department: "Edeka / Superunie", shifts: [{begin:"08:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-8", name: "Serghei", group: "", department: "Edeka / Superunie", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"08:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-9", name: "Krys", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-10", name: "Raivis", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w51-11", name: "Richard", group: "", department: "Daghandel", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"08:00",end:"Tas"},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-12", name: "Makele", group: "", department: "Daghandel", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w51-13", name: "Jurek", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"Vrij",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-14", name: "Owen", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w51-15", name: "Mariusz", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"06:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-16", name: "Philip", group: "", department: "Metro/Real", shifts: [{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w51-17", name: "Gabriel", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""}] },
+                    { id: "w51-18", name: "Alina", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] },
+                    { id: "w51-19", name: "Octavian", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""}] },
+                    { id: "w51-20", name: "Ari", group: "", department: "TAS", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""}] },
+                    { id: "w51-21", name: "Rado", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] }
+                ];
+            }
+
+            if (data["y2026-w52"]) {
+                data["y2026-w52"].hasGroupColumn = false;
+                data["y2026-w52"].hasDepartments = true;
+                data["y2026-w52"].activeGroups = null;
+                data["y2026-w52"].departments = w51_52_depts;
+                data["y2026-w52"].note = "Vineri (25 Dec - Crăciun): Toți angajații au Vrij (Liber).";
+                data["y2026-w52"].employees = [
+                    { id: "w52-1", name: "Anneke", group: "", department: "General / Fără categorie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w52-2", name: "Serge", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"",end:""},{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"09:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-3", name: "Sander", group: "", department: "General / Fără categorie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-4", name: "Franny", group: "", department: "General / Fără categorie", shifts: [{begin:"",end:""},{begin:"",end:""},{begin:"07:00",end:""},{begin:"",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w52-5", name: "Wesley", group: "", department: "General / Fără categorie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w52-6", name: "Devin", group: "", department: "General / Fără categorie", shifts: [{begin:"13:00",end:""},{begin:"13:00",end:""},{begin:"11:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-7", name: "Daniel", group: "", department: "Edeka / Superunie", shifts: [{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"10:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-8", name: "Serghei", group: "", department: "Edeka / Superunie", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w52-9", name: "Krys", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-10", name: "Raivis", group: "", department: "Edeka / Superunie", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-11", name: "Richard", group: "", department: "Daghandel", shifts: [{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:"TAS"},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:15",end:""},{begin:"",end:""}] },
+                    { id: "w52-12", name: "Makele", group: "", department: "Daghandel", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w52-13", name: "Jurek", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"",end:""}] },
+                    { id: "w52-14", name: "Owen", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-15", name: "Mariusz", group: "", department: "Binnenkomst / Kleinpak 3", shifts: [{begin:"Vrij",end:""},{begin:"12:00",end:""},{begin:"06:00",end:""},{begin:"06:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-16", name: "Philip", group: "", department: "Metro/Real", shifts: [{begin:"10:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"",end:""}] },
+                    { id: "w52-17", name: "Gabriel", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""}] },
+                    { id: "w52-18", name: "Alina", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] },
+                    { id: "w52-19", name: "Octavian", group: "", department: "TAS", shifts: [{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""}] },
+                    { id: "w52-20", name: "Ari", group: "", department: "TAS", shifts: [{begin:"07:00",end:""},{begin:"07:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"07:00",end:""},{begin:"07:00",end:""}] },
+                    { id: "w52-21", name: "Rado", group: "", department: "TAS", shifts: [{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"Vrij",end:""},{begin:"08:00",end:""},{begin:"08:00",end:""}] }
+                ];
+            }
+
+            return data;
+        }
+
+        const STORAGE_KEY = "shift_planner_2026_2027_v5";
+        let scheduleData = {};
+        let activeWeekId = "y2026-w47";
+        let viewMode = "table";
+        let tableZoom = "large";
+        let isFocusMode = false;
+        let rotationMode = "ccw";
+        let selectedCardDayIdx = 0;
+        let currentlyEditing = null;
+        let pendingDeleteEmployee = null;
+
+        function loadData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && typeof parsed === "object" && Object.keys(parsed).length > 0) {
+                        scheduleData = parsed;
+                        if (!scheduleData[activeWeekId]) {
+                            activeWeekId = Object.keys(scheduleData)[0];
+                        }
+                        return;
+                    }
+                }
+            } catch (e) {}
+            scheduleData = buildInitialScheduleData();
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(scheduleData));
+            } catch (e) {}
+        }
+
+        function isWorkingShift(shift) {
+            if (!shift || !shift.begin) return false;
+            const val = shift.begin.trim().toLowerCase();
+            if (val === "" || val === "-" || val === "vrij" || val === "vakantie") return false;
+            return true;
+        }
+
+        function isVrijShift(shift) {
+            if (!shift || !shift.begin) return false;
+            return shift.begin.trim().toLowerCase() === "vrij";
+        }
+
+        function hasSpecialNote(shift) {
+            if (!shift) return false;
+            const b = (shift.begin || "").trim().toLowerCase();
+            const e = (shift.end || "").trim().toLowerCase();
+            return b === "vakantie" || e.includes("extra") || e.includes("tas");
+        }
+
+        function getShiftBadgeStyle(shift) {
+            const begin = (shift && shift.begin ? shift.begin : "").trim();
+            const end = (shift && shift.end ? shift.end : "").trim();
+            const lowerBegin = begin.toLowerCase();
+
+            if (!begin || begin === "-") {
+                return { bg: "bg-slate-50/70 hover:bg-slate-100", text: "text-slate-300", border: "border-transparent", label: "-", sublabel: end };
+            }
+            if (lowerBegin === "vrij") {
+                return { bg: "bg-rose-50 hover:bg-rose-100", text: "text-rose-700 font-bold", border: "border-rose-200", label: "Vrij", sublabel: "Liber" };
+            }
+            if (lowerBegin === "vakantie") {
+                return { bg: "bg-purple-50 hover:bg-purple-100", text: "text-purple-800 font-bold", border: "border-purple-200", label: "Vakantie", sublabel: "Concediu" };
+            }
+            if (begin.startsWith("06:")) {
+                return { bg: "bg-sky-50 hover:bg-sky-100", text: "text-sky-900 font-extrabold", border: "border-sky-200", label: begin, sublabel: end };
+            }
+            if (begin.startsWith("07:")) {
+                return { bg: "bg-emerald-50 hover:bg-emerald-100", text: "text-emerald-900 font-extrabold", border: "border-emerald-200", label: begin, sublabel: end };
+            }
+            if (begin.startsWith("08:") || begin.startsWith("09:")) {
+                return { bg: "bg-blue-50 hover:bg-blue-100", text: "text-blue-900 font-extrabold", border: "border-blue-200", label: begin, sublabel: end };
+            }
+            return { bg: "bg-teal-50 hover:bg-teal-100", text: "text-teal-900 font-extrabold", border: "border-teal-200", label: begin, sublabel: end };
+        }
+
+        function getGroupBadgeColor(group) {
+            if (group === "A") return "bg-blue-100 text-blue-800 border-blue-200";
+            if (group === "B") return "bg-emerald-100 text-emerald-800 border-emerald-200";
+            if (group === "C") return "bg-amber-100 text-amber-800 border-amber-200";
+            return "bg-slate-100 text-slate-600 border-slate-200";
+        }
+
+        function syncYearAndWeekDropdowns() {
+            const activeWeek = scheduleData[activeWeekId];
+            if (!activeWeek) return;
+
+            const yearSelect = document.getElementById("quick-year-select");
+            const weekSelect = document.getElementById("quick-week-select");
+
+            yearSelect.value = String(activeWeek.year);
+            const yearWeeks = Object.values(scheduleData).filter(w => w.year === activeWeek.year);
+
+            weekSelect.innerHTML = yearWeeks.map(w => `
+                <option value="${w.id}" ${w.id === activeWeekId ? "selected" : ""}>
+                    ${w.title} (${w.subtitle})
+                </option>
+            `).join("");
+        }
+
+        function onYearOrWeekDropdownChange() {
+            const selectedYear = parseInt(document.getElementById("quick-year-select").value, 10);
+            const currentWeek = scheduleData[activeWeekId];
+            const targetWeekNum = currentWeek ? currentWeek.weekNumber : 1;
+
+            const match = Object.values(scheduleData).find(w => w.year === selectedYear && w.weekNumber === targetWeekNum)
+                || Object.values(scheduleData).find(w => w.year === selectedYear);
+
+            if (match) {
+                switchWeek(match.id);
+            }
+        }
+
+        function renderWeekTabs() {
+            const activeWeek = scheduleData[activeWeekId];
+            if (!activeWeek) return;
+
+            const container = document.getElementById("week-tabs");
+            const fsContainer = document.getElementById("fs-week-tabs");
+            const yearWeeks = Object.values(scheduleData).filter(w => w.year === activeWeek.year);
+
+            container.innerHTML = yearWeeks.map(week => {
+                const isActive = week.id === activeWeekId;
+                return `
+                    <button type="button" id="tab-${week.id}" onclick="switchWeek('${week.id}')"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition whitespace-nowrap cursor-pointer border ${
+                            isActive
+                                ? "bg-indigo-600 text-white border-indigo-600 shadow-sm shadow-indigo-200"
+                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900"
+                        }">
+                        <span>${week.title}</span>
+                        <span class="text-[10px] font-normal px-1.5 py-0.5 rounded-md ${
+                            isActive ? "bg-indigo-500/60 text-indigo-50" : "bg-slate-100 text-slate-500"
+                        }">${week.subtitle.replace(` ${week.year}`, "")}</span>
+                    </button>
+                `;
+            }).join("");
+
+            if (fsContainer) {
+                fsContainer.innerHTML = yearWeeks.map(week => {
+                    const isActive = week.id === activeWeekId;
+                    return `
+                        <button type="button" onclick="switchWeek('${week.id}')"
+                            class="px-2 py-0.5 rounded-md text-[11px] font-bold transition whitespace-nowrap cursor-pointer ${
+                                isActive
+                                    ? "bg-indigo-600 text-white shadow-xs"
+                                    : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+                            }">
+                            W${week.weekNumber}
+                        </button>
+                    `;
+                }).join("");
+            }
+
+            syncYearAndWeekDropdowns();
+        }
+
+        function populateFilterOptions() {
+            const week = scheduleData[activeWeekId];
+            if (!week) return;
+
+            const deptSelect = document.getElementById("filter-dept");
+            const daySelect = document.getElementById("filter-day");
+
+            let deptOptions = `<option value="ALL">Toate Departamentele / Grupele</option>`;
+            if (week.hasGroupColumn) {
+                deptOptions += `
+                    <option value="GROUP_A">Grupa A</option>
+                    <option value="GROUP_B">Grupa B</option>
+                    <option value="GROUP_C">Grupa C</option>
+                    <option value="GROUP_NONE">Fără grupă</option>
+                `;
+            } else if (week.departments) {
+                week.departments.forEach(dept => {
+                    deptOptions += `<option value="${dept}">${dept}</option>`;
+                });
+            }
+            deptSelect.innerHTML = deptOptions;
+
+            let dayOptions = `<option value="ALL">Toate zilele săptămânii</option>`;
+            week.days.forEach((d, idx) => {
+                dayOptions += `<option value="${idx}">${d.ro} (${d.nl}) - ${d.shortDate}</option>`;
+            });
+            daySelect.innerHTML = dayOptions;
+        }
+
+        function getFilteredEmployees() {
+            const week = scheduleData[activeWeekId];
+            if (!week) return [];
+
+            const searchQuery = document.getElementById("filter-search").value.trim().toLowerCase();
+            const deptFilter = document.getElementById("filter-dept").value;
+            const dayFilter = document.getElementById("filter-day").value;
+            const statusFilter = document.getElementById("filter-status").value;
+
+            return week.employees.filter(emp => {
+                if (searchQuery && !emp.name.toLowerCase().includes(searchQuery)) return false;
+
+                if (deptFilter !== "ALL") {
+                    if (week.hasGroupColumn) {
+                        if (deptFilter === "GROUP_A" && emp.group !== "A") return false;
+                        if (deptFilter === "GROUP_B" && emp.group !== "B") return false;
+                        if (deptFilter === "GROUP_C" && emp.group !== "C") return false;
+                        if (deptFilter === "GROUP_NONE" && emp.group !== "") return false;
+                    } else {
+                        if (emp.department !== deptFilter) return false;
+                    }
+                }
+
+                if (dayFilter !== "ALL") {
+                    const dIdx = parseInt(dayFilter, 10);
+                    const shift = emp.shifts[dIdx];
+                    if (statusFilter === "WORKING" && !isWorkingShift(shift)) return false;
+                    if (statusFilter === "VRIJ" && !isVrijShift(shift)) return false;
+                    if (statusFilter === "SPECIAL" && !hasSpecialNote(shift)) return false;
+                } else {
+                    if (statusFilter === "WORKING" && !emp.shifts.some(isWorkingShift)) return false;
+                    if (statusFilter === "VRIJ" && !emp.shifts.some(isVrijShift)) return false;
+                    if (statusFilter === "SPECIAL" && !emp.shifts.some(hasSpecialNote)) return false;
+                }
+
+                return true;
+            });
+        }
+
+        function renderStatsAndChart() {
+            const week = scheduleData[activeWeekId];
+            if (!week) return;
+
+            const totalEmployees = week.employees.length;
+            const dailyTotals = week.days.map((_, dayIdx) => {
+                return week.employees.reduce((sum, emp) => sum + (isWorkingShift(emp.shifts[dayIdx]) ? 1 : 0), 0);
+            });
+
+            const totalShifts = dailyTotals.reduce((a, b) => a + b, 0);
+            const avgShifts = (totalShifts / 7).toFixed(1);
+
+            let vrijCount = 0;
+            let specialCount = 0;
+
+            week.employees.forEach(emp => {
+                emp.shifts.forEach(s => {
+                    if (isVrijShift(s)) vrijCount++;
+                    if (hasSpecialNote(s)) specialCount++;
+                });
+            });
+
+            document.getElementById("stat-total-employees").textContent = totalEmployees;
+            document.getElementById("stat-dept-count").textContent = week.hasDepartments
+                ? `${week.departments.length} departamente active`
+                : `Grupe A, B, C + General`;
+
+            document.getElementById("stat-total-shifts").textContent = totalShifts;
+            document.getElementById("stat-avg-shifts").textContent = `Medie ${avgShifts} persoane / zi`;
+            document.getElementById("stat-vrij-count").textContent = vrijCount;
+            document.getElementById("stat-special-count").textContent = specialCount;
+            document.getElementById("week-badge-info").textContent = `${week.title} (${week.subtitle})`;
+
+            const maxVal = Math.max(...dailyTotals, 1);
+            const currentDayFilter = document.getElementById("filter-day").value;
+            const chartContainer = document.getElementById("daily-chart-container");
+
+            chartContainer.innerHTML = week.days.map((day, idx) => {
+                const count = dailyTotals[idx];
+                const heightPct = Math.round((count / maxVal) * 100);
+                const isSelected = currentDayFilter === String(idx);
+                const groupTag = week.activeGroups ? week.activeGroups[idx] : "";
+
+                return `
+                    <div onclick="toggleDayFilterFromChart(${idx})" title="Click pentru a filtra ziua de ${day.ro} (${count} prezenți)"
+                        class="flex flex-col items-center justify-end h-full group cursor-pointer select-none">
+                        <div class="text-xs font-bold mb-1 ${isSelected ? 'text-indigo-600 scale-110' : 'text-slate-700'} transition">
+                            ${count}
+                        </div>
+                        <div class="w-full max-w-[38px] bg-slate-100 rounded-t-lg h-16 flex items-end overflow-hidden p-0.5 border ${isSelected ? 'border-indigo-400 ring-2 ring-indigo-200' : 'border-transparent'}">
+                            <div style="height: ${Math.max(heightPct, count > 0 ? 12 : 4)}%"
+                                class="w-full rounded-t-md transition-all duration-300 ${
+                                    count === 0 ? 'bg-rose-300' : isSelected ? 'bg-indigo-600' : 'bg-indigo-400 group-hover:bg-indigo-500'
+                                }">
+                            </div>
+                        </div>
+                        <div class="mt-1.5 text-center">
+                            <div class="text-[11px] font-semibold ${isSelected ? 'text-indigo-700' : 'text-slate-700'}">${day.ro.slice(0, 3)}</div>
+                            ${groupTag ? `<span class="inline-block text-[9px] font-bold px-1 rounded bg-slate-200/80 text-slate-600">${groupTag}</span>` : `<div class="text-[9px] text-slate-400">${day.shortDate}</div>`}
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            const noteBanner = document.getElementById("week-note-banner");
+            const noteText = document.getElementById("week-note-text");
+            if (week.note && week.note.trim() !== "") {
+                noteText.textContent = week.note;
+                noteBanner.classList.remove("hidden");
+            } else {
+                noteBanner.classList.add("hidden");
+            }
+        }
+
+        function renderTable() {
+            const week = scheduleData[activeWeekId];
+            if (!week) return;
+
+            const filteredEmployees = getFilteredEmployees();
+            const dayFilter = document.getElementById("filter-day").value;
+
+            const thead = document.getElementById("schedule-thead");
+            const tbody = document.getElementById("schedule-tbody");
+            const tfoot = document.getElementById("schedule-tfoot");
+
+            const zoomCfg = isFocusMode
+                ? {
+                    nameColWidthClass: "w-[118px] sm:w-[142px]",
+                    groupColWidthClass: "w-[36px]",
+                    dayColWidthClass: "",
+                    thPad: "py-1.5 px-1",
+                    thDayText: "text-[11px] sm:text-xs",
+                    tdNamePad: "py-1.5 px-1.5",
+                    nameText: "text-[11px] sm:text-xs leading-tight",
+                    avatarSize: "w-5 h-5 text-[9px]",
+                    cellPad: "p-0.5 sm:p-1",
+                    badgeMinH: "min-h-[38px] sm:min-h-[44px] px-1 py-1",
+                    shiftText: "text-xs sm:text-sm leading-none",
+                    subText: "text-[9px] leading-tight",
+                    deptRowPad: "py-1.5 px-2.5 text-[11px]"
+                }
+                : {
+                    normal: {
+                        nameColWidthClass: "min-w-[185px] sm:min-w-[220px]",
+                        groupColWidthClass: "w-20",
+                        dayColWidthClass: "min-w-[115px]",
+                        thPad: "py-3 px-3",
+                        thDayText: "text-sm",
+                        tdNamePad: "py-3 px-3.5",
+                        nameText: "text-sm sm:text-base",
+                        avatarSize: "w-8 h-8 text-xs",
+                        cellPad: "p-2",
+                        badgeMinH: "min-h-[48px] px-2.5 py-1.5",
+                        shiftText: "text-sm",
+                        subText: "text-[11px]",
+                        deptRowPad: "py-2.5 px-4 text-xs"
+                    },
+                    large: {
+                        nameColWidthClass: "min-w-[220px] sm:min-w-[265px]",
+                        groupColWidthClass: "w-20",
+                        dayColWidthClass: "min-w-[138px]",
+                        thPad: "py-4 px-3.5",
+                        thDayText: "text-base",
+                        tdNamePad: "py-4 px-4",
+                        nameText: "text-base sm:text-lg",
+                        avatarSize: "w-9 h-9 text-sm",
+                        cellPad: "p-2.5",
+                        badgeMinH: "min-h-[60px] px-3 py-2",
+                        shiftText: "text-base sm:text-lg",
+                        subText: "text-xs",
+                        deptRowPad: "py-3 px-4 text-sm"
+                    },
+                    xlarge: {
+                        nameColWidthClass: "min-w-[250px] sm:min-w-[300px]",
+                        groupColWidthClass: "w-24",
+                        dayColWidthClass: "min-w-[160px]",
+                        thPad: "py-5 px-4",
+                        thDayText: "text-lg",
+                        tdNamePad: "py-5 px-5",
+                        nameText: "text-lg sm:text-xl",
+                        avatarSize: "w-11 h-11 text-base",
+                        cellPad: "p-3",
+                        badgeMinH: "min-h-[72px] px-3.5 py-2.5",
+                        shiftText: "text-lg sm:text-xl",
+                        subText: "text-xs sm:text-sm",
+                        deptRowPad: "py-3.5 px-5 text-base"
+                    }
+                }[tableZoom];
+
+            let headerHtml = `<tr>`;
+            headerHtml += `
+                <th class="sticky-col bg-slate-900 ${zoomCfg.thPad} font-bold border-r border-slate-700 ${zoomCfg.nameColWidthClass}">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="${zoomCfg.thDayText} truncate">Persoană</span>
+                        ${isFocusMode ? '' : '<span class="text-xs font-medium text-slate-400">Zile / Șterge</span>'}
+                    </div>
+                </th>
+            `;
+
+            if (week.hasGroupColumn) {
+                headerHtml += `<th class="${zoomCfg.thPad} text-center font-bold border-r border-slate-700 ${zoomCfg.groupColWidthClass} ${zoomCfg.thDayText}">Grp</th>`;
+            }
+
+            week.days.forEach((day, idx) => {
+                const isHighlightedDay = dayFilter === String(idx);
+                const activeGroupBadge = week.activeGroups && week.activeGroups[idx]
+                    ? `<span class="mt-0.5 inline-block px-1.5 py-0.2 rounded-full text-[9px] sm:text-[10px] font-bold bg-indigo-500/40 text-indigo-100 border border-indigo-400/50">${isFocusMode ? week.activeGroups[idx] : `Grupe: ${week.activeGroups[idx]}`}</span>`
+                    : "";
+
+                headerHtml += `
+                    <th class="${zoomCfg.thPad} text-center border-r border-slate-700/80 ${zoomCfg.dayColWidthClass} ${isHighlightedDay ? 'bg-indigo-900' : 'bg-slate-900'}">
+                        <div class="font-extrabold text-white ${zoomCfg.thDayText} truncate">${isFocusMode ? day.ro.slice(0, 3) : day.ro}</div>
+                        <div class="${isFocusMode ? 'text-[9px]' : 'text-xs'} text-slate-300 font-medium truncate">${day.shortDate}</div>
+                        ${activeGroupBadge}
+                    </th>
+                `;
+            });
+            headerHtml += `</tr>`;
+            thead.innerHTML = headerHtml;
+
+            if (filteredEmployees.length === 0) {
+                const colSpan = week.days.length + (week.hasGroupColumn ? 2 : 1);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="${colSpan}" class="py-16 text-center text-slate-500">
+                            <div class="flex flex-col items-center justify-center gap-2">
+                                <i data-lucide="users" class="w-10 h-10 text-slate-300"></i>
+                                <p class="text-base font-semibold text-slate-700">Nicio persoană în această săptămână sau filtru.</p>
+                                <div class="flex items-center gap-3 mt-1">
+                                    <button type="button" onclick="resetAllFilters()" class="text-sm font-semibold text-indigo-600 hover:underline cursor-pointer">Resetează filtrele</button>
+                                    <button type="button" onclick="openAddEmployeeModal()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 cursor-pointer">+ Adaugă Persoană</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                let bodyHtml = "";
+                if (week.hasDepartments) {
+                    const departmentsOrder = week.departments || [...new Set(filteredEmployees.map(e => e.department))];
+                    departmentsOrder.forEach(deptName => {
+                        const deptEmps = filteredEmployees.filter(e => e.department === deptName);
+                        if (deptEmps.length === 0) return;
+
+                        bodyHtml += `
+                            <tr class="bg-slate-100 border-y border-slate-300">
+                                <td colspan="${week.days.length + 1}" class="${zoomCfg.deptRowPad} font-extrabold uppercase tracking-wider text-slate-800">
+                                    <div class="flex items-center gap-2 truncate">
+                                        <span class="w-2 h-2 rounded-full bg-indigo-600 shrink-0"></span>
+                                        <span class="truncate">${deptName}</span>
+                                        <span class="text-[10px] font-semibold text-slate-500 normal-case shrink-0">(${deptEmps.length})</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                        deptEmps.forEach(emp => {
+                            bodyHtml += buildEmployeeRowHtml(emp, week, dayFilter, zoomCfg);
+                        });
+                    });
+                } else {
+                    filteredEmployees.forEach(emp => {
+                        bodyHtml += buildEmployeeRowHtml(emp, week, dayFilter, zoomCfg);
+                    });
+                }
+                tbody.innerHTML = bodyHtml;
+            }
+
+            const dailyTotals = week.days.map((_, dayIdx) => {
+                return filteredEmployees.reduce((sum, emp) => sum + (isWorkingShift(emp.shifts[dayIdx]) ? 1 : 0), 0);
+            });
+            const grandTotal = dailyTotals.reduce((a, b) => a + b, 0);
+
+            let footerHtml = `<tr>`;
+            footerHtml += `
+                <td class="sticky-col bg-slate-100 ${zoomCfg.tdNamePad} border-r border-slate-300">
+                    <div class="flex items-center justify-between gap-1">
+                        <span class="${isFocusMode ? 'text-[10px] sm:text-xs' : 'text-sm sm:text-base'} font-extrabold text-slate-900 truncate">TOTAL</span>
+                        <span class="px-1.5 py-0.5 rounded-full bg-indigo-600 text-white ${isFocusMode ? 'text-[9px]' : 'text-xs'} font-extrabold shrink-0">${grandTotal}</span>
+                    </div>
+                </td>
+            `;
+            if (week.hasGroupColumn) {
+                footerHtml += `<td class="py-1.5 px-1 text-center border-r border-slate-300 text-slate-400 text-xs">-</td>`;
+            }
+            dailyTotals.forEach((total, idx) => {
+                const isHighlightedDay = dayFilter === String(idx);
+                footerHtml += `
+                    <td class="${zoomCfg.cellPad} text-center border-r border-slate-200 ${isHighlightedDay ? 'bg-indigo-100/70 text-indigo-900' : ''}">
+                        <span class="inline-flex items-center justify-center ${isFocusMode ? 'w-7 h-7 text-xs rounded-lg' : 'w-10 h-10 text-base rounded-xl'} font-extrabold ${
+                            total === 0 ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-white text-slate-900 shadow-sm border border-slate-300'
+                        }">
+                            ${total}
+                        </span>
+                    </td>
+                `;
+            });
+            footerHtml += `</tr>`;
+            tfoot.innerHTML = footerHtml;
+        }
+
+        function buildEmployeeRowHtml(emp, week, dayFilter, zoomCfg) {
+            const workedDaysCount = emp.shifts.filter(isWorkingShift).length;
+            const initials = emp.name.slice(0, 2).toUpperCase();
+            const safeName = emp.name.replace(/'/g, "\\'");
+
+            let row = `<tr class="hover:bg-indigo-50/30 transition-colors group">`;
+
+            row += `
+                <td class="sticky-col bg-white group-hover:bg-slate-50 ${zoomCfg.tdNamePad} font-bold text-slate-900 border-r border-slate-200">
+                    <div class="flex items-center justify-between gap-1">
+                        <div onclick="openEmployeeDetailModal('${safeName}')" title="Click pentru fișa completă a lui ${emp.name}"
+                            class="flex items-center gap-1.5 min-w-0 cursor-pointer flex-1">
+                            ${isFocusMode ? '' : `
+                                <div class="${zoomCfg.avatarSize} rounded-xl bg-slate-100 group-hover:bg-indigo-600 group-hover:text-white text-slate-700 font-extrabold flex items-center justify-center shrink-0 transition-colors">
+                                    ${initials}
+                                </div>
+                            `}
+                            <div class="min-w-0 flex-1">
+                                <div class="${zoomCfg.nameText} font-bold text-slate-900 group-hover:text-indigo-700 truncate transition-colors">${emp.name}</div>
+                                ${!isFocusMode && week.hasDepartments ? `<div class="text-[11px] font-normal text-slate-400 truncate">${emp.department}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-0.5 shrink-0">
+                            ${isFocusMode ? '' : `
+                                <span class="text-xs font-bold px-2 py-1 rounded-lg bg-slate-100 text-slate-700" title="Zile lucrate">
+                                    ${workedDaysCount}z
+                                </span>
+                            `}
+                            <button type="button" onclick="openDeleteEmployeeModal('${emp.id}', '${safeName}')"
+                                title="Șterge ${emp.name}"
+                                class="${isFocusMode ? 'p-0.5' : 'p-1.5'} rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer">
+                                <i data-lucide="trash-2" class="${isFocusMode ? 'w-3 h-3' : 'w-4 h-4'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            `;
+
+            if (week.hasGroupColumn) {
+                const groupBadge = emp.group
+                    ? `<span class="inline-flex items-center justify-center ${isFocusMode ? 'w-5 h-5 text-[10px] rounded-md' : 'w-8 h-8 text-sm rounded-xl'} font-extrabold border ${getGroupBadgeColor(emp.group)}">${emp.group}</span>`
+                    : `<span class="text-slate-300 text-xs">-</span>`;
+                row += `<td class="${isFocusMode ? 'py-1 px-0.5' : 'py-3 px-2'} text-center border-r border-slate-200">${groupBadge}</td>`;
+            }
+
+            emp.shifts.forEach((shift, dayIdx) => {
+                const style = getShiftBadgeStyle(shift);
+                const isHighlightedDay = dayFilter === String(dayIdx);
+
+                let extraBadgeHtml = "";
+                if (style.sublabel && style.sublabel !== "Liber" && style.sublabel !== "Concediu") {
+                    extraBadgeHtml = `
+                        <span class="mt-0.5 inline-block px-1 py-0.2 rounded text-[8px] sm:text-[10px] font-extrabold uppercase tracking-tight bg-amber-500 text-slate-950 leading-tight truncate max-w-full">
+                            ${style.sublabel}
+                        </span>
+                    `;
+                } else if (!isFocusMode && (style.sublabel === "Liber" || style.sublabel === "Concediu")) {
+                    extraBadgeHtml = `<span class="block ${zoomCfg.subText} opacity-80 font-medium mt-0.5">${style.sublabel}</span>`;
+                }
+
+                const displayLabel = isFocusMode && style.label === "Vakantie" ? "Vac." : style.label;
+
+                row += `
+                    <td onclick="openEditModal('${emp.id}', ${dayIdx})"
+                        class="${zoomCfg.cellPad} text-center border-r border-slate-200/80 cursor-pointer transition ${isHighlightedDay ? 'bg-indigo-50/50' : ''}">
+                        <div class="w-full ${zoomCfg.badgeMinH} rounded-lg sm:rounded-xl border ${isFocusMode ? '' : 'border-2'} ${style.bg} ${style.border} ${style.text} flex flex-col items-center justify-center transition overflow-hidden">
+                            <span class="${zoomCfg.shiftText} leading-tight tracking-tight truncate max-w-full">${displayLabel}</span>
+                            ${extraBadgeHtml}
+                        </div>
+                    </td>
+                `;
+            });
+
+            row += `</tr>`;
+            return row;
+        }
+
+        function renderCardsView() {
+            const week = scheduleData[activeWeekId];
+            if (!week) return;
+
+            const filteredEmployees = getFilteredEmployees();
+            const pillsContainer = document.getElementById("cards-day-pills");
+            pillsContainer.innerHTML = week.days.map((day, idx) => {
+                const count = filteredEmployees.filter(e => isWorkingShift(e.shifts[idx])).length;
+                const isSelected = idx === selectedCardDayIdx;
+                const groupTag = week.activeGroups && week.activeGroups[idx] ? ` • Grupe ${week.activeGroups[idx]}` : "";
+
+                return `
+                    <button type="button" onclick="selectCardDay(${idx})"
+                        class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition whitespace-nowrap cursor-pointer ${
+                            isSelected ? "bg-slate-900 text-white border-slate-900 shadow-sm" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                        }">
+                        <span>${day.ro} (${day.shortDate})${groupTag}</span>
+                        <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                            isSelected ? "bg-indigo-500 text-white" : "bg-slate-100 text-slate-600"
+                        }">${count}</span>
+                    </button>
+                `;
+            }).join("");
+
+            const dayObj = week.days[selectedCardDayIdx];
+            const buckets = {
+                "06:00 - Intrare Matinală": [],
+                "07:00 - 07:15 - Tura 1": [],
+                "08:00 - 09:00 - Tura 2": [],
+                "10:00+ - Tura de Zi / După-amiază": [],
+                "Vrij (Liber) & Vakantie (Concediu)": [],
+                "Neprogramat (-)": []
+            };
+
+            filteredEmployees.forEach(emp => {
+                const shift = emp.shifts[selectedCardDayIdx];
+                const begin = (shift && shift.begin ? shift.begin : "").trim();
+                const lower = begin.toLowerCase();
+
+                if (!begin || begin === "-") buckets["Neprogramat (-)"].push({ emp, shift });
+                else if (lower === "vrij" || lower === "vakantie") buckets["Vrij (Liber) & Vakantie (Concediu)"].push({ emp, shift });
+                else if (begin.startsWith("06:")) buckets["06:00 - Intrare Matinală"].push({ emp, shift });
+                else if (begin.startsWith("07:")) buckets["07:00 - 07:15 - Tura 1"].push({ emp, shift });
+                else if (begin.startsWith("08:") || begin.startsWith("09:")) buckets["08:00 - 09:00 - Tura 2"].push({ emp, shift });
+                else buckets["10:00+ - Tura de Zi / După-amiază"].push({ emp, shift });
+            });
+
+            const cardsGrid = document.getElementById("cards-grid");
+            const bucketColors = {
+                "06:00 - Intrare Matinală": "border-t-4 border-t-cyan-500",
+                "07:00 - 07:15 - Tura 1": "border-t-4 border-t-emerald-500",
+                "08:00 - 09:00 - Tura 2": "border-t-4 border-t-indigo-500",
+                "10:00+ - Tura de Zi / După-amiază": "border-t-4 border-t-amber-500",
+                "Vrij (Liber) & Vakantie (Concediu)": "border-t-4 border-t-slate-400",
+                "Neprogramat (-)": "border-t-4 border-t-slate-200"
+            };
+
+            cardsGrid.innerHTML = Object.entries(buckets).map(([title, items]) => {
+                return `
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 flex flex-col justify-between ${bucketColors[title]}">
+                        <div>
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <h3 class="text-sm font-bold text-slate-900">${title}</h3>
+                                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">${items.length}</span>
+                            </div>
+                            <div class="mt-3 space-y-2 max-h-72 overflow-y-auto pr-1">
+                                ${items.length === 0
+                                    ? `<p class="text-xs text-slate-400 italic py-4 text-center">Nicio persoană în acest interval pentru ${dayObj.ro}.</p>`
+                                    : items.map(({ emp, shift }) => {
+                                        const style = getShiftBadgeStyle(shift);
+                                        const safeName = emp.name.replace(/'/g, "\\'");
+                                        return `
+                                            <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-slate-50 transition">
+                                                <div onclick="openEditModal('${emp.id}', ${selectedCardDayIdx})" class="cursor-pointer flex-1">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="text-sm font-semibold text-slate-900">${emp.name}</span>
+                                                        ${emp.group ? `<span class="text-[10px] font-bold px-1.5 py-0.2 rounded border ${getGroupBadgeColor(emp.group)}">${emp.group}</span>` : ''}
+                                                    </div>
+                                                    <div class="text-[11px] text-slate-500">${emp.department}</div>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <div onclick="openEditModal('${emp.id}', ${selectedCardDayIdx})" class="text-right cursor-pointer">
+                                                        <span class="inline-block px-2.5 py-1 rounded-lg text-xs border ${style.bg} ${style.border} ${style.text}">${style.label}</span>
+                                                        ${shift.end ? `<div class="text-[10px] font-bold text-purple-700 mt-0.5">${shift.end}</div>` : ''}
+                                                    </div>
+                                                    <button type="button" onclick="openDeleteEmployeeModal('${emp.id}', '${safeName}')" title="Șterge ${emp.name}"
+                                                        class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 cursor-pointer">
+                                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join("")
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function renderAll() {
+            renderWeekTabs();
+            renderStatsAndChart();
+            if (viewMode === "table" || isFocusMode) {
+                document.getElementById("table-view-container").classList.remove("hidden");
+                document.getElementById("cards-view-container").classList.add("hidden");
+                renderTable();
+            } else {
+                document.getElementById("table-view-container").classList.add("hidden");
+                document.getElementById("cards-view-container").classList.remove("hidden");
+                renderCardsView();
+            }
+            safeRefreshIcons();
+        }
+
+        function applyRotationClass() {
+            const shell = document.getElementById("fullscreen-overlay-shell");
+            shell.classList.remove("rotated-cw", "rotated-ccw");
+            if (isFocusMode) {
+                shell.classList.add(rotationMode === "cw" ? "rotated-cw" : "rotated-ccw");
+            }
+        }
+
+        function cycleRotationDirection() {
+            rotationMode = rotationMode === "ccw" ? "cw" : "ccw";
+            applyRotationClass();
+            showToast(rotationMode === "ccw" ? "Rotit invers (-90°)." : "Rotit în sens orar (+90°).", "info");
+        }
+
+        function enterFullscreenSchedule() {
+            if (isFocusMode) return;
+            isFocusMode = true;
+            if (viewMode !== "table") viewMode = "table";
+
+            try {
+                if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                }
+            } catch (e) {}
+
+            const shell = document.getElementById("fullscreen-overlay-shell");
+            const fsTopBar = document.getElementById("fullscreen-top-bar");
+            const tableContainer = document.getElementById("table-view-container");
+            const scrollWrapper = document.getElementById("table-scroll-wrapper");
+
+            document.body.classList.add("fullscreen-schedule-active");
+            shell.classList.add("active");
+            applyRotationClass();
+            fsTopBar.classList.remove("hidden");
+
+            tableContainer.classList.remove("rounded-2xl", "border");
+            tableContainer.classList.add("rounded-none", "border-0");
+
+            scrollWrapper.classList.remove("max-h-[78vh]");
+            scrollWrapper.style.height = "100%";
+            scrollWrapper.style.maxHeight = "none";
+
+            const fsSearch = document.getElementById("fs-filter-search");
+            if (fsSearch) fsSearch.value = document.getElementById("filter-search").value;
+
+            renderAll();
+            if (window.innerWidth >= 768) {
+                showToast("Ecran complet: toate zilele încap fără scroll lateral.", "info");
+            }
+        }
+
+        function exitFullscreenSchedule() {
+            if (!isFocusMode) return;
+            isFocusMode = false;
+
+            try {
+                if (document.fullscreenElement && document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            } catch (e) {}
+
+            const shell = document.getElementById("fullscreen-overlay-shell");
+            const fsTopBar = document.getElementById("fullscreen-top-bar");
+            const tableContainer = document.getElementById("table-view-container");
+            const scrollWrapper = document.getElementById("table-scroll-wrapper");
+
+            document.body.classList.remove("fullscreen-schedule-active");
+            shell.classList.remove("active", "rotated-cw", "rotated-ccw");
+            fsTopBar.classList.add("hidden");
+
+            tableContainer.classList.add("rounded-2xl", "border");
+            tableContainer.classList.remove("rounded-none", "border-0");
+
+            scrollWrapper.style.height = "";
+            scrollWrapper.style.maxHeight = "";
+            scrollWrapper.classList.add("max-h-[78vh]");
+
+            renderAll();
+        }
+
+        function syncFullscreenSearch(val) {
+            document.getElementById("filter-search").value = val;
+            applyFilters();
+        }
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                const modals = ["edit-cell-modal", "employee-detail-modal", "add-employee-modal", "delete-employee-modal", "reset-modal"];
+                for (const id of modals) {
+                    const el = document.getElementById(id);
+                    if (el && !el.classList.contains("hidden")) {
+                        el.classList.add("hidden");
+                        el.classList.remove("flex");
+                        return;
+                    }
+                }
+                if (isFocusMode) exitFullscreenSchedule();
+            }
+        });
+
+        function setTableZoom(zoomLevel) {
+            tableZoom = zoomLevel;
+            ["normal", "large", "xlarge"].forEach(lvl => {
+                const btn = document.getElementById(`btn-zoom-${lvl}`);
+                if (btn) {
+                    btn.className = lvl === zoomLevel
+                        ? "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm"
+                        : "px-2.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
+                }
+            });
+            if (viewMode === "table" || isFocusMode) {
+                renderTable();
+                safeRefreshIcons();
+            }
+        }
+
+        function openEmployeeDetailModal(personName) {
+            const modal = document.getElementById("employee-detail-modal");
+            const body = document.getElementById("emp-modal-body");
+            document.getElementById("emp-modal-name").textContent = personName;
+            document.getElementById("emp-modal-avatar").textContent = personName.slice(0, 2).toUpperCase();
+
+            let foundMeta = [];
+            let weeksHtml = "";
+            const activeYear = scheduleData[activeWeekId]?.year || 2026;
+            const relevantWeeks = Object.values(scheduleData).filter(w =>
+                w.year === activeYear && w.employees.some(e => e.name.toLowerCase() === personName.toLowerCase())
+            ).slice(0, 12);
+
+            relevantWeeks.forEach(week => {
+                const emp = week.employees.find(e => e.name.toLowerCase() === personName.toLowerCase());
+                if (!emp) return;
+
+                if (emp.department && emp.department !== "General" && !foundMeta.includes(emp.department)) foundMeta.push(emp.department);
+                if (emp.group && !foundMeta.includes(`Grupa ${emp.group}`)) foundMeta.push(`Grupa ${emp.group}`);
+
+                const workedCount = emp.shifts.filter(isWorkingShift).length;
+
+                weeksHtml += `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs">
+                        <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100">
+                            <div>
+                                <span class="text-base font-extrabold text-slate-900">${week.title}</span>
+                                <span class="text-xs text-slate-500 ml-2">${week.subtitle}</span>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                ${workedCount} zile lucrate
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-7 gap-2">
+                            ${week.days.map((day, dIdx) => {
+                                const shift = emp.shifts[dIdx];
+                                const style = getShiftBadgeStyle(shift);
+                                return `
+                                    <div onclick="closeEmployeeDetailModal(); switchWeek('${week.id}'); openEditModal('${emp.id}', ${dIdx});"
+                                        class="p-2.5 rounded-xl border ${style.bg} ${style.border} text-center cursor-pointer hover:ring-2 hover:ring-indigo-400 transition">
+                                        <div class="text-[11px] font-bold text-slate-700">${day.ro}</div>
+                                        <div class="text-[10px] text-slate-500 mb-1">${day.shortDate}</div>
+                                        <div class="text-sm font-extrabold ${style.text}">${style.label}</div>
+                                        ${shift.end ? `<div class="text-[10px] font-bold text-purple-700 mt-0.5">${shift.end}</div>` : ''}
+                                    </div>
+                                `;
+                            }).join("")}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById("emp-modal-meta").textContent = foundMeta.length > 0 ? foundMeta.join(" • ") : `Program ${activeYear}`;
+            body.innerHTML = weeksHtml || `<p class="text-sm text-slate-500">Nu s-au găsit date pentru această persoană.</p>`;
+
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            safeRefreshIcons();
+        }
+
+        function closeEmployeeDetailModal() {
+            const modal = document.getElementById("employee-detail-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function switchWeek(weekId) {
+            if (!scheduleData[weekId]) return;
+            activeWeekId = weekId;
+            selectedCardDayIdx = 0;
+            populateFilterOptions();
+            renderAll();
+        }
+
+        function setViewMode(mode) {
+            viewMode = mode;
+            const btnTable = document.getElementById("btn-view-table");
+            const btnCards = document.getElementById("btn-view-cards");
+
+            if (mode === "table") {
+                btnTable.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm";
+                btnCards.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
+            } else {
+                btnCards.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer bg-white text-indigo-700 shadow-sm";
+                btnTable.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer text-slate-600 hover:text-slate-900";
+            }
+            renderAll();
+        }
+
+        function selectCardDay(dayIdx) {
+            selectedCardDayIdx = dayIdx;
+            renderCardsView();
+            safeRefreshIcons();
+        }
+
+        function applyFilters() {
+            const searchVal = document.getElementById("filter-search").value;
+            const clearBtn = document.getElementById("clear-search-btn");
+            if (searchVal.length > 0) clearBtn.classList.remove("hidden");
+            else clearBtn.classList.add("hidden");
+
+            const dayFilter = document.getElementById("filter-day").value;
+            if (dayFilter !== "ALL") selectedCardDayIdx = parseInt(dayFilter, 10);
+
+            renderAll();
+        }
+
+        function clearSearch() {
+            document.getElementById("filter-search").value = "";
+            applyFilters();
+        }
+
+        function resetAllFilters() {
+            document.getElementById("filter-search").value = "";
+            document.getElementById("filter-dept").value = "ALL";
+            document.getElementById("filter-day").value = "ALL";
+            document.getElementById("filter-status").value = "ALL";
+            applyFilters();
+        }
+
+        function toggleDayFilterFromChart(dayIdx) {
+            const daySelect = document.getElementById("filter-day");
+            if (daySelect.value === String(dayIdx)) daySelect.value = "ALL";
+            else {
+                daySelect.value = String(dayIdx);
+                selectedCardDayIdx = dayIdx;
+            }
+            applyFilters();
+        }
+
+        function openEditModal(empId, dayIdx) {
+            const week = scheduleData[activeWeekId];
+            const emp = week.employees.find(e => e.id === empId);
+            if (!emp) return;
+
+            currentlyEditing = { empId, dayIdx };
+            const shift = emp.shifts[dayIdx];
+            const day = week.days[dayIdx];
+
+            document.getElementById("modal-edit-title").textContent = `Editare Program: ${emp.name}`;
+            document.getElementById("modal-edit-subtitle").textContent = `${day.ro} (${day.nl}) • ${day.date} • ${week.title} ${week.year}`;
+            document.getElementById("edit-begin").value = shift.begin || "";
+            document.getElementById("edit-end").value = shift.end || "";
+
+            const modal = document.getElementById("edit-cell-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            document.getElementById("edit-begin").focus();
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById("edit-cell-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            currentlyEditing = null;
+        }
+
+        function applyQuickPreset(beginVal, endVal) {
+            document.getElementById("edit-begin").value = beginVal;
+            if (endVal !== undefined) document.getElementById("edit-end").value = endVal;
+        }
+
+        function saveShiftEdit(event) {
+            event.preventDefault();
+            if (!currentlyEditing) return;
+
+            const { empId, dayIdx } = currentlyEditing;
+            const week = scheduleData[activeWeekId];
+            const emp = week.employees.find(e => e.id === empId);
+            if (emp) {
+                emp.shifts[dayIdx] = {
+                    begin: document.getElementById("edit-begin").value.trim(),
+                    end: document.getElementById("edit-end").value.trim()
+                };
+                saveData();
+                renderAll();
+                showToast(`Program actualizat pentru ${emp.name} (${week.days[dayIdx].ro})`, "success");
+            }
+            closeEditModal();
+        }
+
+        function openAddEmployeeModal() {
+            const week = scheduleData[activeWeekId];
+            document.getElementById("modal-add-week-label").textContent = `${week.title} (${week.subtitle})`;
+
+            const groupField = document.getElementById("new-emp-group-field");
+            const deptField = document.getElementById("new-emp-dept-field");
+            const deptSelect = document.getElementById("new-emp-dept");
+
+            if (week.hasGroupColumn) {
+                groupField.classList.remove("hidden");
+                deptField.classList.add("hidden");
+            } else {
+                groupField.classList.add("hidden");
+                deptField.classList.remove("hidden");
+                deptSelect.innerHTML = (week.departments || ["General / Fără categorie"]).map(d => `<option value="${d}">${d}</option>`).join("");
+            }
+
+            document.getElementById("new-emp-name").value = "";
+            const modal = document.getElementById("add-employee-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            document.getElementById("new-emp-name").focus();
+        }
+
+        function closeAddEmployeeModal() {
+            const modal = document.getElementById("add-employee-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function createShiftsFromDefault(defaultShift) {
+            return Array.from({ length: 7 }, (_, idx) => {
+                if (defaultShift === "07:00" || defaultShift === "08:00") {
+                    return idx < 5 ? { begin: defaultShift, end: "" } : { begin: "Vrij", end: "" };
+                }
+                return { begin: defaultShift, end: "" };
+            });
+        }
+
+        function handleAddEmployee(event) {
+            event.preventDefault();
+            const week = scheduleData[activeWeekId];
+            const name = document.getElementById("new-emp-name").value.trim();
+            if (!name) return;
+
+            const group = week.hasGroupColumn ? document.getElementById("new-emp-group").value : "";
+            const department = week.hasDepartments ? document.getElementById("new-emp-dept").value : "General";
+            const defaultShift = document.getElementById("new-emp-default-shift").value;
+            const scope = document.getElementById("new-emp-scope").value;
+
+            if (scope === "all") {
+                Object.values(scheduleData).forEach(w => {
+                    const targetDept = w.hasDepartments
+                        ? (w.departments && w.departments.includes(department) ? department : (w.departments?.[0] || "General / Fără categorie"))
+                        : "General";
+                    w.employees.push({
+                        id: `${w.id}-${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+                        name,
+                        group: w.hasGroupColumn ? group : "",
+                        department: targetDept,
+                        shifts: createShiftsFromDefault(defaultShift)
+                    });
+                });
+                showToast(`${name} a fost adăugat în toate săptămânile (2026 & 2027).`, "success");
+            } else {
+                week.employees.push({
+                    id: `${activeWeekId}-${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`,
+                    name,
+                    group,
+                    department,
+                    shifts: createShiftsFromDefault(defaultShift)
+                });
+                showToast(`${name} a fost adăugat în ${week.title}.`, "success");
+            }
+
+            saveData();
+            closeAddEmployeeModal();
+            renderAll();
+        }
+
+        function openDeleteEmployeeModal(empId, empName) {
+            pendingDeleteEmployee = { empId, empName };
+            document.getElementById("delete-emp-name").textContent = empName;
+            document.getElementById("delete-emp-subtitle").textContent = scheduleData[activeWeekId]?.title || "";
+            const modal = document.getElementById("delete-employee-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            safeRefreshIcons();
+        }
+
+        function closeDeleteEmployeeModal() {
+            const modal = document.getElementById("delete-employee-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+            pendingDeleteEmployee = null;
+        }
+
+        function confirmDeleteEmployee(scope) {
+            if (!pendingDeleteEmployee) return;
+            const { empId, empName } = pendingDeleteEmployee;
+
+            if (scope === "all") {
+                Object.values(scheduleData).forEach(w => {
+                    w.employees = w.employees.filter(e => e.name.toLowerCase() !== empName.toLowerCase());
+                });
+                showToast(`${empName} a fost șters din toate săptămânile.`, "success");
+            } else {
+                const week = scheduleData[activeWeekId];
+                week.employees = week.employees.filter(e => e.id !== empId);
+                showToast(`${empName} a fost șters din ${week.title}.`, "success");
+            }
+
+            saveData();
+            closeDeleteEmployeeModal();
+            renderAll();
+        }
+
+        function openResetModal() {
+            const modal = document.getElementById("reset-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeResetModal() {
+            const modal = document.getElementById("reset-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function confirmResetData() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {}
+            scheduleData = buildInitialScheduleData();
+            activeWeekId = "y2026-w47";
+            populateFilterOptions();
+            renderAll();
+            closeResetModal();
+            showToast("Datele au fost resetate la versiunea inițială (2026 & 2027).", "info");
+        }
+
+        function exportToCSV() {
+            const week = scheduleData[activeWeekId];
+            if (!week) return;
+
+            const headers = ["An", "Săptămână", "Departament", "Group", "Persoană", ...week.days.map(d => `${d.ro} (${d.date})`)];
+            const rows = [headers.join(",")];
+
+            week.employees.forEach(emp => {
+                const shiftCells = emp.shifts.map(s => {
+                    const b = s.begin || "-";
+                    const e = s.end ? ` [${s.end}]` : "";
+                    return `"${b}${e}"`;
+                });
+                rows.push([
+                    `"${week.year}"`,
+                    `"${week.title}"`,
+                    `"${emp.department || ""}"`,
+                    `"${emp.group || ""}"`,
+                    `"${emp.name}"`,
+                    ...shiftCells
+                ].join(","));
+            });
+
+            const csvContent = "\uFEFF" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Program_${week.year}_${week.title.replace(/\s+/g, "_")}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast(`CSV exportat pentru ${week.title} (${week.year}).`, "success");
+        }
+
+        function showToast(message, type = "info") {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+
+            const colors = {
+                success: "bg-slate-900 text-white border-emerald-500",
+                info: "bg-slate-900 text-white border-indigo-500"
+            };
+
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border-l-4 text-xs sm:text-sm font-medium transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check-circle-2' : 'info'}" class="w-4 h-4 ${type === 'success' ? 'text-emerald-400' : 'text-indigo-400'} shrink-0"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+            safeRefreshIcons();
+
+            setTimeout(() => {
+                toast.classList.add("opacity-0", "translate-y-2");
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadData();
+            populateFilterOptions();
+            renderAll();
+        });
+    </script>
+</body>
+</html>

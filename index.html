@@ -742,6 +742,10 @@
         #fullscreen-overlay-shell.active #fullscreen-rotated-stage {
             border-radius: 0;
             border: none;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
             transition: transform 0.25s ease;
         }
 
@@ -750,8 +754,6 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 100vh;
-            height: 100vw;
             width: 100dvh;
             height: 100vw;
             max-width: none;
@@ -771,12 +773,15 @@
             overflow-y: auto !important;
             -webkit-overflow-scrolling: touch;
             flex: 1 1 auto;
+            width: 100%;
+            height: 100%;
             min-height: 0;
         }
 
         #fullscreen-overlay-shell.active table.schedule-table {
             min-width: 0 !important;
             width: 100% !important;
+            height: auto;
             table-layout: fixed !important;
             direction: ltr !important;
             border-collapse: collapse !important;
@@ -1473,6 +1478,7 @@
             schedules: {},
             editingCell: null,
             isFullscreen: false,
+            pushedFullscreenState: false,
             rotationClass: 'rotated-ccw'
         };
 
@@ -2186,20 +2192,54 @@
         }
 
         function enterFullscreenSchedule() {
+            if (state.isFullscreen) return;
             state.isFullscreen = true;
+            state.pushedFullscreenState = false;
+
+            try {
+                window.history.pushState(
+                    { scheduleFullscreen90: true, year: state.year, week: state.week },
+                    '',
+                    window.location.href
+                );
+                state.pushedFullscreenState = true;
+            } catch (err) {
+                state.pushedFullscreenState = false;
+            }
+
             document.body.classList.add('fullscreen-schedule-active');
             const shell = document.getElementById('fullscreen-overlay-shell');
             shell.classList.add('active', state.rotationClass);
             syncPortalsToFullscreenStage(true);
-            showToast('Ecran complet 90° activat • Numele angajaților sunt evidențiate.');
+            showToast('Ecran complet 90° activat • Apasă Înapoi pentru pagina principală.');
         }
 
-        function exitFullscreenSchedule() {
+        function exitFullscreenSchedule(fromPopState = false) {
+            if (!state.isFullscreen) return;
+
+            if (document.getElementById('shift-modal').classList.contains('open')) {
+                closeShiftModal();
+            }
+            if (document.getElementById('emp-modal').classList.contains('open')) {
+                closeAddEmployeeModal();
+            }
+
+            const hadPushedState = state.pushedFullscreenState;
             state.isFullscreen = false;
+            state.pushedFullscreenState = false;
+
             syncPortalsToFullscreenStage(false);
             document.body.classList.remove('fullscreen-schedule-active');
             const shell = document.getElementById('fullscreen-overlay-shell');
             shell.classList.remove('active', 'rotated-ccw', 'rotated-cw');
+
+            if (!fromPopState && hadPushedState) {
+                try {
+                    window.history.back();
+                } catch (err) {
+                    // Ignorăm dacă istoricul nu permite back
+                }
+            }
         }
 
         function toggleRotationDirection() {
@@ -2211,12 +2251,12 @@
 
         function handleStageDoubleClick() {
             if (state.isFullscreen && window.innerWidth < 768) {
-                exitFullscreenSchedule();
+                exitFullscreenSchedule(false);
             }
         }
 
         /* =====================================================================
-           9. NOTIFICĂRI TOAST & PORNIRE APLICAȚIE
+           9. NOTIFICĂRI TOAST, BUTON ÎNAPOI & PORNIRE APLICAȚIE
            ===================================================================== */
         function showToast(message) {
             const container = document.getElementById('toast-container');
@@ -2231,6 +2271,42 @@
             }, 2600);
         }
 
+        window.addEventListener('popstate', () => {
+            if (document.getElementById('shift-modal').classList.contains('open')) {
+                closeShiftModal();
+                if (state.isFullscreen) {
+                    try {
+                        window.history.pushState(
+                            { scheduleFullscreen90: true, year: state.year, week: state.week },
+                            '',
+                            window.location.href
+                        );
+                        state.pushedFullscreenState = true;
+                    } catch (err) {}
+                }
+                return;
+            }
+
+            if (document.getElementById('emp-modal').classList.contains('open')) {
+                closeAddEmployeeModal();
+                if (state.isFullscreen) {
+                    try {
+                        window.history.pushState(
+                            { scheduleFullscreen90: true, year: state.year, week: state.week },
+                            '',
+                            window.location.href
+                        );
+                        state.pushedFullscreenState = true;
+                    } catch (err) {}
+                }
+                return;
+            }
+
+            if (state.isFullscreen) {
+                exitFullscreenSchedule(true);
+            }
+        });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 if (document.getElementById('shift-modal').classList.contains('open')) {
@@ -2238,7 +2314,7 @@
                 } else if (document.getElementById('emp-modal').classList.contains('open')) {
                     closeAddEmployeeModal();
                 } else if (state.isFullscreen) {
-                    exitFullscreenSchedule();
+                    exitFullscreenSchedule(false);
                 }
             }
         });

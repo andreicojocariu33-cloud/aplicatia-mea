@@ -43,16 +43,6 @@
             --rose-600: #e11d48;
             --rose-700: #be123c;
 
-            --sky-50: #f0f9ff;
-            --sky-100: #e0f2fe;
-            --sky-200: #bae6fd;
-            --sky-800: #075985;
-
-            --purple-50: #faf5ff;
-            --purple-100: #f3e8ff;
-            --purple-200: #e9d5ff;
-            --purple-800: #6b21a8;
-
             --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
             --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
             --shadow-xl: 0 20px 35px -10px rgba(15, 23, 42, 0.25);
@@ -452,10 +442,10 @@
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            min-width: 760px; /* Pe ecrane foarte înguste permite scroll orizontal lin fără a strivi textul */
+            min-width: 760px;
         }
 
-        /* Lățimi procentuale exacte: 17% Angajat + 7 * 10.6% Zile + 8.8% Zile Lucrate = 100% */
+        /* Lățimi procentuale în modul normal: 17% Angajat + 7 * 10.6% Zile + 8.8% Zile = 100% */
         col.col-employee { width: 17%; }
         col.col-day      { width: 10.6%; }
         col.col-days-cnt { width: 8.8%; }
@@ -523,7 +513,7 @@
             background-color: #f8fafc;
         }
 
-        /* Coloana Angajat (Fixă la stânga) */
+        /* Coloana Angajat (Fixă la stânga în modul normal) */
         .schedule-table tbody td.sticky-col {
             position: sticky;
             left: 0;
@@ -592,7 +582,7 @@
             background-color: rgba(254, 243, 199, 0.28);
         }
 
-        /* Celula de program zilnic (o singură tură -> afișează ora de început sau statusul) */
+        /* Celula de program zilnic */
         .shift-slot {
             width: 100%;
             height: 100%;
@@ -670,7 +660,7 @@
             white-space: nowrap;
         }
 
-        /* Coloana Zile Lucrate (fără ore) */
+        /* Coloana Zile Lucrate */
         .days-count-badge {
             display: inline-flex;
             align-items: center;
@@ -708,7 +698,7 @@
         }
 
         /* =====================================================================
-           5. MOD ECRAN COMPLET ROTIT LA 90° (FIT-TO-SCREEN TOATE CELE 7 ZILE)
+           5. MOD ECRAN COMPLET ROTIT LA 90° (NUMELE ANGAJATULUI VIZIBIL CLAR)
            ===================================================================== */
         #fullscreen-overlay-shell.active {
             position: fixed;
@@ -743,7 +733,6 @@
             transform: translate(-50%, -50%) rotate(90deg);
         }
 
-        /* Încadrează toate cele 7 zile fără scroll orizontal în modul 90° */
         #fullscreen-overlay-shell.active #table-scroll-wrapper {
             overflow-x: hidden !important;
             overflow-y: auto !important;
@@ -755,14 +744,76 @@
             table-layout: fixed !important;
         }
 
+        /* Alocăm 22% pentru coloana Angajat astfel încât numele și funcția să fie mereu vizibile */
+        #fullscreen-overlay-shell.active col.col-employee { width: 22%; }
+        #fullscreen-overlay-shell.active col.col-day      { width: 9.8%; }
+        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.4%; }
+
+        /* Dezactivăm position: sticky în scena rotită pentru a evita ascunderea/decuparea numelui */
+        #fullscreen-overlay-shell.active .schedule-table thead th,
+        #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col,
+        #fullscreen-overlay-shell.active .schedule-table tbody td.sticky-col,
+        #fullscreen-overlay-shell.active .schedule-table tfoot td.sticky-col {
+            position: static !important;
+            left: auto !important;
+        }
+
         #fullscreen-overlay-shell.active .schedule-table thead th {
             padding: 6px 2px;
             font-size: 0.7rem;
         }
 
+        #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col {
+            text-align: left;
+            padding-left: 8px;
+            background: #e0e7ff;
+            color: #1e1b4b;
+        }
+
         #fullscreen-overlay-shell.active .schedule-table tbody td {
-            padding: 3px 2px;
-            height: 46px;
+            padding: 4px 2px;
+            height: auto;
+            min-height: 46px;
+        }
+
+        #fullscreen-overlay-shell.active td.sticky-col {
+            background: #f8fafc !important;
+            border-right: 2px solid #6366f1 !important;
+            padding: 5px 6px 5px 8px !important;
+        }
+
+        #fullscreen-overlay-shell.active .emp-info,
+        #fullscreen-overlay-shell.active .emp-name,
+        #fullscreen-overlay-shell.active .emp-role {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            word-break: break-word;
+        }
+
+        #fullscreen-overlay-shell.active .emp-name {
+            font-size: 0.78rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #0f172a !important;
+        }
+
+        #fullscreen-overlay-shell.active .emp-role {
+            font-size: 0.65rem;
+            font-weight: 600;
+            line-height: 1.15;
+            color: #475569 !important;
+            margin-top: 2px;
+        }
+
+        #fullscreen-overlay-shell.active .emp-del-btn {
+            opacity: 0.75;
+            width: 18px;
+            height: 18px;
+            font-size: 0.65rem;
         }
 
         #fullscreen-overlay-shell.active .shift-slot {
@@ -775,17 +826,11 @@
             font-size: 0.68rem;
         }
 
-        #fullscreen-overlay-shell.active .shift-time {
+        #fullscreen-overlay-shell.active .shift-sub {
             font-size: 0.58rem;
         }
 
-        #fullscreen-overlay-shell.active td.sticky-col {
-            background: linear-gradient(90deg, #eef2ff 0%, #ffffff 100%) !important;
-            border-right: 2px solid #6366f1 !important;
-            box-shadow: 2px 0 8px rgba(79, 70, 229, 0.14);
-        }
-
-        /* Pe telefon (<768px) ascunde bara de sus în modul tot ecranul (ieșire prin dublu-tap) */
+        /* Pe telefon (<768px) ascunde bara de sus în modul tot ecranul (ieșire prin dublu-tap sau ESC) */
         @media (max-width: 767px) {
             #fullscreen-overlay-shell.active #fullscreen-top-bar {
                 display: none !important;
@@ -811,7 +856,7 @@
             display: flex;
         }
 
-        /* Când suntem în modul 90° pe tot ecranul, modalele sunt mutate și rotite în #fullscreen-rotated-stage */
+        /* Când suntem în modul 90° pe tot ecranul, modalele sunt mutate în scena rotită */
         #fullscreen-rotated-stage .modal-backdrop {
             position: absolute;
             inset: 0;
@@ -994,7 +1039,7 @@
             pointer-events: none;
         }
 
-        /* Când este activ modul 90°, notificările apar tot în interiorul scenei rotite la 90° */
+        /* Când este activ modul 90°, notificările apar în scena rotită */
         #fullscreen-rotated-stage #toast-container {
             position: absolute;
             bottom: 12px;
@@ -1107,7 +1152,7 @@
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    <span>Angajat</span>
+                    <span>+ Angajat</span>
                 </button>
 
                 <button type="button" class="btn" onclick="copyPreviousWeek()" title="Copiază programul din săptămâna anterioară">
@@ -1140,7 +1185,7 @@
         </div>
     </header>
 
-    <!-- BARA DE LEGENDĂ (FĂRĂ TURE ȘI FĂRĂ ORE) ȘI SUMAR PREZENȚE -->
+    <!-- BARA DE LEGENDĂ & SUMAR PREZENȚE -->
     <section class="sub-toolbar">
         <div class="legend-list">
             <span class="legend-pill shift-work"><span class="legend-dot" style="background:#059669"></span>Program (ex. 07:00 / 08:00 / 10:00)</span>
@@ -1174,7 +1219,7 @@
                     </div>
                 </div>
 
-                <!-- Tabelul complet: Angajat + Luni, Marți, Miercuri, Joi, Vineri, Sâmbătă, Duminică + Total -->
+                <!-- Tabelul complet: Angajat + Luni..Duminică + Zile -->
                 <div id="table-scroll-wrapper">
                     <table class="schedule-table">
                         <colgroup>
@@ -1189,17 +1234,11 @@
                             <col class="col-days-cnt">
                         </colgroup>
                         <thead>
-                            <tr id="table-head-row">
-                                <!-- Generat dinamic din JS cu Luni -> Duminică -->
-                            </tr>
+                            <tr id="table-head-row"></tr>
                         </thead>
-                        <tbody id="table-body">
-                            <!-- Generat dinamic din JS -->
-                        </tbody>
+                        <tbody id="table-body"></tbody>
                         <tfoot>
-                            <tr id="table-foot-row">
-                                <!-- Sumar prezență zilnică Luni -> Duminică -->
-                            </tr>
+                            <tr id="table-foot-row"></tr>
                         </tfoot>
                     </table>
                 </div>
@@ -1207,9 +1246,7 @@
         </div>
     </main>
 
-    <!-- =========================================================================
-         MODAL 1: EDITARE PROGRAM ZILNIC (O SINGURĂ TURĂ, FĂRĂ ORE)
-         ========================================================================= -->
+    <!-- MODAL 1: EDITARE PROGRAM ZILNIC -->
     <div id="shift-modal" class="modal-backdrop" onclick="if(event.target===this) closeShiftModal()">
         <div class="modal-card">
             <div class="modal-header">
@@ -1298,9 +1335,7 @@
         </div>
     </div>
 
-    <!-- =========================================================================
-         MODAL 2: ADĂUGARE ANGAJAT
-         ========================================================================= -->
+    <!-- MODAL 2: ADĂUGARE ANGAJAT -->
     <div id="emp-modal" class="modal-backdrop" onclick="if(event.target===this) closeAddEmployeeModal()">
         <div class="modal-card" style="max-width:400px;">
             <div class="modal-header">
@@ -1331,7 +1366,7 @@
 
     <script>
         /* =====================================================================
-           1. STARE GLOBALĂ & PERSISTENȚĂ SIGURĂ (FĂRĂ ERORI ÎN IFRAME SANDBOX)
+           1. STARE GLOBALĂ & PERSISTENȚĂ SIGURĂ (LOCALSTORAGE + FALLBACK MEMORIE)
            ===================================================================== */
         const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v1';
         const DAY_NAMES = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'];
@@ -1359,10 +1394,10 @@
             year: 2026,
             week: 47,
             employees: [],
-            schedules: {}, // { "2026-W47": { "emp_daniel": { "0": { type, label, note }, ... } } }
-            editingCell: null, // { empId, dayIndex }
+            schedules: {},
+            editingCell: null,
             isFullscreen: false,
-            rotationClass: 'rotated-ccw' // 'rotated-ccw' (-90deg) sau 'rotated-cw' (+90deg)
+            rotationClass: 'rotated-ccw'
         };
 
         /* =====================================================================
@@ -1415,14 +1450,13 @@
         }
 
         /* =====================================================================
-           3. INIȚIALIZARE & DATE DIN FIȘIERUL EXCEL (WEEK 47, WEEK 51, WEEK 52)
+           3. DATE IMPLICITE PENTRU SĂPTĂMÂNILE 47, 51 ȘI 52 DIN 2026
            ===================================================================== */
         function createSlot(type, label, note = '') {
             return { type, label, note };
         }
 
         function getDefaultWorkbookSchedules() {
-            // WEEK 47 (16.11.2026 – 22.11.2026) din fișierul încărcat (foaia 1)
             const w47 = {
                 emp_daniel: {
                     0: createSlot('work', '07:00'),
@@ -1489,7 +1523,6 @@
                 }
             };
 
-            // WEEK 51 (14.12.2026 – 20.12.2026) din foaia 2 a registrului
             const w51 = {
                 emp_daniel: {
                     0: createSlot('work', '07:00'),
@@ -1556,7 +1589,6 @@
                 }
             };
 
-            // WEEK 52 (21.12.2026 – 27.12.2026) din foaia 3 a registrului
             const w52 = {
                 emp_daniel: {
                     0: createSlot('work', '07:00'),
@@ -1774,7 +1806,6 @@
                 fsLabel.textContent = `Săpt. ${String(state.week).padStart(2, '0')} • ${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
             }
 
-            // 1. Randare Antet (Angajat + Cele 7 zile Luni-Duminică + Zile)
             const headRow = document.getElementById('table-head-row');
             let headHTML = `<th class="sticky-col">Angajat</th>`;
 
@@ -1796,7 +1827,6 @@
             headHTML += `<th>Zile</th>`;
             headRow.innerHTML = headHTML;
 
-            // 2. Randare Rânduri Angajați
             const tbody = document.getElementById('table-body');
             let bodyHTML = '';
             let grandTotalDays = 0;
@@ -1875,7 +1905,6 @@
 
             tbody.innerHTML = bodyHTML;
 
-            // 3. Randare Sumar Jos (Prezenți pe zi Luni - Duminică)
             const footRow = document.getElementById('table-foot-row');
             let footHTML = `<td class="sticky-col">Prezenți / zi</td>`;
             for (let d = 0; d < 7; d++) {
@@ -1884,7 +1913,6 @@
             footHTML += `<td>${grandTotalDays}</td>`;
             footRow.innerHTML = footHTML;
 
-            // 4. Actualizare statistici de sus
             document.getElementById('stat-emp-count').textContent = String(state.employees.length);
             document.getElementById('stat-total-days').textContent = `${grandTotalDays} zile`;
         }
@@ -2087,7 +2115,7 @@
             const shell = document.getElementById('fullscreen-overlay-shell');
             shell.classList.add('active', state.rotationClass);
             syncPortalsToFullscreenStage(true);
-            showToast('Ecran complet 90° activat (modalele și notificările sunt la 90°).');
+            showToast('Ecran complet 90° activat (numele angajaților sunt vizibile).');
         }
 
         function exitFullscreenSchedule() {

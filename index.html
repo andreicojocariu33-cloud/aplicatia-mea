@@ -70,7 +70,9 @@
             inset: 0;
             z-index: 45;
             width: 100vw;
+            width: 100dvw;
             height: 100vh;
+            height: 100dvh;
             background: #0f172a;
             overflow: hidden;
         }
@@ -85,21 +87,22 @@
             transition: transform 0.25s ease;
         }
 
-        #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vh;
-            height: 100vw;
-            transform: translate(-50%, -50%) rotate(-90deg);
-        }
-
+        #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage,
         #fullscreen-overlay-shell.active.rotated-cw #fullscreen-rotated-stage {
             position: absolute;
             top: 50%;
             left: 50%;
             width: 100vh;
+            width: 100dvh;
             height: 100vw;
+            height: 100dvw;
+        }
+
+        #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage {
+            transform: translate(-50%, -50%) rotate(-90deg);
+        }
+
+        #fullscreen-overlay-shell.active.rotated-cw #fullscreen-rotated-stage {
             transform: translate(-50%, -50%) rotate(90deg);
         }
 
@@ -115,6 +118,14 @@
             width: 100% !important;
             max-width: 100% !important;
             table-layout: fixed !important;
+        }
+
+        /* Ascunde complet bara și butoanele pe telefon în modul tot ecranul */
+        @media (max-width: 767px) {
+            #fullscreen-overlay-shell.active #fullscreen-top-bar,
+            #fullscreen-overlay-shell.active .no-print {
+                display: none !important;
+            }
         }
 
         @media print {
@@ -1571,6 +1582,12 @@
             isFocusMode = true;
             if (viewMode !== "table") viewMode = "table";
 
+            try {
+                if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                }
+            } catch (e) {}
+
             const shell = document.getElementById("fullscreen-overlay-shell");
             const fsTopBar = document.getElementById("fullscreen-top-bar");
             const tableContainer = document.getElementById("table-view-container");
@@ -1592,12 +1609,20 @@
             if (fsSearch) fsSearch.value = document.getElementById("filter-search").value;
 
             renderAll();
-            showToast("Ecran complet: toate zilele încap fără scroll lateral.", "info");
+            if (window.innerWidth >= 768) {
+                showToast("Ecran complet: toate zilele încap fără scroll lateral.", "info");
+            }
         }
 
         function exitFullscreenSchedule() {
             if (!isFocusMode) return;
             isFocusMode = false;
+
+            try {
+                if (document.fullscreenElement && document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                }
+            } catch (e) {}
 
             const shell = document.getElementById("fullscreen-overlay-shell");
             const fsTopBar = document.getElementById("fullscreen-top-bar");

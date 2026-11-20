@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planificator Ture & Program de Lucru (2026 & 2027)</title>
+    <title>Programul de muncă (2026 &amp; 2027)</title>
     <style>
         /* =====================================================================
-           1. RESET & VARIABILE DE DESIGN (100% AUTONOM, FĂRĂ CDN EXTERN)
+           1. VARIABILE DE DESIGN & RESET (100% AUTONOM, FĂRĂ DEPENDENȚE EXTERNE)
            ===================================================================== */
         :root {
             --bg-body: #f8fafc;
@@ -28,13 +28,10 @@
             --amber-50: #fffbeb;
             --amber-100: #fef3c7;
             --amber-200: #fde68a;
-            --amber-700: #b45309;
             --amber-800: #92400e;
 
             --emerald-50: #ecfdf5;
-            --emerald-100: #d1fae5;
             --emerald-200: #a7f3d0;
-            --emerald-700: #047857;
             --emerald-800: #065f46;
 
             --rose-50: #fff1f2;
@@ -78,6 +75,7 @@
             font-family: inherit;
         }
 
+        /* Scrollbar discret */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -252,6 +250,30 @@
             background: var(--indigo-100);
         }
 
+        .btn-whatsapp {
+            background: #16a34a;
+            color: #ffffff;
+            border-color: #15803d;
+            box-shadow: 0 2px 6px rgba(22, 163, 74, 0.22);
+        }
+
+        .btn-whatsapp:hover {
+            background: #15803d;
+            border-color: #166534;
+        }
+
+        .btn-email {
+            background: #0284c7;
+            color: #ffffff;
+            border-color: #0369a1;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.22);
+        }
+
+        .btn-email:hover {
+            background: #0369a1;
+            border-color: #075985;
+        }
+
         .btn-danger-soft {
             background: var(--rose-50);
             color: var(--rose-700);
@@ -287,7 +309,7 @@
         }
 
         /* =====================================================================
-           3. BARA DE LEGENDĂ & STATISTICI RAPIDE
+           3. BARA DE LEGENDĂ, DISTRIBUIRE (WHATSAPP / EMAIL) & STATISTICI
            ===================================================================== */
         .sub-toolbar {
             max-width: 1600px;
@@ -323,6 +345,20 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
+        }
+
+        .right-toolbar-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .share-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .stats-bar {
@@ -401,6 +437,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
         }
 
         .fs-btn {
@@ -419,6 +456,26 @@
 
         .fs-btn:hover {
             background: #334155;
+        }
+
+        .fs-btn-wa {
+            background: #16a34a;
+            border-color: #15803d;
+            color: #ffffff;
+        }
+
+        .fs-btn-wa:hover {
+            background: #15803d;
+        }
+
+        .fs-btn-mail {
+            background: #0284c7;
+            border-color: #0369a1;
+            color: #ffffff;
+        }
+
+        .fs-btn-mail:hover {
+            background: #0369a1;
         }
 
         .fs-btn-exit {
@@ -787,12 +844,11 @@
             border-collapse: collapse !important;
         }
 
-        /* Alocăm 26% lățime pentru coloana Angajat în modul 90° pe mobil astfel încât numele să fie mereu clar vizibil */
         #fullscreen-overlay-shell.active col.col-employee { width: 26%; }
         #fullscreen-overlay-shell.active col.col-day      { width: 9.2%; }
         #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.6%; }
 
-        /* Dezactivăm position: sticky în scena rotită pentru a evita decuparea sau dispariția coloanei de nume */
+        /* Dezactivăm position: sticky în scena rotită pentru a evita decuparea coloanei de nume */
         #fullscreen-overlay-shell.active .schedule-table thead th,
         #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col,
         #fullscreen-overlay-shell.active .schedule-table tbody td,
@@ -911,7 +967,6 @@
             font-size: 0.66rem;
         }
 
-        /* Pe telefon (<768px) ascunde bara de sus în modul tot ecranul (ieșire prin dublu-tap sau ESC) */
         @media (max-width: 767px) {
             #fullscreen-overlay-shell.active #fullscreen-top-bar {
                 display: none !important;
@@ -937,7 +992,6 @@
             display: flex;
         }
 
-        /* Când suntem în modul 90° pe tot ecranul, modalele sunt mutate în scena rotită */
         #fullscreen-rotated-stage .modal-backdrop {
             position: absolute;
             inset: 0;
@@ -1118,9 +1172,9 @@
             flex-direction: column;
             gap: 8px;
             pointer-events: none;
+            max-width: 360px;
         }
 
-        /* Când este activ modul 90°, notificările apar în scena rotită */
         #fullscreen-rotated-stage #toast-container {
             position: absolute;
             bottom: 12px;
@@ -1266,7 +1320,7 @@
         </div>
     </header>
 
-    <!-- BARA DE LEGENDĂ & SUMAR PREZENȚE -->
+    <!-- BARA DE LEGENDĂ, DISTRIBUIRE (WHATSAPP / EMAIL) & STATISTICI -->
     <section class="sub-toolbar">
         <div class="legend-list">
             <span class="legend-pill shift-work"><span class="legend-dot" style="background:#059669"></span>Program (ex. 07:00 / 08:00 / 10:00)</span>
@@ -1275,10 +1329,37 @@
             <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span>Vakantie / CO</span>
         </div>
 
-        <div class="stats-bar">
-            <span>Angajați: <strong id="stat-emp-count">0</strong></span>
-            <span>•</span>
-            <span>Zile lucrate / săpt.: <strong id="stat-total-days">0 zile</strong></span>
+        <div class="right-toolbar-group">
+            <div class="share-group">
+                <button type="button" class="btn btn-whatsapp" onclick="shareScheduleWhatsApp()" title="Trimite tot tabelul programului pe WhatsApp">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                    </svg>
+                    <span>WhatsApp</span>
+                </button>
+
+                <button type="button" class="btn btn-email" onclick="shareScheduleEmail()" title="Trimite tot tabelul programului pe Email">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <span>Email</span>
+                </button>
+
+                <button type="button" class="btn" onclick="copyScheduleTextToClipboard()" title="Copiază întregul tabel în format text">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    <span>Copiază Text</span>
+                </button>
+            </div>
+
+            <div class="stats-bar">
+                <span>Angajați: <strong id="stat-emp-count">0</strong></span>
+                <span>•</span>
+                <span>Zile lucrate / săpt.: <strong id="stat-total-days">0 zile</strong></span>
+            </div>
         </div>
     </section>
 
@@ -1293,6 +1374,8 @@
                         <span id="fs-week-label" style="color:#a5b4fc; font-weight:600;"></span>
                     </div>
                     <div class="fs-actions-group">
+                        <button type="button" class="fs-btn fs-btn-wa" onclick="shareScheduleWhatsApp()">WhatsApp</button>
+                        <button type="button" class="fs-btn fs-btn-mail" onclick="shareScheduleEmail()">Email</button>
                         <button type="button" class="fs-btn" onclick="changeWeek(-1)">◀ Săpt. ant.</button>
                         <button type="button" class="fs-btn" onclick="changeWeek(1)">Săpt. urm. ▶</button>
                         <button type="button" class="fs-btn" onclick="toggleRotationDirection()">↻ Rotește ±90°</button>
@@ -1451,6 +1534,7 @@
            ===================================================================== */
         const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v1';
         const DAY_NAMES = ['Luni', 'Marți', 'Miercuri', 'Joi', 'Vineri', 'Sâmbătă', 'Duminică'];
+        const DAY_SHORT = ['Lu', 'Ma', 'Mi', 'Jo', 'Vi', 'Sâ', 'Du'];
         const MONTH_SHORT = ['Ian', 'Feb', 'Mar', 'Apr', 'Mai', 'Iun', 'Iul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
         let memoryStorageFallback = null;
@@ -2172,7 +2256,126 @@
         }
 
         /* =====================================================================
-           8. MOD ECRAN COMPLET ROTIT LA 90°
+           8. DISTRIBUIRE COMPLETĂ PE WHATSAPP, EMAIL & CLIPBOARD
+           ===================================================================== */
+        function buildScheduleShareText() {
+            const days = getDatesOfISOWeek(state.year, state.week);
+            const weekKey = getWeekKey(state.year, state.week);
+            const weekData = state.schedules[weekKey] || {};
+            const weekNumStr = String(state.week).padStart(2, '0');
+            const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
+
+            const lines = [];
+            lines.push(`PROGRAMUL DE MUNCĂ - Săpt. ${weekNumStr} (${rangeStr})`);
+            lines.push(`Zile: ${days.map((d, idx) => `${DAY_SHORT[idx]} ${formatShortDate(d)}`).join(' | ')}`);
+            lines.push('--------------------------------------------------');
+
+            let grandTotalDays = 0;
+            const dailyWorkingCount = [0, 0, 0, 0, 0, 0, 0];
+
+            if (state.employees.length === 0) {
+                lines.push('Nu există angajați în program pentru această săptămână.');
+            } else {
+                state.employees.forEach((emp, index) => {
+                    const empSchedule = weekData[emp.id] || {};
+                    let empWorkedDays = 0;
+                    const dayParts = [];
+
+                    for (let d = 0; d < 7; d++) {
+                        const slot = empSchedule[d];
+                        if (slot && slot.label) {
+                            const worked = isWorkingDaySlot(slot);
+                            if (worked) {
+                                empWorkedDays += 1;
+                                dailyWorkingCount[d] += 1;
+                            }
+                            const noteSuffix = slot.note ? ` (${slot.note})` : '';
+                            dayParts.push(`${DAY_SHORT[d]}: ${slot.label}${noteSuffix}`);
+                        } else {
+                            dayParts.push(`${DAY_SHORT[d]}: -`);
+                        }
+                    }
+
+                    grandTotalDays += empWorkedDays;
+                    const rolePart = emp.role ? ` [${emp.role}]` : '';
+                    const dayWord = empWorkedDays === 1 ? 'zi' : 'zile';
+
+                    lines.push(`${index + 1}. ${emp.name}${rolePart} — ${empWorkedDays} ${dayWord}`);
+                    lines.push(`   ${dayParts.join(' | ')}`);
+                });
+            }
+
+            lines.push('--------------------------------------------------');
+            lines.push(`Prezenți / zi: ${dailyWorkingCount.map((cnt, idx) => `${DAY_SHORT[idx]}: ${cnt}`).join(' | ')}`);
+            lines.push(`Total zile lucrate în săptămână: ${grandTotalDays} zile (${state.employees.length} angajați)`);
+
+            return lines.join('\n');
+        }
+
+        function copyTextFallback(text) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.setAttribute('readonly', '');
+                ta.style.position = 'fixed';
+                ta.style.top = '-9999px';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                return ok;
+            } catch (err) {
+                return false;
+            }
+        }
+
+        function copyScheduleTextToClipboard() {
+            const text = buildScheduleShareText();
+            const copied = copyTextFallback(text);
+            if (copied) {
+                showToast('Tot tabelul programului a fost copiat în clipboard.');
+            } else {
+                showToast('Nu s-a putut copia automat; poți folosi butoanele WhatsApp sau Email.');
+            }
+        }
+
+        function shareScheduleWhatsApp() {
+            const text = buildScheduleShareText();
+            copyTextFallback(text);
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            try {
+                const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
+                if (win) {
+                    showToast('WhatsApp s-a deschis cu tot programul (textul este și copiat).');
+                } else {
+                    showToast('Programul complet a fost copiat — lipește-l direct în WhatsApp.');
+                }
+            } catch (err) {
+                showToast('Programul complet a fost copiat — lipește-l direct în WhatsApp.');
+            }
+        }
+
+        function shareScheduleEmail() {
+            const days = getDatesOfISOWeek(state.year, state.week);
+            const weekNumStr = String(state.week).padStart(2, '0');
+            const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
+            const subject = `Programul de muncă - Săpt. ${weekNumStr} (${rangeStr})`;
+            const body = buildScheduleShareText();
+            copyTextFallback(body);
+
+            const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            try {
+                window.location.href = mailtoUrl;
+                showToast('S-a deschis clientul de Email cu tot programul (și copiat în clipboard).');
+            } catch (err) {
+                showToast('Programul complet a fost copiat — lipește-l în Email.');
+            }
+        }
+
+        /* =====================================================================
+           9. MOD ECRAN COMPLET ROTIT LA 90°
            ===================================================================== */
         function syncPortalsToFullscreenStage(intoStage) {
             const stage = document.getElementById('fullscreen-rotated-stage');
@@ -2256,7 +2459,7 @@
         }
 
         /* =====================================================================
-           9. NOTIFICĂRI TOAST, BUTON ÎNAPOI & PORNIRE APLICAȚIE
+           10. NOTIFICĂRI TOAST, BUTON ÎNAPOI & PORNIRE APLICAȚIE
            ===================================================================== */
         function showToast(message) {
             const container = document.getElementById('toast-container');

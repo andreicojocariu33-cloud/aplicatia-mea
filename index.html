@@ -1,6 +1,6 @@
 ```html
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="ro" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,6 +56,7 @@
 
         html, body {
             height: 100%;
+            direction: ltr;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
@@ -77,7 +78,6 @@
             font-family: inherit;
         }
 
-        /* Scrollbar fin */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -443,12 +443,13 @@
             border-collapse: collapse;
             table-layout: fixed;
             min-width: 760px;
+            direction: ltr;
         }
 
-        /* Lățimi procentuale în modul normal: 18% Angajat + 7 * 10.5% Zile + 8.5% Zile = 100% */
-        col.col-employee { width: 18%; }
-        col.col-day      { width: 10.5%; }
-        col.col-days-cnt { width: 8.5%; }
+        /* Lățimi procentuale în modul normal: 19% Angajat + 7 * 10.4% Zile + 8.2% Zile = 100% */
+        col.col-employee { width: 19%; }
+        col.col-day      { width: 10.4%; }
+        col.col-days-cnt { width: 8.2%; }
 
         .schedule-table thead th {
             position: sticky;
@@ -468,11 +469,13 @@
             position: sticky;
             left: 0;
             z-index: 25;
+            direction: ltr;
+            unicode-bidi: isolate;
             text-align: left;
             padding-left: 12px;
-            background: var(--indigo-100);
-            color: #1e1b4b;
-            border-right: 2px solid var(--indigo-200);
+            background: var(--indigo-600);
+            color: #ffffff;
+            border-right: 2px solid var(--indigo-700);
         }
 
         .schedule-table thead th.weekend-col {
@@ -508,18 +511,20 @@
             padding: 5px 4px;
             vertical-align: middle;
             text-align: center;
-            height: 62px;
+            height: 64px;
         }
 
         .schedule-table tbody tr:hover td {
             background-color: #f8fafc;
         }
 
-        /* Coloana Angajat (Fixă la stânga în modul normal + evidențiere puternică) */
+        /* Coloana Angajat (Fixă la stânga în modul normal + evidențiere clară LTR) */
         .schedule-table tbody td.sticky-col {
             position: sticky;
             left: 0;
             z-index: 20;
+            direction: ltr;
+            unicode-bidi: isolate;
             background: linear-gradient(90deg, var(--indigo-50) 0%, #ffffff 100%);
             text-align: left;
             padding: 6px 8px 6px 12px;
@@ -534,6 +539,8 @@
 
         .emp-cell-wrap {
             display: flex;
+            flex-direction: row;
+            direction: ltr;
             align-items: center;
             justify-content: space-between;
             gap: 4px;
@@ -542,10 +549,16 @@
         .emp-info {
             min-width: 0;
             flex: 1;
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: left;
         }
 
         .emp-name {
-            font-size: 0.92rem;
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: left;
+            font-size: 0.96rem;
             font-weight: 900;
             letter-spacing: -0.01em;
             color: #1e1b4b;
@@ -557,13 +570,16 @@
 
         .emp-role {
             display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            text-align: left;
             font-size: 0.68rem;
-            font-weight: 700;
-            color: var(--indigo-700);
-            background: var(--indigo-100);
-            border: 1px solid var(--indigo-200);
+            font-weight: 800;
+            color: #ffffff;
+            background: var(--indigo-600);
+            border: 1px solid var(--indigo-700);
             border-radius: 6px;
-            padding: 1px 6px;
+            padding: 1px 7px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -591,12 +607,10 @@
             opacity: 1;
         }
 
-        /* Fundal discret weekend pe celule */
         .schedule-table tbody td.weekend-cell {
             background-color: rgba(254, 243, 199, 0.28);
         }
 
-        /* Celula de program zilnic */
         .shift-slot {
             width: 100%;
             height: 100%;
@@ -674,7 +688,6 @@
             white-space: nowrap;
         }
 
-        /* Coloana Zile Lucrate */
         .days-count-badge {
             display: inline-flex;
             align-items: center;
@@ -688,7 +701,6 @@
             border: 1px solid var(--indigo-200);
         }
 
-        /* Rând Sumar Jos (tfoot) */
         .schedule-table tfoot td {
             background: #f8fafc;
             border-top: 2px solid var(--border-strong);
@@ -704,6 +716,8 @@
             position: sticky;
             left: 0;
             z-index: 20;
+            direction: ltr;
+            unicode-bidi: isolate;
             background: #f1f5f9;
             text-align: left;
             padding-left: 12px;
@@ -712,7 +726,7 @@
         }
 
         /* =====================================================================
-           5. MOD ECRAN COMPLET ROTIT LA 90° (NUMELE ANGAJATULUI FOARTE EVIDENȚIAT)
+           5. MOD ECRAN COMPLET ROTIT LA 90° (NUMELE ANGAJATULUI LTR & EVIDENȚIAT)
            ===================================================================== */
         #fullscreen-overlay-shell.active {
             position: fixed;
@@ -756,14 +770,15 @@
             min-width: 0 !important;
             width: 100% !important;
             table-layout: fixed !important;
+            direction: ltr !important;
         }
 
-        /* Alocăm 23% pentru coloana Angajat astfel încât numele și funcția să fie mereu vizibile și clare */
-        #fullscreen-overlay-shell.active col.col-employee { width: 23%; }
-        #fullscreen-overlay-shell.active col.col-day      { width: 9.6%; }
-        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.8%; }
+        /* Alocăm 24% lățime pentru coloana Angajat în modul 90° astfel încât numele să fie foarte vizibil și neîntrerupt */
+        #fullscreen-overlay-shell.active col.col-employee { width: 24%; }
+        #fullscreen-overlay-shell.active col.col-day      { width: 9.5%; }
+        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.5%; }
 
-        /* Dezactivăm position: sticky în scena rotită pentru a evita ascunderea/decuparea numelui */
+        /* Dezactivăm position: sticky în scena rotită pentru a evita dispariția sau decuparea numelui */
         #fullscreen-overlay-shell.active .schedule-table thead th,
         #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col,
         #fullscreen-overlay-shell.active .schedule-table tbody td.sticky-col,
@@ -778,7 +793,9 @@
         }
 
         #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col {
-            text-align: left;
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+            text-align: left !important;
             padding-left: 8px;
             background: var(--indigo-600);
             color: #ffffff;
@@ -788,15 +805,25 @@
         #fullscreen-overlay-shell.active .schedule-table tbody td {
             padding: 4px 2px;
             height: auto;
-            min-height: 48px;
+            min-height: 50px;
         }
 
         #fullscreen-overlay-shell.active td.sticky-col {
-            background: linear-gradient(90deg, var(--indigo-100) 0%, var(--indigo-50) 100%) !important;
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+            text-align: left !important;
+            background: linear-gradient(90deg, var(--indigo-100) 0%, #ffffff 100%) !important;
             border-left: 4px solid var(--indigo-600) !important;
             border-right: 2px solid var(--indigo-600) !important;
             padding: 5px 6px 5px 8px !important;
             box-shadow: 2px 0 8px rgba(79, 70, 229, 0.16);
+        }
+
+        #fullscreen-overlay-shell.active .emp-cell-wrap {
+            flex-direction: row !important;
+            direction: ltr !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
         }
 
         #fullscreen-overlay-shell.active .emp-info,
@@ -805,18 +832,24 @@
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
+            direction: ltr !important;
+            unicode-bidi: isolate !important;
+            text-align: left !important;
             white-space: normal !important;
             overflow: visible !important;
             text-overflow: clip !important;
-            word-break: break-word;
+            word-break: normal;
+            overflow-wrap: break-word;
         }
 
         #fullscreen-overlay-shell.active .emp-name {
-            font-size: 0.86rem;
+            font-size: 0.9rem;
             font-weight: 900;
             line-height: 1.15;
             color: #1e1b4b !important;
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
+            padding: 1px 4px;
+            border-radius: 4px;
         }
 
         #fullscreen-overlay-shell.active .emp-role {
@@ -828,7 +861,7 @@
             background: var(--indigo-600) !important;
             border: none !important;
             border-radius: 5px;
-            padding: 1px 5px;
+            padding: 1px 6px;
             margin-top: 2px;
         }
 
@@ -1830,7 +1863,7 @@
             }
 
             const headRow = document.getElementById('table-head-row');
-            let headHTML = `<th class="sticky-col">Angajat</th>`;
+            let headHTML = `<th class="sticky-col" dir="ltr">Angajat</th>`;
 
             for (let i = 0; i < 7; i++) {
                 const isWeekend = (i === 5 || i === 6);
@@ -1869,11 +1902,11 @@
                     let empWorkedDays = 0;
 
                     let cellsHTML = `
-                        <td class="sticky-col">
-                            <div class="emp-cell-wrap">
-                                <div class="emp-info">
-                                    <div class="emp-name" title="${escapeHTML(emp.name)}">${escapeHTML(emp.name)}</div>
-                                    ${emp.role ? `<div class="emp-role" title="${escapeHTML(emp.role)}">${escapeHTML(emp.role)}</div>` : ''}
+                        <td class="sticky-col" dir="ltr">
+                            <div class="emp-cell-wrap" dir="ltr">
+                                <div class="emp-info" dir="ltr">
+                                    <div class="emp-name" dir="ltr" title="${escapeHTML(emp.name)}">${escapeHTML(emp.name)}</div>
+                                    ${emp.role ? `<div class="emp-role" dir="ltr" title="${escapeHTML(emp.role)}">${escapeHTML(emp.role)}</div>` : ''}
                                 </div>
                                 <button type="button" class="emp-del-btn" onclick="deleteEmployee('${emp.id}')" title="Elimină angajatul">✕</button>
                             </div>
@@ -1929,7 +1962,7 @@
             tbody.innerHTML = bodyHTML;
 
             const footRow = document.getElementById('table-foot-row');
-            let footHTML = `<td class="sticky-col">Prezenți / zi</td>`;
+            let footHTML = `<td class="sticky-col" dir="ltr">Prezenți / zi</td>`;
             for (let d = 0; d < 7; d++) {
                 footHTML += `<td>${dailyWorkingCount[d]}</td>`;
             }

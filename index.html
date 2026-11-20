@@ -734,6 +734,7 @@
             z-index: 50;
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             background: #0f172a;
             overflow: hidden;
         }
@@ -751,6 +752,10 @@
             left: 50%;
             width: 100vh;
             height: 100vw;
+            width: 100dvh;
+            height: 100vw;
+            max-width: none;
+            max-height: none;
         }
 
         #fullscreen-overlay-shell.active.rotated-ccw #fullscreen-rotated-stage {
@@ -764,6 +769,9 @@
         #fullscreen-overlay-shell.active #table-scroll-wrapper {
             overflow-x: hidden !important;
             overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            flex: 1 1 auto;
+            min-height: 0;
         }
 
         #fullscreen-overlay-shell.active table.schedule-table {
@@ -771,25 +779,31 @@
             width: 100% !important;
             table-layout: fixed !important;
             direction: ltr !important;
+            border-collapse: collapse !important;
         }
 
-        /* Alocăm 24% lățime pentru coloana Angajat în modul 90° astfel încât numele să fie foarte vizibil și neîntrerupt */
-        #fullscreen-overlay-shell.active col.col-employee { width: 24%; }
-        #fullscreen-overlay-shell.active col.col-day      { width: 9.5%; }
-        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.5%; }
+        /* Alocăm 26% lățime pentru coloana Angajat în modul 90° pe mobil astfel încât numele să fie mereu clar vizibil */
+        #fullscreen-overlay-shell.active col.col-employee { width: 26%; }
+        #fullscreen-overlay-shell.active col.col-day      { width: 9.2%; }
+        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.6%; }
 
-        /* Dezactivăm position: sticky în scena rotită pentru a evita dispariția sau decuparea numelui */
+        /* Dezactivăm position: sticky în scena rotită pentru a evita decuparea sau dispariția coloanei de nume */
         #fullscreen-overlay-shell.active .schedule-table thead th,
         #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col,
+        #fullscreen-overlay-shell.active .schedule-table tbody td,
         #fullscreen-overlay-shell.active .schedule-table tbody td.sticky-col,
+        #fullscreen-overlay-shell.active .schedule-table tfoot td,
         #fullscreen-overlay-shell.active .schedule-table tfoot td.sticky-col {
             position: static !important;
+            top: auto !important;
             left: auto !important;
+            right: auto !important;
+            bottom: auto !important;
         }
 
         #fullscreen-overlay-shell.active .schedule-table thead th {
-            padding: 6px 2px;
-            font-size: 0.7rem;
+            padding: 5px 2px;
+            font-size: 0.68rem;
         }
 
         #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col {
@@ -803,9 +817,10 @@
         }
 
         #fullscreen-overlay-shell.active .schedule-table tbody td {
-            padding: 4px 2px;
+            padding: 3px 2px;
             height: auto;
-            min-height: 50px;
+            min-height: 44px;
+            overflow: visible;
         }
 
         #fullscreen-overlay-shell.active td.sticky-col {
@@ -815,15 +830,17 @@
             background: linear-gradient(90deg, var(--indigo-100) 0%, #ffffff 100%) !important;
             border-left: 4px solid var(--indigo-600) !important;
             border-right: 2px solid var(--indigo-600) !important;
-            padding: 5px 6px 5px 8px !important;
+            padding: 4px 5px 4px 7px !important;
             box-shadow: 2px 0 8px rgba(79, 70, 229, 0.16);
         }
 
         #fullscreen-overlay-shell.active .emp-cell-wrap {
+            display: flex !important;
             flex-direction: row !important;
             direction: ltr !important;
             justify-content: flex-start !important;
             align-items: center !important;
+            width: 100%;
         }
 
         #fullscreen-overlay-shell.active .emp-info,
@@ -840,50 +857,53 @@
             text-overflow: clip !important;
             word-break: normal;
             overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         #fullscreen-overlay-shell.active .emp-name {
-            font-size: 0.9rem;
+            font-size: 0.86rem;
             font-weight: 900;
             line-height: 1.15;
             color: #1e1b4b !important;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 1px 4px;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 2px 4px;
             border-radius: 4px;
         }
 
         #fullscreen-overlay-shell.active .emp-role {
             display: inline-block !important;
-            font-size: 0.64rem;
+            font-size: 0.62rem;
             font-weight: 800;
-            line-height: 1.15;
+            line-height: 1.1;
             color: #ffffff !important;
             background: var(--indigo-600) !important;
             border: none !important;
             border-radius: 5px;
-            padding: 1px 6px;
+            padding: 1px 5px;
             margin-top: 2px;
         }
 
         #fullscreen-overlay-shell.active .emp-del-btn {
-            opacity: 0.85;
-            width: 18px;
-            height: 18px;
-            font-size: 0.65rem;
+            display: none !important;
         }
 
         #fullscreen-overlay-shell.active .shift-slot {
-            min-height: 38px;
+            min-height: 36px;
             padding: 2px;
             border-radius: 7px;
         }
 
         #fullscreen-overlay-shell.active .shift-title {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
         }
 
         #fullscreen-overlay-shell.active .shift-sub {
-            font-size: 0.58rem;
+            font-size: 0.56rem;
+        }
+
+        #fullscreen-overlay-shell.active .days-count-badge {
+            padding: 3px 5px;
+            font-size: 0.66rem;
         }
 
         /* Pe telefon (<768px) ascunde bara de sus în modul tot ecranul (ieșire prin dublu-tap sau ESC) */

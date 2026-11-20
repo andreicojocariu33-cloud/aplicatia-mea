@@ -445,10 +445,10 @@
             min-width: 760px;
         }
 
-        /* Lățimi procentuale în modul normal: 17% Angajat + 7 * 10.6% Zile + 8.8% Zile = 100% */
-        col.col-employee { width: 17%; }
-        col.col-day      { width: 10.6%; }
-        col.col-days-cnt { width: 8.8%; }
+        /* Lățimi procentuale în modul normal: 18% Angajat + 7 * 10.5% Zile + 8.5% Zile = 100% */
+        col.col-employee { width: 18%; }
+        col.col-day      { width: 10.5%; }
+        col.col-days-cnt { width: 8.5%; }
 
         .schedule-table thead th {
             position: sticky;
@@ -470,7 +470,9 @@
             z-index: 25;
             text-align: left;
             padding-left: 12px;
-            background: #e2e8f0;
+            background: var(--indigo-100);
+            color: #1e1b4b;
+            border-right: 2px solid var(--indigo-200);
         }
 
         .schedule-table thead th.weekend-col {
@@ -506,26 +508,28 @@
             padding: 5px 4px;
             vertical-align: middle;
             text-align: center;
-            height: 60px;
+            height: 62px;
         }
 
         .schedule-table tbody tr:hover td {
             background-color: #f8fafc;
         }
 
-        /* Coloana Angajat (Fixă la stânga în modul normal) */
+        /* Coloana Angajat (Fixă la stânga în modul normal + evidențiere puternică) */
         .schedule-table tbody td.sticky-col {
             position: sticky;
             left: 0;
             z-index: 20;
-            background: #ffffff;
+            background: linear-gradient(90deg, var(--indigo-50) 0%, #ffffff 100%);
             text-align: left;
             padding: 6px 8px 6px 12px;
-            border-right: 2px solid var(--border-strong);
+            border-left: 4px solid var(--indigo-600);
+            border-right: 2px solid var(--indigo-200);
+            box-shadow: 2px 0 6px rgba(79, 70, 229, 0.08);
         }
 
         .schedule-table tbody tr:hover td.sticky-col {
-            background: #f1f5f9;
+            background: linear-gradient(90deg, var(--indigo-100) 0%, var(--indigo-50) 100%);
         }
 
         .emp-cell-wrap {
@@ -541,20 +545,30 @@
         }
 
         .emp-name {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--text-main);
+            font-size: 0.92rem;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            color: #1e1b4b;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.2;
         }
 
         .emp-role {
+            display: inline-block;
             font-size: 0.68rem;
-            color: var(--text-muted);
+            font-weight: 700;
+            color: var(--indigo-700);
+            background: var(--indigo-100);
+            border: 1px solid var(--indigo-200);
+            border-radius: 6px;
+            padding: 1px 6px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-top: 3px;
+            max-width: 100%;
         }
 
         .emp-del-btn {
@@ -698,7 +712,7 @@
         }
 
         /* =====================================================================
-           5. MOD ECRAN COMPLET ROTIT LA 90° (NUMELE ANGAJATULUI VIZIBIL CLAR)
+           5. MOD ECRAN COMPLET ROTIT LA 90° (NUMELE ANGAJATULUI FOARTE EVIDENȚIAT)
            ===================================================================== */
         #fullscreen-overlay-shell.active {
             position: fixed;
@@ -744,10 +758,10 @@
             table-layout: fixed !important;
         }
 
-        /* Alocăm 22% pentru coloana Angajat astfel încât numele și funcția să fie mereu vizibile */
-        #fullscreen-overlay-shell.active col.col-employee { width: 22%; }
-        #fullscreen-overlay-shell.active col.col-day      { width: 9.8%; }
-        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.4%; }
+        /* Alocăm 23% pentru coloana Angajat astfel încât numele și funcția să fie mereu vizibile și clare */
+        #fullscreen-overlay-shell.active col.col-employee { width: 23%; }
+        #fullscreen-overlay-shell.active col.col-day      { width: 9.6%; }
+        #fullscreen-overlay-shell.active col.col-days-cnt { width: 9.8%; }
 
         /* Dezactivăm position: sticky în scena rotită pentru a evita ascunderea/decuparea numelui */
         #fullscreen-overlay-shell.active .schedule-table thead th,
@@ -766,20 +780,23 @@
         #fullscreen-overlay-shell.active .schedule-table thead th.sticky-col {
             text-align: left;
             padding-left: 8px;
-            background: #e0e7ff;
-            color: #1e1b4b;
+            background: var(--indigo-600);
+            color: #ffffff;
+            border-right: 2px solid var(--indigo-700);
         }
 
         #fullscreen-overlay-shell.active .schedule-table tbody td {
             padding: 4px 2px;
             height: auto;
-            min-height: 46px;
+            min-height: 48px;
         }
 
         #fullscreen-overlay-shell.active td.sticky-col {
-            background: #f8fafc !important;
-            border-right: 2px solid #6366f1 !important;
+            background: linear-gradient(90deg, var(--indigo-100) 0%, var(--indigo-50) 100%) !important;
+            border-left: 4px solid var(--indigo-600) !important;
+            border-right: 2px solid var(--indigo-600) !important;
             padding: 5px 6px 5px 8px !important;
+            box-shadow: 2px 0 8px rgba(79, 70, 229, 0.16);
         }
 
         #fullscreen-overlay-shell.active .emp-info,
@@ -795,22 +812,28 @@
         }
 
         #fullscreen-overlay-shell.active .emp-name {
-            font-size: 0.78rem;
-            font-weight: 800;
+            font-size: 0.86rem;
+            font-weight: 900;
             line-height: 1.15;
-            color: #0f172a !important;
+            color: #1e1b4b !important;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
         }
 
         #fullscreen-overlay-shell.active .emp-role {
-            font-size: 0.65rem;
-            font-weight: 600;
+            display: inline-block !important;
+            font-size: 0.64rem;
+            font-weight: 800;
             line-height: 1.15;
-            color: #475569 !important;
+            color: #ffffff !important;
+            background: var(--indigo-600) !important;
+            border: none !important;
+            border-radius: 5px;
+            padding: 1px 5px;
             margin-top: 2px;
         }
 
         #fullscreen-overlay-shell.active .emp-del-btn {
-            opacity: 0.75;
+            opacity: 0.85;
             width: 18px;
             height: 18px;
             font-size: 0.65rem;
@@ -823,7 +846,7 @@
         }
 
         #fullscreen-overlay-shell.active .shift-title {
-            font-size: 0.68rem;
+            font-size: 0.7rem;
         }
 
         #fullscreen-overlay-shell.active .shift-sub {
@@ -2115,7 +2138,7 @@
             const shell = document.getElementById('fullscreen-overlay-shell');
             shell.classList.add('active', state.rotationClass);
             syncPortalsToFullscreenStage(true);
-            showToast('Ecran complet 90° activat (numele angajaților sunt vizibile).');
+            showToast('Ecran complet 90° activat • Numele angajaților sunt evidențiate.');
         }
 
         function exitFullscreenSchedule() {

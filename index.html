@@ -1597,33 +1597,169 @@
 
     <script>
         /* =====================================================================
-           1. STORAGE & MULTI-LANGUAGE DICTIONARY (RO, DE, EN, RU, TR, NL)
+           1. MULTI-LAYER PERSISTENT STORAGE (LOCALSTORAGE + INDEXEDDB + WINDOW.NAME)
            ===================================================================== */
         const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v4';
         const LANG_STORAGE_KEY = 'planificator_program_lang_2026_2027_v1';
-        let memoryStorageFallback = null;
-        let langMemoryFallback = null;
+        const META_STORAGE_KEY = 'planificator_program_meta_2026_2027_v1';
+        const IDB_DB_NAME = 'PlanificatorProgramDB_2026_2027';
+        const IDB_STORE_NAME = 'kv_store';
+        const WINDOW_NAME_PREFIX = 'PLANIFICATOR_PERSIST_V1::';
+
+        const memoryStore = new Map();
+        let idbReadyPromise = null;
+
+        function getIndexedDB() {
+            if (!idbReadyPromise) {
+                idbReadyPromise = new Promise((resolve) => {
+                    try {
+                        const indexedDBRef = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+                        if (!indexedDBRef) {
+                            resolve(null);
+                            return;
+                        }
+                        const request = indexedDBRef.open(IDB_DB_NAME, 1);
+                        request.onupgradeneeded = (event) => {
+                            const db = event.target.result;
+                            if (!db.objectStoreNames.contains(IDB_STORE_NAME)) {
+                                db.createObjectStore(IDB_STORE_NAME);
+                            }
+                        };
+                        request.onsuccess = (event) => resolve(event.target.result);
+                        request.onerror = () => resolve(null);
+                    } catch (err) {
+                        resolve(null);
+                    }
+                });
+            }
+            return idbReadyPromise;
+        }
+
+        function readWindowNameMap() {
+            try {
+                if (typeof window.name === 'string' && window.name.startsWith(WINDOW_NAME_PREFIX)) {
+                    const parsed = JSON.parse(window.name.slice(WINDOW_NAME_PREFIX.length));
+                    if (parsed && typeof parsed === 'object') {
+                        return parsed;
+                    }
+                }
+            } catch (err) {
+                // Ignore malformed window.name
+            }
+            return {};
+        }
+
+        function writeWindowNameEntry(key, val) {
+            try {
+                const map = readWindowNameMap();
+                map[key] = val;
+                const serialized = WINDOW_NAME_PREFIX + JSON.stringify(map);
+                if (serialized.length < 1800000) {
+                    window.name = serialized;
+                }
+            } catch (err) {
+                // Ignore window.name quota errors
+            }
+        }
+
+        function writeToIndexedDB(key, val) {
+            getIndexedDB().then((db) => {
+                if (!db) return;
+                try {
+                    const tx = db.transaction(IDB_STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(IDB_STORE_NAME);
+                    store.put(val, key);
+                } catch (err) {
+                    // Ignore IDB write error
+                }
+            });
+        }
 
         function safeGetStorage(key) {
+            let lsVal = null;
             try {
-                return window.localStorage.getItem(key);
+                lsVal = window.localStorage.getItem(key);
             } catch (err) {
-                return key === LANG_STORAGE_KEY ? langMemoryFallback : memoryStorageFallback;
+                lsVal = null;
             }
+
+            if (lsVal !== null && lsVal !== undefined) {
+                memoryStore.set(key, lsVal);
+                writeWindowNameEntry(key, lsVal);
+                return lsVal;
+            }
+
+            const wnMap = readWindowNameMap();
+            if (Object.prototype.hasOwnProperty.call(wnMap, key) && wnMap[key] !== null && wnMap[key] !== undefined) {
+                const wnVal = String(wnMap[key]);
+                memoryStore.set(key, wnVal);
+                try {
+                    window.localStorage.setItem(key, wnVal);
+                } catch (err) {}
+                return wnVal;
+            }
+
+            if (memoryStore.has(key)) {
+                return memoryStore.get(key);
+            }
+
+            return null;
         }
 
         function safeSetStorage(key, val) {
+            const strVal = String(val);
+            memoryStore.set(key, strVal);
+            writeWindowNameEntry(key, strVal);
+            writeToIndexedDB(key, strVal);
+
             try {
-                window.localStorage.setItem(key, val);
+                window.localStorage.setItem(key, strVal);
             } catch (err) {
-                if (key === LANG_STORAGE_KEY) {
-                    langMemoryFallback = val;
-                } else {
-                    memoryStorageFallback = val;
-                }
+                // Fallback layers (IndexedDB + window.name + memory) remain active
             }
         }
 
+        async function hydrateFromIndexedDBIfNeeded(onHydrated) {
+            const db = await getIndexedDB();
+            if (!db) return;
+
+            const keys = [STORAGE_KEY, LANG_STORAGE_KEY, META_STORAGE_KEY];
+            let updatedAny = false;
+
+            await Promise.all(keys.map((key) => new Promise((resolve) => {
+                try {
+                    const tx = db.transaction(IDB_STORE_NAME, 'readonly');
+                    const store = tx.objectStore(IDB_STORE_NAME);
+                    const req = store.get(key);
+                    req.onsuccess = () => {
+                        const idbVal = req.result;
+                        if (typeof idbVal === 'string' && idbVal.length > 0) {
+                            const currentVal = safeGetStorage(key);
+                            if (currentVal !== idbVal) {
+                                memoryStore.set(key, idbVal);
+                                writeWindowNameEntry(key, idbVal);
+                                try {
+                                    window.localStorage.setItem(key, idbVal);
+                                } catch (err) {}
+                                updatedAny = true;
+                            }
+                        }
+                        resolve();
+                    };
+                    req.onerror = () => resolve();
+                } catch (err) {
+                    resolve();
+                }
+            })));
+
+            if (updatedAny && typeof onHydrated === 'function') {
+                onHydrated();
+            }
+        }
+
+        /* =====================================================================
+           2. MULTI-LANGUAGE DICTIONARY (RO, DE, EN, RU, TR, NL)
+           ===================================================================== */
         const TRANSLATIONS = {
             ro: {
                 pageTitle: 'Programul de muncă (2026 & 2027)',
@@ -2413,7 +2549,7 @@
                 toastPngDownloaded: 'Afbeelding {filename} gedownload.',
                 toastPngOpenFail: 'Open de afbeelding in het voorbeeld om deze op te slaan.',
                 toastNoPng: 'Geen PNG-afbeelding gegenereerd.',
-                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp of E-mail.',
+                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp eller E-mail.',
                 toastImgCopyFallback: 'Browser ondersteunt direct kopiëren van afbeeldingen niet; PNG gedownload om bij te voegen.',
                 toastNoPngGen: 'Kon geen PNG-afbeelding genereren.',
                 toastSharedWa: 'PNG-afbeelding verzonden naar deelmenu / WhatsApp.',
@@ -2443,20 +2579,89 @@
                 .filter(Boolean)
         );
 
-        const state = {
+        const rawState = {
             year: 2026,
             week: 47,
             lang: 'ro',
+            rotationClass: 'rotated-ccw',
             employees: [],
             schedules: {},
+            customData: {},
             editingCell: null,
             isFullscreen: false,
             pushedFullscreenState: false,
-            rotationClass: 'rotated-ccw',
             lastPngDataUrl: '',
             lastPngBlob: null,
             lastPngFilename: ''
         };
+
+        let persistDebounceTimer = null;
+
+        function persistEverythingNow() {
+            if (persistDebounceTimer) {
+                clearTimeout(persistDebounceTimer);
+                persistDebounceTimer = null;
+            }
+            const payload = JSON.stringify({
+                employees: rawState.employees,
+                schedules: rawState.schedules,
+                customData: rawState.customData || {}
+            });
+            safeSetStorage(STORAGE_KEY, payload);
+            safeSetStorage(LANG_STORAGE_KEY, rawState.lang);
+            safeSetStorage(META_STORAGE_KEY, JSON.stringify({
+                year: rawState.year,
+                week: rawState.week,
+                rotationClass: rawState.rotationClass || 'rotated-ccw'
+            }));
+        }
+
+        function schedulePersistEverything() {
+            if (persistDebounceTimer) {
+                clearTimeout(persistDebounceTimer);
+            }
+            persistDebounceTimer = setTimeout(() => {
+                persistDebounceTimer = null;
+                persistEverythingNow();
+            }, 30);
+        }
+
+        function createDeepReactiveProxy(target) {
+            if (!target || typeof target !== 'object') return target;
+            if (target.__isReactiveProxy) return target;
+
+            const proxy = new Proxy(target, {
+                get(obj, prop, receiver) {
+                    if (prop === '__isReactiveProxy') return true;
+                    const val = Reflect.get(obj, prop, receiver);
+                    if (val && typeof val === 'object') {
+                        return createDeepReactiveProxy(val);
+                    }
+                    return val;
+                },
+                set(obj, prop, value, receiver) {
+                    const prev = Reflect.get(obj, prop, receiver);
+                    const wrappedValue = (value && typeof value === 'object') ? createDeepReactiveProxy(value) : value;
+                    const ok = Reflect.set(obj, prop, wrappedValue, receiver);
+                    if (ok && prev !== value) {
+                        schedulePersistEverything();
+                    }
+                    return ok;
+                },
+                deleteProperty(obj, prop) {
+                    const hadKey = Object.prototype.hasOwnProperty.call(obj, prop);
+                    const ok = Reflect.deleteProperty(obj, prop);
+                    if (ok && hadKey) {
+                        schedulePersistEverything();
+                    }
+                    return ok;
+                }
+            });
+
+            return proxy;
+        }
+
+        const state = createDeepReactiveProxy(rawState);
 
         function t(key, params = {}) {
             const dict = TRANSLATIONS[state.lang] || TRANSLATIONS.ro;
@@ -2513,13 +2718,34 @@
             return role;
         }
 
-        function loadSavedLanguage() {
-            const saved = safeGetStorage(LANG_STORAGE_KEY);
-            if (saved && Object.prototype.hasOwnProperty.call(TRANSLATIONS, saved)) {
-                state.lang = saved;
+        function loadSavedMetaAndLanguage() {
+            const savedLang = safeGetStorage(LANG_STORAGE_KEY);
+            if (savedLang && Object.prototype.hasOwnProperty.call(TRANSLATIONS, savedLang)) {
+                state.lang = savedLang;
             } else {
                 state.lang = 'ro';
             }
+
+            const savedMeta = safeGetStorage(META_STORAGE_KEY);
+            if (savedMeta) {
+                try {
+                    const meta = JSON.parse(savedMeta);
+                    if (meta && typeof meta === 'object') {
+                        if (meta.year === 2026 || meta.year === 2027) {
+                            state.year = meta.year;
+                        }
+                        if (typeof meta.week === 'number' && meta.week >= 1 && meta.week <= 53) {
+                            state.week = meta.week;
+                        }
+                        if (meta.rotationClass === 'rotated-ccw' || meta.rotationClass === 'rotated-cw') {
+                            state.rotationClass = meta.rotationClass;
+                        }
+                    }
+                } catch (err) {
+                    // Ignore malformed meta
+                }
+            }
+
             const select = document.getElementById('lang-select');
             if (select) select.value = state.lang;
             document.documentElement.lang = state.lang;
@@ -2775,7 +3001,7 @@
         function onLanguageChange(newLang) {
             if (!newLang || !Object.prototype.hasOwnProperty.call(TRANSLATIONS, newLang)) return;
             state.lang = newLang;
-            safeSetStorage(LANG_STORAGE_KEY, newLang);
+            saveAppState();
             applyStaticTranslations();
             populateWeekDropdown();
             renderScheduleTable();
@@ -2785,7 +3011,7 @@
         }
 
         /* =====================================================================
-           2. ISO CALENDAR UTILITIES (2026 & 2027)
+           3. ISO CALENDAR UTILITIES (2026 & 2027)
            ===================================================================== */
         function getISOWeekInfo(date) {
             const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -2834,7 +3060,7 @@
         }
 
         /* =====================================================================
-           3. DEFAULT SCHEDULE DATA (2026 WEEKS 47, 51, 52)
+           4. DEFAULT SCHEDULE DATA (2026 WEEKS 47, 51, 52)
            ===================================================================== */
         function createSlot(type, label, note = '') {
             return { type, label, note };
@@ -3054,9 +3280,14 @@
             if (raw) {
                 try {
                     const parsed = JSON.parse(raw);
-                    if (Array.isArray(parsed.employees) && parsed.employees.length > 0) {
+                    if (parsed && Array.isArray(parsed.employees)) {
                         state.employees = parsed.employees;
-                        state.schedules = parsed.schedules || getDefaultWorkbookSchedules();
+                        state.schedules = (parsed.schedules && typeof parsed.schedules === 'object')
+                            ? parsed.schedules
+                            : getDefaultWorkbookSchedules();
+                        state.customData = (parsed.customData && typeof parsed.customData === 'object')
+                            ? parsed.customData
+                            : {};
                         return;
                     }
                 } catch (err) {
@@ -3075,19 +3306,16 @@
             ];
 
             state.schedules = getDefaultWorkbookSchedules();
-            saveAppState();
+            state.customData = {};
+            persistEverythingNow();
         }
 
         function saveAppState() {
-            const payload = JSON.stringify({
-                employees: state.employees,
-                schedules: state.schedules
-            });
-            safeSetStorage(STORAGE_KEY, payload);
+            persistEverythingNow();
         }
 
         /* =====================================================================
-           4. WEEK & YEAR NAVIGATION
+           5. WEEK & YEAR NAVIGATION
            ===================================================================== */
         function populateWeekDropdown() {
             const yearSelect = document.getElementById('year-select');
@@ -3111,11 +3339,13 @@
         function onYearChange() {
             state.year = parseInt(document.getElementById('year-select').value, 10);
             populateWeekDropdown();
+            saveAppState();
             renderScheduleTable();
         }
 
         function onWeekChange() {
             state.week = parseInt(document.getElementById('week-select').value, 10);
+            saveAppState();
             renderScheduleTable();
         }
 
@@ -3147,6 +3377,7 @@
             state.year = y;
             state.week = w;
             populateWeekDropdown();
+            saveAppState();
             renderScheduleTable();
         }
 
@@ -3154,12 +3385,13 @@
             state.year = 2026;
             state.week = 47;
             populateWeekDropdown();
+            saveAppState();
             renderScheduleTable();
             showToast(t('toastWeek47'));
         }
 
         /* =====================================================================
-           5. TABLE RENDERING
+           6. TABLE RENDERING
            ===================================================================== */
         function escapeHTML(str) {
             return String(str)
@@ -3302,7 +3534,7 @@
         }
 
         /* =====================================================================
-           6. SHIFT MODAL & EMPLOYEE MANAGEMENT
+           7. SHIFT MODAL & EMPLOYEE MANAGEMENT
            ===================================================================== */
         function openShiftModal(empId, dayIndex) {
             const emp = state.employees.find(e => e.id === empId);
@@ -3434,7 +3666,7 @@
             if (!name) return;
 
             const newEmp = {
-                id: 'emp_' + Date.now(),
+                id: 'emp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
                 name: name,
                 role: roleInput.value.trim() || t('empDefaultRole')
             };
@@ -3448,6 +3680,11 @@
 
         function deleteEmployee(empId) {
             state.employees = state.employees.filter(e => e.id !== empId);
+            Object.keys(state.schedules || {}).forEach(wk => {
+                if (state.schedules[wk] && Object.prototype.hasOwnProperty.call(state.schedules[wk], empId)) {
+                    delete state.schedules[wk][empId];
+                }
+            });
             saveAppState();
             renderScheduleTable();
             showToast(t('toastEmpRemoved'));
@@ -3482,7 +3719,7 @@
         }
 
         /* =====================================================================
-           7. TEXT EXPORT, CANVAS PNG RENDERING & WHATSAPP / EMAIL SHARE
+           8. TEXT EXPORT, CANVAS PNG RENDERING & WHATSAPP / EMAIL SHARE
            ===================================================================== */
         function buildScheduleShareText() {
             const days = getDatesOfISOWeek(state.year, state.week);
@@ -4051,7 +4288,7 @@
         }
 
         /* =====================================================================
-           8. 90-DEGREE FULLSCREEN MODE & PORTALS
+           9. 90-DEGREE FULLSCREEN MODE & PORTALS
            ===================================================================== */
         function syncPortalsToFullscreenStage(intoStage) {
             const stage = document.getElementById('fullscreen-rotated-stage');
@@ -4132,10 +4369,11 @@
             shell.classList.remove(state.rotationClass);
             state.rotationClass = (state.rotationClass === 'rotated-ccw') ? 'rotated-cw' : 'rotated-ccw';
             shell.classList.add(state.rotationClass);
+            saveAppState();
         }
 
         /* =====================================================================
-           9. TOASTS, EVENT BINDING & BOOTSTRAP
+           10. TOASTS, EVENT BINDING & BOOTSTRAP
            ===================================================================== */
         function showToast(message) {
             const container = document.getElementById('toast-container');
@@ -4238,6 +4476,14 @@
             document.getElementById('modal-wa-image-btn').addEventListener('click', () => shareRenderedScheduleImage('whatsapp'));
             document.getElementById('modal-mail-image-btn').addEventListener('click', () => shareRenderedScheduleImage('email'));
 
+            window.addEventListener('pagehide', persistEverythingNow);
+            window.addEventListener('beforeunload', persistEverythingNow);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    persistEverythingNow();
+                }
+            });
+
             window.addEventListener('popstate', () => {
                 if (document.getElementById('shift-modal').classList.contains('open')) {
                     closeShiftModal();
@@ -4294,11 +4540,18 @@
 
         function initApp() {
             loadAppState();
-            loadSavedLanguage();
+            loadSavedMetaAndLanguage();
             bindEvents();
             applyStaticTranslations();
             populateWeekDropdown();
             renderScheduleTable();
+            hydrateFromIndexedDBIfNeeded(() => {
+                loadAppState();
+                loadSavedMetaAndLanguage();
+                applyStaticTranslations();
+                populateWeekDropdown();
+                renderScheduleTable();
+            });
         }
 
         if (document.readyState === 'loading') {

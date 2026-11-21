@@ -4,6 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programul de muncă (2026 &amp; 2027)</title>
+
+    <!-- Setări PWA & Pictogramă personalizată (înlocuiește litera gri "G" pe Android/Chrome) -->
+    <meta name="application-name" content="SmartWork">
+    <meta name="apple-mobile-web-app-title" content="SmartWork">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1d4ed8">
+
+    <link id="app-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%232563eb'/%3E%3Cstop offset='100%25' stop-color='%231e3a8a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23bg)'/%3E%3Cg transform='rotate(-7 240 245)'%3E%3Crect x='92' y='112' width='284' height='256' rx='36' fill='%23f8fafc'/%3E%3Cpath d='M92 148c0-20 16-36 36-36h212c20 0 36 16 36 36v42H92v-42z' fill='%231d4ed8'/%3E%3Crect x='152' y='84' width='24' height='54' rx='12' fill='%230f172a'/%3E%3Crect x='292' y='84' width='24' height='54' rx='12' fill='%230f172a'/%3E%3Crect x='132' y='214' width='40' height='36' rx='8' fill='%23cbd5e1'/%3E%3Crect x='188' y='214' width='40' height='36' rx='8' fill='%23cbd5e1'/%3E%3Crect x='244' y='214' width='40' height='36' rx='8' fill='%23cbd5e1'/%3E%3Crect x='300' y='214' width='40' height='36' rx='8' fill='%23cbd5e1'/%3E%3Crect x='132' y='266' width='40' height='36' rx='8' fill='%23cbd5e1'/%3E%3Crect x='188' y='266' width='40' height='36' rx='8' fill='%232563eb'/%3E%3Cpath d='M198 284l7 7 15-15' stroke='%23ffffff' stroke-width='6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='244' y='266' width='40' height='36' rx='8' fill='%23cbd5e1'/%3E%3C/g%3E%3Cpath d='M402 92l26-26M420 124l36-10M426 158l32 8' stroke='%23ffffff' stroke-width='12' stroke-linecap='round'/%3E%3Crect x='66' y='324' width='156' height='118' rx='24' fill='%23f8fafc' stroke='%231e3a8a' stroke-width='8'/%3E%3Cpath d='M116 324v-20c0-10 8-18 18-18h20c10 0 18 8 18 18v20' fill='none' stroke='%230f172a' stroke-width='12'/%3E%3Cpath d='M66 366c48 22 108 22 156 0' fill='none' stroke='%231e3a8a' stroke-width='8'/%3E%3Crect x='128' y='362' width='32' height='34' rx='8' fill='%231e3a8a'/%3E%3Ccircle cx='352' cy='346' r='104' fill='%23f8fafc' stroke='%231e3a8a' stroke-width='18'/%3E%3Cpath d='M352 266v14M352 412v14M272 346h14M418 346h14' stroke='%231e3a8a' stroke-width='10' stroke-linecap='round'/%3E%3Cpath d='M324 322l28 26 42-38' fill='none' stroke='%230f172a' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link id="apple-touch-icon" rel="apple-touch-icon" href="">
+    <link id="pwa-manifest" rel="manifest" href="">
+
+    <script>
+        /* Generează automat pictograma PNG (512x512) și Manifestul Web App pentru Android/Chrome */
+        (function setupCustomSmartWorkIcon() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return;
+
+                function roundRect(c, x, y, w, h, r) {
+                    c.beginPath();
+                    c.moveTo(x + r, y);
+                    c.arcTo(x + w, y, x + w, y + h, r);
+                    c.arcTo(x + w, y + h, x, y + h, r);
+                    c.arcTo(x, y + h, x, y, r);
+                    c.arcTo(x, y, x + w, y, r);
+                    c.closePath();
+                }
+
+                // 1. Fundal albastru rotunjit (ca în prima poză)
+                const grad = ctx.createLinearGradient(0, 0, 512, 512);
+                grad.addColorStop(0, '#2563eb');
+                grad.addColorStop(1, '#1e3a8a');
+                ctx.fillStyle = grad;
+                roundRect(ctx, 0, 0, 512, 512, 112);
+                ctx.fill();
+
+                // 2. Raze albe dreapta-sus
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 13;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(398, 94); ctx.lineTo(426, 66);
+                ctx.moveTo(418, 128); ctx.lineTo(456, 116);
+                ctx.moveTo(424, 164); ctx.lineTo(458, 172);
+                ctx.stroke();
+
+                // 3. Calendar înclinat
+                ctx.save();
+                ctx.translate(236, 244);
+                ctx.rotate(-7 * Math.PI / 180);
+                ctx.translate(-236, -244);
+
+                ctx.fillStyle = '#f8fafc';
+                roundRect(ctx, 90, 112, 286, 256, 34);
+                ctx.fill();
+
+                ctx.fillStyle = '#1d4ed8';
+                ctx.beginPath();
+                ctx.moveTo(90, 146);
+                ctx.arcTo(90, 112, 124, 112, 34);
+                ctx.lineTo(342, 112);
+                ctx.arcTo(376, 112, 376, 146, 34);
+                ctx.lineTo(376, 188);
+                ctx.lineTo(90, 188);
+                ctx.closePath();
+                ctx.fill();
+
+                // Inele calendar
+                ctx.fillStyle = '#0f172a';
+                roundRect(ctx, 152, 82, 24, 54, 12);
+                ctx.fill();
+                roundRect(ctx, 290, 82, 24, 54, 12);
+                ctx.fill();
+
+                // Pătrățele zile
+                const cols = [132, 188, 244, 300];
+                const rows = [212, 266, 316];
+                rows.forEach((ry, rIdx) => {
+                    cols.forEach((cx, cIdx) => {
+                        if (rIdx === 2 && cIdx === 0) return;
+                        if (rIdx === 1 && cIdx === 1) {
+                            ctx.fillStyle = '#2563eb';
+                            roundRect(ctx, cx, ry, 40, 36, 8);
+                            ctx.fill();
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 6;
+                            ctx.beginPath();
+                            ctx.moveTo(cx + 10, ry + 18);
+                            ctx.lineTo(cx + 17, ry + 25);
+                            ctx.lineTo(cx + 31, ry + 11);
+                            ctx.stroke();
+                        } else {
+                            ctx.fillStyle = '#cbd5e1';
+                            roundRect(ctx, cx, ry, 40, 36, 8);
+                            ctx.fill();
+                        }
+                    });
+                });
+                ctx.restore();
+
+                // 4. Servietă alb-albastru stânga-jos
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 13;
+                roundRect(ctx, 116, 286, 56, 46, 14);
+                ctx.stroke();
+
+                ctx.fillStyle = '#f8fafc';
+                roundRect(ctx, 64, 322, 160, 120, 24);
+                ctx.fill();
+                ctx.strokeStyle = '#1e3a8a';
+                ctx.lineWidth = 7;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(64, 366);
+                ctx.quadraticCurveTo(144, 392, 224, 366);
+                ctx.stroke();
+
+                ctx.fillStyle = '#1e3a8a';
+                roundRect(ctx, 128, 360, 32, 34, 8);
+                ctx.fill();
+
+                // 5. Ceas dreapta-jos
+                ctx.fillStyle = '#f8fafc';
+                ctx.beginPath();
+                ctx.arc(352, 346, 102, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#1e3a8a';
+                ctx.lineWidth = 18;
+                ctx.stroke();
+
+                // Repere ceas
+                ctx.strokeStyle = '#1e3a8a';
+                ctx.lineWidth = 10;
+                ctx.beginPath();
+                ctx.moveTo(352, 268); ctx.lineTo(352, 282);
+                ctx.moveTo(352, 410); ctx.lineTo(352, 424);
+                ctx.moveTo(274, 346); ctx.lineTo(288, 346);
+                ctx.moveTo(416, 346); ctx.lineTo(430, 346);
+                ctx.stroke();
+
+                // Acele ceasului
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 14;
+                ctx.beginPath();
+                ctx.moveTo(324, 322);
+                ctx.lineTo(352, 348);
+                ctx.lineTo(394, 310);
+                ctx.stroke();
+
+                const pngDataUrl = canvas.toDataURL('image/png');
+                const favLink = document.getElementById('app-favicon');
+                const appleLink = document.getElementById('apple-touch-icon');
+                if (favLink) {
+                    favLink.type = 'image/png';
+                    favLink.href = pngDataUrl;
+                }
+                if (appleLink) {
+                    appleLink.href = pngDataUrl;
+                }
+
+                // Manifest Web App pentru ecranul principal Android
+                const manifestObj = {
+                    name: 'SmartWork - Programul de muncă',
+                    short_name: 'SmartWork',
+                    start_url: window.location.href,
+                    display: 'standalone',
+                    background_color: '#f8fafc',
+                    theme_color: '#1d4ed8',
+                    icons: [
+                        { src: pngDataUrl, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+                        { src: pngDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+                    ]
+                };
+                const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+                const manifestLink = document.getElementById('pwa-manifest');
+                if (manifestLink) {
+                    manifestLink.href = URL.createObjectURL(manifestBlob);
+                }
+            } catch (e) {}
+        })();
+    </script>
+
     <style>
         /* =====================================================================
            1. DESIGN TOKENS & BASE STYLES (100% SELF-CONTAINED)
@@ -141,13 +328,14 @@
             width: 42px;
             height: 42px;
             border-radius: 12px;
-            background: linear-gradient(135deg, var(--indigo-600), var(--indigo-700));
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
             color: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.28);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.28);
+            overflow: hidden;
         }
 
         .brand-title-row {
@@ -1319,12 +1507,18 @@
         <div class="header-inner">
             <button type="button" id="brand-trigger-btn" class="brand-trigger" title="Click pentru a deschide Programul de muncă rotit la 90° pe tot ecranul">
                 <div class="brand-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                        <circle cx="12" cy="15" r="2"></circle>
+                    <svg width="28" height="28" viewBox="0 0 512 512" fill="none">
+                        <g transform="rotate(-7 240 245)">
+                            <rect x="75" y="95" width="290" height="265" rx="34" fill="#ffffff"/>
+                            <path d="M75 129c0-19 15-34 34-34h222c19 0 34 15 34 34v42H75v-42z" fill="#93c5fd"/>
+                            <rect x="135" y="68" width="24" height="52" rx="12" fill="#0f172a"/>
+                            <rect x="280" y="68" width="24" height="52" rx="12" fill="#0f172a"/>
+                            <rect x="175" y="245" width="44" height="40" rx="8" fill="#2563eb"/>
+                            <path d="M186 265l8 8 16-16" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                        <rect x="55" y="315" width="160" height="122" rx="22" fill="#ffffff" stroke="#1e3a8a" stroke-width="10"/>
+                        <circle cx="355" cy="345" r="105" fill="#ffffff" stroke="#1e3a8a" stroke-width="18"/>
+                        <path d="M325 320l30 27 44-40" stroke="#0f172a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 </div>
                 <div>

@@ -72,7 +72,7 @@
             overflow: hidden !important;
         }
 
-        button, select, input, textarea {
+        button, select, input {
             font-family: inherit;
         }
 
@@ -215,7 +215,6 @@
             cursor: pointer;
             transition: all 0.15s ease;
             white-space: nowrap;
-            text-decoration: none;
         }
 
         .btn:hover {
@@ -1185,12 +1184,6 @@
             gap: 10px;
         }
 
-        @media (max-width: 560px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .form-group {
             display: flex;
             flex-direction: column;
@@ -1210,32 +1203,11 @@
             font-size: 0.84rem;
             color: var(--text-main);
             outline: none;
-            background: #ffffff;
         }
 
         .form-input:focus {
             border-color: var(--indigo-600);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
-        }
-
-        .share-textarea {
-            width: 100%;
-            min-height: 120px;
-            max-height: 190px;
-            padding: 9px 11px;
-            border-radius: 10px;
-            border: 1px solid var(--border-strong);
-            background: #f8fafc;
-            color: var(--text-main);
-            font-size: 0.76rem;
-            line-height: 1.4;
-            resize: vertical;
-            outline: none;
-        }
-
-        .share-textarea:focus {
-            border-color: var(--indigo-600);
-            background: #ffffff;
         }
 
         .modal-footer {
@@ -1257,8 +1229,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 140px;
-            max-height: 30vh;
+            min-height: 180px;
+            max-height: 46vh;
             overflow: auto;
         }
 
@@ -1657,36 +1629,20 @@
         </div>
     </div>
 
-    <!-- MODAL 3: SEND & PREVIEW SCHEDULE (WHATSAPP + EMAIL + PNG + TEXT) -->
+    <!-- MODAL 3: PNG TABLE PREVIEW & SHARE -->
     <div id="share-image-modal" class="modal-backdrop">
-        <div class="modal-card" style="max-width: 720px;">
+        <div class="modal-card" style="max-width: 680px;">
             <div class="modal-header">
                 <div>
-                    <div class="modal-title" id="share-image-modal-title">Trimite Tabelul Programului</div>
-                    <div class="modal-subtitle" id="share-image-modal-subtitle">Săpt. 47 (16 Nov – 22 Nov 2026) • WhatsApp, Email, Text &amp; PNG</div>
+                    <div class="modal-title" id="share-image-modal-title">Imagine Tabel Program (.PNG)</div>
+                    <div class="modal-subtitle" id="share-image-modal-subtitle">Săpt. 47 (16 Nov – 22 Nov 2026) • Imagine PNG gata de trimis</div>
                 </div>
                 <button type="button" id="close-share-modal-btn" class="modal-close" aria-label="Închide">✕</button>
             </div>
 
             <div class="modal-body">
                 <div class="share-helper-note" id="share-image-helper-text">
-                    Poți trimite tabelul complet direct prin WhatsApp sau Email (cu tot textul tabelului inclus + descărcare automată a imaginii PNG pentru atașare), ori poți copia textul/imaginea direct.
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="share-wa-phone">Număr WhatsApp destinatar (opțional)</label>
-                        <input type="tel" id="share-wa-phone" class="form-input" placeholder="Ex: 31612345678 sau 40722123456">
-                    </div>
-                    <div class="form-group">
-                        <label for="share-email-to">Adresă Email destinatar (opțional)</label>
-                        <input type="email" id="share-email-to" class="form-input" placeholder="Ex: coleg@firma.ro">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="share-text-preview">Conținutul complet al tabelului (se trimite în WhatsApp / Email)</label>
-                    <textarea id="share-text-preview" class="share-textarea" aria-label="Conținutul complet al tabelului"></textarea>
+                    Imaginea conține tot tabelul (angajați, detalii, zilele Luni–Duminică, mențiuni, total zile și prezenți/zi). Pe dispozitivele compatibile poți atașa direct fișierul PNG în WhatsApp sau Email.
                 </div>
 
                 <div class="png-preview-box" id="png-preview-container">
@@ -1698,11 +1654,10 @@
                 <div style="display:flex; flex-wrap:wrap; gap:6px;">
                     <button type="button" id="download-png-btn" class="btn btn-soft-indigo">⬇ Descarcă PNG</button>
                     <button type="button" id="copy-png-btn" class="btn">📋 Copiază Imagine</button>
-                    <button type="button" id="modal-copy-text-btn" class="btn">📄 Copiază Text</button>
                 </div>
                 <div style="display:flex; flex-wrap:wrap; gap:6px;">
-                    <a id="modal-wa-direct-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">Trimite pe WhatsApp</a>
-                    <a id="modal-mail-direct-link" href="#" class="btn btn-email">Trimite pe Email</a>
+                    <button type="button" id="modal-wa-image-btn" class="btn btn-whatsapp">WhatsApp (Imagine)</button>
+                    <button type="button" id="modal-mail-image-btn" class="btn btn-email">Email (Imagine)</button>
                     <button type="button" id="close-share-footer-btn" class="btn">Închide</button>
                 </div>
             </div>
@@ -1966,20 +1921,15 @@
                 empRolePlaceholder: 'Ex: Grup A, Grup B, Grup C...',
                 empDefaultRole: 'Angajat',
                 addEmpSubmitBtn: 'Adaugă în program',
-                shareModalTitle: 'Trimite Tabelul Programului',
-                shareModalSubtitle: 'Săpt. {week} ({range}) • WhatsApp, Email, Text & PNG',
+                shareModalTitle: 'Imagine Tabel Program (.PNG)',
+                shareModalSubtitle: 'Săpt. {week} ({range}) • Imagine PNG gata de trimis',
                 shareError: 'Nu s-a putut genera imaginea PNG a tabelului.',
-                shareHelperText: 'Textul complet al tabelului este pregătit mai jos și se trimite direct prin WhatsApp sau Email. La apăsarea butoanelor de trimitere se descarcă și imaginea PNG a tabelului ca să o poți atașa ușor.',
-                waPhoneLabel: 'Număr WhatsApp destinatar (opțional)',
-                waPhonePlaceholder: 'Ex: 31612345678 sau 40722123456',
-                emailToLabel: 'Adresă Email destinatar (opțional)',
-                emailToPlaceholder: 'Ex: coleg@firma.ro',
-                shareTextLabel: 'Conținutul complet al tabelului (se trimite în WhatsApp / Email)',
+                shareHelperNative: 'Dispozitivul tău suportă atașarea directă a fișierului PNG! Apasă pe WhatsApp (Imagine) sau Email (Imagine) pentru a trimite direct imaginea tabelului.',
+                shareHelperFallback: 'Apasă „Descarcă PNG” sau „Copiază Imagine” pentru a atașa/lipi direct imaginea tabelului în WhatsApp sau Email, ori folosește butoanele rapide de mai jos.',
                 downloadPngBtn: '⬇ Descarcă PNG',
                 copyImageBtn: '📋 Copiază Imagine',
-                copyTextModalBtn: '📄 Copiază Text',
-                waDirectBtn: 'Trimite pe WhatsApp',
-                mailDirectBtn: 'Trimite pe Email',
+                waImageBtn: 'WhatsApp (Imagine)',
+                mailImageBtn: 'Email (Imagine)',
                 closeBtn: 'Închide',
                 canvasBannerTitle: 'PROGRAMUL DE MUNCĂ • SĂPTĂMÂNA {week} ({range})',
                 canvasBannerStats: 'Angajați: {count}   •   Total zile lucrate: {days} zile',
@@ -1993,6 +1943,8 @@
                 shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
                 shareTextPresentLine: 'Prezenți / zi: {presentLine}',
                 shareTextTotalLine: 'Total zile lucrate în săptămână: {days} zile ({count} angajați)',
+                shareAttachNote: '{title} — atașez imaginea tabelului PNG.',
+                shareMailBody: '{title}\n\nImaginea PNG a tabelului a fost descărcată pentru a fi atașată la email.',
                 toastFirstWeek2026: 'Ai ajuns la prima săptămână din 2026.',
                 toastLastWeek2027: 'Ai ajuns la ultima săptămână din 2027.',
                 toastWeek47: 'Afișat Săpt. 47 (16 – 22 Noiembrie 2026).',
@@ -2008,15 +1960,19 @@
                 toastPrevWeekEmpty: 'Săptămâna {week} nu are ture salvate.',
                 toastWeekCopied: 'Programul din Săpt. {week} a fost copiat.',
                 toastTextCopied: 'Tot tabelul programului a fost copiat în clipboard.',
-                toastTextCopyFail: 'Selectează și copiază manual textul din casetă.',
+                toastTextCopyFail: 'Nu s-a putut copia automat; poți folosi butoanele WhatsApp sau Email.',
                 toastPngNotReady: 'Imaginea PNG nu a putut fi pregătită.',
                 toastPngDownloaded: 'Imaginea {filename} a fost descărcată.',
                 toastPngOpenFail: 'Deschide imaginea din previzualizare pentru a o salva.',
                 toastNoPng: 'Nu există o imagine PNG generată.',
                 toastImgCopied: 'Imaginea tabelului a fost copiată în clipboard! O poți lipi direct în WhatsApp sau Email.',
                 toastImgCopyFallback: 'Browserul nu permite copierea directă a imaginii; PNG-ul a fost descărcat pentru atașare.',
-                toastSentWa: 'Textul tabelului a fost copiat, PNG-ul a fost descărcat și WhatsApp s-a deschis.',
-                toastSentMail: 'Textul tabelului a fost copiat, PNG-ul a fost descărcat și aplicația de Email s-a deschis.',
+                toastNoPngGen: 'Nu s-a putut genera imaginea PNG.',
+                toastSharedWa: 'Imaginea PNG a fost trimisă către meniul de partajare / WhatsApp.',
+                toastSharedMail: 'Imaginea PNG a fost trimisă către meniul de partajare / Email.',
+                toastShareCancelled: 'Partajarea imaginii a fost anulată.',
+                toastOpenedWa: 'Am descărcat imaginea PNG și am deschis WhatsApp pentru a o atașa.',
+                toastOpenedMail: 'Am descărcat imaginea PNG și am deschis Email pentru a o atașa.',
                 toastFsActive: 'Ecran complet 90° activat • Apasă Înapoi pentru pagina principală.'
             },
             de: {
@@ -2047,7 +2003,7 @@
                 legendVrij: 'Frei',
                 legendVakantie: 'Urlaub',
                 whatsappBtn: 'WhatsApp',
-                whatsappTitle: 'Gesamten Plan über WhatsApp senden',
+                whatsappTitle: 'Gesamten Plan über WhatsApp teilen',
                 emailBtn: 'E-Mail',
                 emailTitle: 'Gesamten Plan per E-Mail senden',
                 copyTextBtn: 'Text kopieren',
@@ -2107,20 +2063,15 @@
                 empRolePlaceholder: 'Z. B. Gruppe A, Gruppe B...',
                 empDefaultRole: 'Mitarbeiter',
                 addEmpSubmitBtn: 'Zum Plan hinzufügen',
-                shareModalTitle: 'Arbeitsplan senden',
-                shareModalSubtitle: 'KW {week} ({range}) • WhatsApp, E-Mail, Text & PNG',
+                shareModalTitle: 'Arbeitsplan-Bild (.PNG)',
+                shareModalSubtitle: 'KW {week} ({range}) • PNG-Bild bereit zum Teilen',
                 shareError: 'Das PNG-Bild der Tabelle konnte nicht erstellt werden.',
-                shareHelperText: 'Der vollständige Plan ist unten vorbereitet und wird direkt an WhatsApp oder E-Mail übergeben. Beim Senden wird auch das PNG-Bild zum Anhängen heruntergeladen.',
-                waPhoneLabel: 'WhatsApp-Nummer Empfänger (optional)',
-                waPhonePlaceholder: 'Z. B. 491701234567 oder 31612345678',
-                emailToLabel: 'E-Mail-Adresse Empfänger (optional)',
-                emailToPlaceholder: 'Z. B. kollege@firma.de',
-                shareTextLabel: 'Vollständiger Inhalt der Tabelle (für WhatsApp / E-Mail)',
+                shareHelperNative: 'Ihr Gerät unterstützt das direkte Anhängen von PNG-Dateien! Tippen Sie auf WhatsApp (Bild) oder E-Mail (Bild), um das Bild direkt zu senden.',
+                shareHelperFallback: 'Klicken Sie auf „PNG herunterladen“ oder „Bild kopieren“, um das Bild in WhatsApp oder E-Mail anzuhängen/einzufügen, oder nutzen Sie die Schnellaktionen.',
                 downloadPngBtn: '⬇ PNG herunterladen',
                 copyImageBtn: '📋 Bild kopieren',
-                copyTextModalBtn: '📄 Text kopieren',
-                waDirectBtn: 'Auf WhatsApp senden',
-                mailDirectBtn: 'Per E-Mail senden',
+                waImageBtn: 'WhatsApp (Bild)',
+                mailImageBtn: 'E-Mail (Bild)',
                 closeBtn: 'Schließen',
                 canvasBannerTitle: 'ARBEITSPLAN • KALENDERWOCHE {week} ({range})',
                 canvasBannerStats: 'Mitarbeiter: {count}   •   Arbeitstage gesamt: {days} Tage',
@@ -2134,6 +2085,8 @@
                 shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
                 shareTextPresentLine: 'Anwesend / Tag: {presentLine}',
                 shareTextTotalLine: 'Arbeitstage gesamt in der Woche: {days} Tage ({count} Mitarbeiter)',
+                shareAttachNote: '{title} — PNG-Tabellenbild im Anhang.',
+                shareMailBody: '{title}\n\nDas PNG-Bild der Tabelle wurde zum Anhängen an die E-Mail heruntergeladen.',
                 toastFirstWeek2026: 'Erste Woche von 2026 erreicht.',
                 toastLastWeek2027: 'Letzte Woche von 2027 erreicht.',
                 toastWeek47: 'KW 47 angezeigt (16.–22. November 2026).',
@@ -2149,15 +2102,19 @@
                 toastPrevWeekEmpty: 'In KW {week} sind keine Einträge gespeichert.',
                 toastWeekCopied: 'Plan aus KW {week} kopiert.',
                 toastTextCopied: 'Gesamter Plan als Text in die Zwischenablage kopiert.',
-                toastTextCopyFail: 'Bitte Text aus dem Feld manuell kopieren.',
+                toastTextCopyFail: 'Automatisches Kopieren nicht möglich; bitte WhatsApp oder E-Mail nutzen.',
                 toastPngNotReady: 'PNG-Bild konnte nicht vorbereitet werden.',
                 toastPngDownloaded: 'Bild {filename} heruntergeladen.',
                 toastPngOpenFail: 'Öffnen Sie das Bild in der Vorschau, um es zu speichern.',
                 toastNoPng: 'Kein PNG-Bild vorhanden.',
                 toastImgCopied: 'Tabellenbild in die Zwischenablage kopiert! Sie können es direkt in WhatsApp oder E-Mail einfügen.',
                 toastImgCopyFallback: 'Bildkopie wird vom Browser nicht unterstützt; PNG wurde zum Anhängen heruntergeladen.',
-                toastSentWa: 'Text kopiert, PNG heruntergeladen und WhatsApp geöffnet.',
-                toastSentMail: 'Text kopiert, PNG heruntergeladen und E-Mail-Programm geöffnet.',
+                toastNoPngGen: 'PNG-Bild konnte nicht erzeugt werden.',
+                toastSharedWa: 'PNG-Bild an Freigabemenü / WhatsApp gesendet.',
+                toastSharedMail: 'PNG-Bild an Freigabemenü / E-Mail gesendet.',
+                toastShareCancelled: 'Teilen des Bildes abgebrochen.',
+                toastOpenedWa: 'PNG-Bild heruntergeladen und WhatsApp zum Anhängen geöffnet.',
+                toastOpenedMail: 'PNG-Bild heruntergeladen und E-Mail zum Anhängen geöffnet.',
                 toastFsActive: '90°-Vollbild aktiv • Zurück drücken für Hauptansicht.'
             },
             en: {
@@ -2188,7 +2145,7 @@
                 legendVrij: 'Off',
                 legendVakantie: 'Vacation',
                 whatsappBtn: 'WhatsApp',
-                whatsappTitle: 'Send full schedule table on WhatsApp',
+                whatsappTitle: 'Share full schedule table on WhatsApp',
                 emailBtn: 'Email',
                 emailTitle: 'Send full schedule table by Email',
                 copyTextBtn: 'Copy Text',
@@ -2248,20 +2205,15 @@
                 empRolePlaceholder: 'E.g. Group A, Group B, Group C...',
                 empDefaultRole: 'Employee',
                 addEmpSubmitBtn: 'Add to schedule',
-                shareModalTitle: 'Send Schedule Table',
-                shareModalSubtitle: 'Week {week} ({range}) • WhatsApp, Email, Text & PNG',
+                shareModalTitle: 'Schedule Table Image (.PNG)',
+                shareModalSubtitle: 'Week {week} ({range}) • PNG image ready to share',
                 shareError: 'Could not generate PNG image of the table.',
-                shareHelperText: 'The full schedule text is prepared below and sent directly via WhatsApp or Email. Clicking a send button also downloads the PNG table image so you can attach it easily.',
-                waPhoneLabel: 'Recipient WhatsApp number (optional)',
-                waPhonePlaceholder: 'E.g. 31612345678 or 447700900077',
-                emailToLabel: 'Recipient Email address (optional)',
-                emailToPlaceholder: 'E.g. colleague@company.com',
-                shareTextLabel: 'Full table content (sent in WhatsApp / Email)',
+                shareHelperNative: 'Your device supports attaching PNG files directly! Tap WhatsApp (Image) or Email (Image) to send the table image directly.',
+                shareHelperFallback: 'Click "Download PNG" or "Copy Image" to attach/paste the table image into WhatsApp or Email, or use the quick share buttons below.',
                 downloadPngBtn: '⬇ Download PNG',
                 copyImageBtn: '📋 Copy Image',
-                copyTextModalBtn: '📄 Copy Text',
-                waDirectBtn: 'Send on WhatsApp',
-                mailDirectBtn: 'Send by Email',
+                waImageBtn: 'WhatsApp (Image)',
+                mailImageBtn: 'Email (Image)',
                 closeBtn: 'Close',
                 canvasBannerTitle: 'WORK SCHEDULE • WEEK {week} ({range})',
                 canvasBannerStats: 'Employees: {count}   •   Total worked days: {days} days',
@@ -2275,6 +2227,8 @@
                 shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
                 shareTextPresentLine: 'Present / day: {presentLine}',
                 shareTextTotalLine: 'Total worked days this week: {days} days ({count} employees)',
+                shareAttachNote: '{title} — attaching PNG table image.',
+                shareMailBody: '{title}\n\nThe PNG table image has been downloaded so you can attach it to your email.',
                 toastFirstWeek2026: 'Reached the first week of 2026.',
                 toastLastWeek2027: 'Reached the last week of 2027.',
                 toastWeek47: 'Showing Week 47 (16 – 22 November 2026).',
@@ -2290,15 +2244,19 @@
                 toastPrevWeekEmpty: 'Week {week} has no saved shifts.',
                 toastWeekCopied: 'Copied schedule from Week {week}.',
                 toastTextCopied: 'Full schedule table copied to clipboard.',
-                toastTextCopyFail: 'Please copy the text manually from the box.',
+                toastTextCopyFail: 'Could not copy automatically; use WhatsApp or Email buttons.',
                 toastPngNotReady: 'PNG image could not be prepared.',
                 toastPngDownloaded: 'Image {filename} downloaded.',
                 toastPngOpenFail: 'Open the image from preview to save it.',
                 toastNoPng: 'No PNG image generated.',
                 toastImgCopied: 'Table image copied to clipboard! Paste it directly into WhatsApp or Email.',
                 toastImgCopyFallback: 'Browser does not support copying images directly; PNG downloaded to attach.',
-                toastSentWa: 'Text copied, PNG downloaded, and WhatsApp opened.',
-                toastSentMail: 'Text copied, PNG downloaded, and Email client opened.',
+                toastNoPngGen: 'Could not generate PNG image.',
+                toastSharedWa: 'PNG image sent to share menu / WhatsApp.',
+                toastSharedMail: 'PNG image sent to share menu / Email.',
+                toastShareCancelled: 'Image sharing cancelled.',
+                toastOpenedWa: 'Downloaded PNG image and opened WhatsApp to attach it.',
+                toastOpenedMail: 'Downloaded PNG image and opened Email to attach it.',
                 toastFsActive: '90° fullscreen active • Press Back for main view.'
             },
             ru: {
@@ -2389,20 +2347,15 @@
                 empRolePlaceholder: 'Напр.: Группа A, Группа B...',
                 empDefaultRole: 'Сотрудник',
                 addEmpSubmitBtn: 'Добавить в график',
-                shareModalTitle: 'Отправить график работы',
-                shareModalSubtitle: 'Нед. {week} ({range}) • WhatsApp, Email, Текст и PNG',
+                shareModalTitle: 'Изображение графика (.PNG)',
+                shareModalSubtitle: 'Нед. {week} ({range}) • PNG-изображение готово к отправке',
                 shareError: 'Не удалось создать PNG-изображение таблицы.',
-                shareHelperText: 'Полный текст таблицы подготовлен ниже и отправляется напрямую через WhatsApp или Email. Также скачивается PNG-изображение таблицы для прикрепления.',
-                waPhoneLabel: 'Номер WhatsApp получателя (необязательно)',
-                waPhonePlaceholder: 'Напр.: 79991234567 или 31612345678',
-                emailToLabel: 'Email получателя (необязательно)',
-                emailToPlaceholder: 'Напр.: kollega@firma.ru',
-                shareTextLabel: 'Полное содержимое таблицы (для WhatsApp / Email)',
+                shareHelperNative: 'Ваше устройство поддерживает прямое прикрепление PNG-файлов! Нажмите WhatsApp (Картинка) или Email (Картинка), чтобы отправить изображение таблицы.',
+                shareHelperFallback: 'Нажмите «Скачать PNG» или «Копировать картинку», чтобы прикрепить/вставить изображение таблицы в WhatsApp или Email, либо используйте быстрые кнопки ниже.',
                 downloadPngBtn: '⬇ Скачать PNG',
                 copyImageBtn: '📋 Копировать картинку',
-                copyTextModalBtn: '📄 Копировать текст',
-                waDirectBtn: 'Отправить в WhatsApp',
-                mailDirectBtn: 'Отправить по Email',
+                waImageBtn: 'WhatsApp (Картинка)',
+                mailImageBtn: 'Email (Картинка)',
                 closeBtn: 'Закрыть',
                 canvasBannerTitle: 'ГРАФИК РАБОТЫ • НЕДЕЛЯ {week} ({range})',
                 canvasBannerStats: 'Сотрудников: {count}   •   Всего рабочих дней: {days} дн.',
@@ -2416,6 +2369,8 @@
                 shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
                 shareTextPresentLine: 'На смене / день: {presentLine}',
                 shareTextTotalLine: 'Всего рабочих дней за неделю: {days} дн. (сотрудников: {count})',
+                shareAttachNote: '{title} — прикрепляю PNG-изображение таблицы.',
+                shareMailBody: '{title}\n\nPNG-изображение таблицы скачано, чтобы вы могли прикрепить его к письму.',
                 toastFirstWeek2026: 'Достигнута первая неделя 2026 года.',
                 toastLastWeek2027: 'Достигнута последняя неделя 2027 года.',
                 toastWeek47: 'Показана неделя 47 (16 – 22 ноября 2026).',
@@ -2431,15 +2386,19 @@
                 toastPrevWeekEmpty: 'В неделе {week} нет сохранённых смен.',
                 toastWeekCopied: 'График с недели {week} скопирован.',
                 toastTextCopied: 'Весь график скопирован в буфер обмена.',
-                toastTextCopyFail: 'Скопируйте текст вручную из поля выше.',
+                toastTextCopyFail: 'Автокопирование недоступно; используйте WhatsApp или Email.',
                 toastPngNotReady: 'Не удалось подготовить PNG-изображение.',
                 toastPngDownloaded: 'Изображение {filename} скачано.',
                 toastPngOpenFail: 'Откройте изображение в предпросмотре, чтобы сохранить его.',
                 toastNoPng: 'PNG-изображение не создано.',
                 toastImgCopied: 'Изображение таблицы скопировано в буфер обмена! Вставьте его в WhatsApp или Email.',
                 toastImgCopyFallback: 'Браузер не поддерживает копирование картинок; PNG скачан для отправки.',
-                toastSentWa: 'Текст скопирован, PNG скачан и открыт WhatsApp.',
-                toastSentMail: 'Текст скопирован, PNG скачан и открыт почтовый клиент.',
+                toastNoPngGen: 'Не удалось создать PNG-изображение.',
+                toastSharedWa: 'PNG-изображение передано в меню отправки / WhatsApp.',
+                toastSharedMail: 'PNG-изображение передано в меню отправки / Email.',
+                toastShareCancelled: 'Отправка изображения отменена.',
+                toastOpenedWa: 'PNG-изображение скачано, открыт WhatsApp для прикрепления.',
+                toastOpenedMail: 'PNG-изображение скачано, открыт Email для прикрепления.',
                 toastFsActive: 'Полноэкранный режим 90° активен • Нажмите Назад для возврата.'
             },
             tr: {
@@ -2470,7 +2429,7 @@
                 legendVrij: 'İzinli',
                 legendVakantie: 'Tatil',
                 whatsappBtn: 'WhatsApp',
-                whatsappTitle: 'Tüm program tablosunu WhatsApp’ta gönder',
+                whatsappTitle: 'Tüm program tablosunu WhatsApp’ta paylaş',
                 emailBtn: 'E-posta',
                 emailTitle: 'Tüm program tablosunu E-posta ile gönder',
                 copyTextBtn: 'Metni Kopyala',
@@ -2530,20 +2489,15 @@
                 empRolePlaceholder: 'Örn: Grup A, Grup B, Grup C...',
                 empDefaultRole: 'Çalışan',
                 addEmpSubmitBtn: 'Programa ekle',
-                shareModalTitle: 'Program Tablosunu Gönder',
-                shareModalSubtitle: 'Hafta {week} ({range}) • WhatsApp, E-posta, Metin & PNG',
+                shareModalTitle: 'Program Tablosu Görseli (.PNG)',
+                shareModalSubtitle: 'Hafta {week} ({range}) • Paylaşıma hazır PNG görsel',
                 shareError: 'Tablonun PNG görseli oluşturulamadı.',
-                shareHelperText: 'Tüm tablo metni aşağıda hazırlandı ve WhatsApp veya E-posta ile doğrudan gönderilir. Gönder düğmelerine bastığınızda eklemek için PNG görseli de indirilir.',
-                waPhoneLabel: 'Alıcı WhatsApp numarası (isteğe bağlı)',
-                waPhonePlaceholder: 'Örn: 905551234567 veya 31612345678',
-                emailToLabel: 'Alıcı E-posta adresi (isteğe bağlı)',
-                emailToPlaceholder: 'Örn: kisi@firma.com',
-                shareTextLabel: 'Tüm tablo içeriği (WhatsApp / E-posta için)',
+                shareHelperNative: 'Cihazınız doğrudan PNG dosyası eklemeyi destekliyor! Tablo görselini doğrudan göndermek için WhatsApp (Görsel) veya E-posta (Görsel) düğmesine dokunun.',
+                shareHelperFallback: 'Tablo görselini WhatsApp veya E-postaya eklemek/yapıştırmak için „PNG İndir“ veya „Görseli Kopyala“ düğmesine tıklayın ya da aşağıdaki hızlı düğmeleri kullanın.',
                 downloadPngBtn: '⬇ PNG İndir',
                 copyImageBtn: '📋 Görseli Kopyala',
-                copyTextModalBtn: '📄 Metni Kopyala',
-                waDirectBtn: 'WhatsApp’ta Gönder',
-                mailDirectBtn: 'E-posta ile Gönder',
+                waImageBtn: 'WhatsApp (Görsel)',
+                mailImageBtn: 'E-posta (Görsel)',
                 closeBtn: 'Kapat',
                 canvasBannerTitle: 'ÇALIŞMA PROGRAMI • HAFTA {week} ({range})',
                 canvasBannerStats: 'Çalışanlar: {count}   •   Toplam çalışılan gün: {days} gün',
@@ -2557,6 +2511,8 @@
                 shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
                 shareTextPresentLine: 'Mevcut / gün: {presentLine}',
                 shareTextTotalLine: 'Haftalık toplam çalışılan gün: {days} gün ({count} çalışan)',
+                shareAttachNote: '{title} — PNG tablo görseli ekleniyor.',
+                shareMailBody: '{title}\n\nTablo PNG görseli e-postaya eklemeniz için indirildi.',
                 toastFirstWeek2026: '2026 yılının ilk haftasına ulaştınız.',
                 toastLastWeek2027: '2027 yılının son haftasına ulaştınız.',
                 toastWeek47: '47. Hafta gösteriliyor (16 – 22 Kasım 2026).',
@@ -2572,15 +2528,19 @@
                 toastPrevWeekEmpty: '{week}. haftada kayıtlı vardiya yok.',
                 toastWeekCopied: '{week}. haftanın programı kopyalandı.',
                 toastTextCopied: 'Tüm program tablosu panoya kopyalandı.',
-                toastTextCopyFail: 'Metni yukarıdaki kutudan manuel olarak kopyalayın.',
+                toastTextCopyFail: 'Otomatik kopyalanamadı; WhatsApp veya E-posta düğmelerini kullanın.',
                 toastPngNotReady: 'PNG görseli hazırlanamadı.',
                 toastPngDownloaded: '{filename} görseli indirildi.',
                 toastPngOpenFail: 'Kaydetmek için önizlemeden görseli açın.',
                 toastNoPng: 'Oluşturulmuş PNG görseli yok.',
                 toastImgCopied: 'Tablo görseli panoya kopyalandı! WhatsApp veya E-postaya doğrudan yapıştırabilirsiniz.',
                 toastImgCopyFallback: 'Tarayıcı doğrudan görsel kopyalamayı desteklemiyor; PNG eklemek için indirildi.',
-                toastSentWa: 'Metin kopyalandı, PNG indirildi ve WhatsApp açıldı.',
-                toastSentMail: 'Metin kopyalandı, PNG indirildi ve E-posta uygulaması açıldı.',
+                toastNoPngGen: 'PNG görseli oluşturulamadı.',
+                toastSharedWa: 'PNG görseli paylaşım menüsüne / WhatsApp’a gönderildi.',
+                toastSharedMail: 'PNG görseli paylaşım menüsüne / E-postaya gönderildi.',
+                toastShareCancelled: 'Görsel paylaşımı iptal edildi.',
+                toastOpenedWa: 'PNG görseli indirildi ve eklemek için WhatsApp açıldı.',
+                toastOpenedMail: 'PNG görseli indirildi ve eklemek için E-posta açıldı.',
                 toastFsActive: '90° tam ekran aktif • Ana görünüm için Geri tuşuna basın.'
             },
             nl: {
@@ -2611,7 +2571,7 @@
                 legendVrij: 'Vrij',
                 legendVakantie: 'Vakantie',
                 whatsappBtn: 'WhatsApp',
-                whatsappTitle: 'Verstuur het hele roostertabel op WhatsApp',
+                whatsappTitle: 'Deel het hele roostertabel op WhatsApp',
                 emailBtn: 'E-mail',
                 emailTitle: 'Verstuur het hele roostertabel per e-mail',
                 copyTextBtn: 'Kopieer Tekst',
@@ -2671,20 +2631,15 @@
                 empRolePlaceholder: 'Bijv.: Groep A, Groep B, Groep C...',
                 empDefaultRole: 'Medewerker',
                 addEmpSubmitBtn: 'Toevoegen aan rooster',
-                shareModalTitle: 'Rooster Verzenden',
-                shareModalSubtitle: 'Week {week} ({range}) • WhatsApp, E-mail, Tekst & PNG',
+                shareModalTitle: 'Rooster Afbeelding (.PNG)',
+                shareModalSubtitle: 'Week {week} ({range}) • PNG-afbeelding klaar om te delen',
                 shareError: 'Kon geen PNG-afbeelding van de tabel maken.',
-                shareHelperText: 'De volledige roostertekst staat hieronder klaar en wordt direct via WhatsApp of E-mail verzonden. Ook wordt de PNG-afbeelding gedownload zodat u deze eenvoudig kunt bijvoegen.',
-                waPhoneLabel: 'WhatsApp-nummer ontvanger (optioneel)',
-                waPhonePlaceholder: 'Bijv.: 31612345678',
-                emailToLabel: 'E-mailadres ontvanger (optioneel)',
-                emailToPlaceholder: 'Bijv.: collega@bedrijf.nl',
-                shareTextLabel: 'Volledige roosterinhoud (voor WhatsApp / E-mail)',
+                shareHelperNative: 'Uw apparaat ondersteunt het direct bijvoegen van PNG-bestanden! Tik op WhatsApp (Afbeelding) of E-mail (Afbeelding) om de afbeelding direct te sturen.',
+                shareHelperFallback: 'Klik op „Download PNG“ of „Kopieer Afbeelding“ om de roosterafbeelding in WhatsApp of E-mail bij te voegen/plakken, of gebruik de snelle knoppen hieronder.',
                 downloadPngBtn: '⬇ Download PNG',
                 copyImageBtn: '📋 Kopieer Afbeelding',
-                copyTextModalBtn: '📄 Kopieer Tekst',
-                waDirectBtn: 'Verstuur via WhatsApp',
-                mailDirectBtn: 'Verstuur per E-mail',
+                waImageBtn: 'WhatsApp (Afbeelding)',
+                mailImageBtn: 'E-mail (Afbeelding)',
                 closeBtn: 'Sluiten',
                 canvasBannerTitle: 'WERKROOSTER • WEEK {week} ({range})',
                 canvasBannerStats: 'Medewerkers: {count}   •   Totaal gewerkte dagen: {days} dagen',
@@ -2698,6 +2653,8 @@
                 shareTextEmpLine: '{idx}. {name}{role} — {days} {dayWord}',
                 shareTextPresentLine: 'Aanwezig / dag: {presentLine}',
                 shareTextTotalLine: 'Totaal gewerkte dagen deze week: {days} dagen ({count} medewerkers)',
+                shareAttachNote: '{title} — PNG-roosterafbeelding bijgevoegd.',
+                shareMailBody: '{title}\n\nDe PNG-afbeelding van het rooster is gedownload zodat u deze aan uw e-mail kunt toevoegen.',
                 toastFirstWeek2026: 'Eerste week van 2026 bereikt.',
                 toastLastWeek2027: 'Laatste week van 2027 bereikt.',
                 toastWeek47: 'Week 47 weergegeven (16 – 22 november 2026).',
@@ -2713,15 +2670,19 @@
                 toastPrevWeekEmpty: 'Week {week} heeft geen opgeslagen diensten.',
                 toastWeekCopied: 'Rooster van week {week} gekopieerd.',
                 toastTextCopied: 'Volledig rooster gekopieerd naar klembord.',
-                toastTextCopyFail: 'Kopieer de tekst handmatig uit het vak hierboven.',
+                toastTextCopyFail: 'Automatisch kopiëren mislukt; gebruik WhatsApp of E-mail.',
                 toastPngNotReady: 'PNG-afbeelding kon niet worden voorbereid.',
                 toastPngDownloaded: 'Afbeelding {filename} gedownload.',
                 toastPngOpenFail: 'Open de afbeelding in het voorbeeld om deze op te slaan.',
                 toastNoPng: 'Geen PNG-afbeelding gegenereerd.',
                 toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp of E-mail.',
                 toastImgCopyFallback: 'Browser ondersteunt direct kopiëren van afbeeldingen niet; PNG gedownload om bij te voegen.',
-                toastSentWa: 'Tekst gekopieerd, PNG gedownload en WhatsApp geopend.',
-                toastSentMail: 'Tekst gekopieerd, PNG gedownload en E-mail geopend.',
+                toastNoPngGen: 'Kon geen PNG-afbeelding genereren.',
+                toastSharedWa: 'PNG-afbeelding verzonden naar deelmenu / WhatsApp.',
+                toastSharedMail: 'PNG-afbeelding verzonden naar deelmenu / E-mail.',
+                toastShareCancelled: 'Delen van afbeelding geannuleerd.',
+                toastOpenedWa: 'PNG-afbeelding gedownload en WhatsApp geopend om bij te voegen.',
+                toastOpenedMail: 'PNG-afbeelding gedownload en E-mail geopend om bij te voegen.',
                 toastFsActive: '90° volledig scherm actief • Druk op Terug voor hoofdweergave.'
             }
         };
@@ -2759,9 +2720,7 @@
             pushedFullscreenState: false,
             lastPngDataUrl: '',
             lastPngBlob: null,
-            lastPngFilename: '',
-            shareWaPhone: '',
-            shareEmailTo: ''
+            lastPngFilename: ''
         };
 
         let persistDebounceTimer = null;
@@ -3187,33 +3146,17 @@
                 const title = document.getElementById('share-image-modal-title');
                 if (title) title.textContent = t('shareModalTitle');
 
-                const waPhoneLabel = document.querySelector('label[for="share-wa-phone"]');
-                if (waPhoneLabel) waPhoneLabel.textContent = t('waPhoneLabel');
-                const waPhoneInput = document.getElementById('share-wa-phone');
-                if (waPhoneInput) waPhoneInput.setAttribute('placeholder', t('waPhonePlaceholder'));
-
-                const emailToLabel = document.querySelector('label[for="share-email-to"]');
-                if (emailToLabel) emailToLabel.textContent = t('emailToLabel');
-                const emailToInput = document.getElementById('share-email-to');
-                if (emailToInput) emailToInput.setAttribute('placeholder', t('emailToPlaceholder'));
-
-                const shareTextLabel = document.querySelector('label[for="share-text-preview"]');
-                if (shareTextLabel) shareTextLabel.textContent = t('shareTextLabel');
-
                 const dlBtn = document.getElementById('download-png-btn');
                 if (dlBtn) dlBtn.textContent = t('downloadPngBtn');
 
                 const cpBtn = document.getElementById('copy-png-btn');
                 if (cpBtn) cpBtn.textContent = t('copyImageBtn');
 
-                const cpTextModalBtn = document.getElementById('modal-copy-text-btn');
-                if (cpTextModalBtn) cpTextModalBtn.textContent = t('copyTextModalBtn');
+                const waImgBtn = document.getElementById('modal-wa-image-btn');
+                if (waImgBtn) waImgBtn.textContent = t('waImageBtn');
 
-                const waDirectLink = document.getElementById('modal-wa-direct-link');
-                if (waDirectLink) waDirectLink.textContent = t('waDirectBtn');
-
-                const mailDirectLink = document.getElementById('modal-mail-direct-link');
-                if (mailDirectLink) mailDirectLink.textContent = t('mailDirectBtn');
+                const mailImgBtn = document.getElementById('modal-mail-image-btn');
+                if (mailImgBtn) mailImgBtn.textContent = t('mailImageBtn');
 
                 const closeFooterBtn = document.getElementById('close-share-footer-btn');
                 if (closeFooterBtn) closeFooterBtn.textContent = t('closeBtn');
@@ -3228,7 +3171,7 @@
             populateWeekDropdown();
             renderScheduleTable();
             if (document.getElementById('share-image-modal').classList.contains('open')) {
-                openShareImageModal();
+                openShareImageModal(null);
             }
         }
 
@@ -3988,7 +3931,7 @@
                 }
             });
             Object.keys(state.manualOverrides || {}).forEach(wk => {
-                if (state.manualOverrides[wk] && state.manualOverrides[wk][empId]) {
+                if (state.manualOverrides[wk] && Object.prototype.hasOwnProperty.call(state.manualOverrides[wk], empId)) {
                     delete state.manualOverrides[wk][empId];
                 }
             });
@@ -4031,7 +3974,7 @@
         }
 
         /* =====================================================================
-           8. TEXT EXPORT, CANVAS PNG RENDERING & DIRECT WHATSAPP / EMAIL SHARE
+           8. TEXT EXPORT, CANVAS PNG RENDERING & WHATSAPP / EMAIL SHARE
            ===================================================================== */
         function buildScheduleShareText() {
             const days = getDatesOfISOWeek(state.year, state.week);
@@ -4115,56 +4058,14 @@
             }
         }
 
-        function copyScheduleTextToClipboard(customText = null, silent = false) {
-            const text = typeof customText === 'string' ? customText : buildScheduleShareText();
+        function copyScheduleTextToClipboard() {
+            const text = buildScheduleShareText();
             const copied = copyTextFallback(text);
-            if (!silent) {
-                if (copied) {
-                    showToast(t('toastTextCopied'));
-                } else {
-                    showToast(t('toastTextCopyFail'));
-                }
+            if (copied) {
+                showToast(t('toastTextCopied'));
+            } else {
+                showToast(t('toastTextCopyFail'));
             }
-            return copied;
-        }
-
-        function sanitizePhoneForWhatsApp(rawPhone) {
-            return String(rawPhone || '').replace(/[^\d]/g, '');
-        }
-
-        function buildWhatsAppURL(text, rawPhone = '') {
-            const cleanPhone = sanitizePhoneForWhatsApp(rawPhone);
-            const encodedText = encodeURIComponent(text);
-            if (cleanPhone) {
-                return `https://api.whatsapp.com/send?phone=${encodeURIComponent(cleanPhone)}&text=${encodedText}`;
-            }
-            return `https://api.whatsapp.com/send?text=${encodedText}`;
-        }
-
-        function buildMailtoURL(subject, body, rawEmail = '') {
-            const cleanEmail = String(rawEmail || '').trim();
-            return `mailto:${encodeURIComponent(cleanEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        }
-
-        function refreshShareModalLinks() {
-            const textarea = document.getElementById('share-text-preview');
-            const waPhoneInput = document.getElementById('share-wa-phone');
-            const emailToInput = document.getElementById('share-email-to');
-            const waLink = document.getElementById('modal-wa-direct-link');
-            const mailLink = document.getElementById('modal-mail-direct-link');
-
-            if (!textarea || !waLink || !mailLink) return;
-
-            const days = getDatesOfISOWeek(state.year, state.week);
-            const weekNumStr = String(state.week).padStart(2, '0');
-            const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
-            const subject = t('shareTextTitle', { week: weekNumStr, range: rangeStr });
-            const bodyText = textarea.value || buildScheduleShareText();
-            const phoneVal = waPhoneInput ? waPhoneInput.value : state.shareWaPhone;
-            const emailVal = emailToInput ? emailToInput.value : state.shareEmailTo;
-
-            waLink.href = buildWhatsAppURL(bodyText, phoneVal);
-            mailLink.href = buildMailtoURL(subject, bodyText, emailVal);
         }
 
         function getSlotColors(kind) {
@@ -4515,30 +4416,16 @@
             }
         }
 
-        function openShareImageModal(focusField = null) {
+        function openShareImageModal(preferredChannel = null) {
             const rendered = renderScheduleToPNG();
             const container = document.getElementById('png-preview-container');
             const helper = document.getElementById('share-image-helper-text');
             const subtitle = document.getElementById('share-image-modal-subtitle');
-            const textarea = document.getElementById('share-text-preview');
-            const waPhoneInput = document.getElementById('share-wa-phone');
-            const emailToInput = document.getElementById('share-email-to');
 
             const days = getDatesOfISOWeek(state.year, state.week);
             const weekNumStr = String(state.week).padStart(2, '0');
             const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
             subtitle.textContent = t('shareModalSubtitle', { week: weekNumStr, range: rangeStr });
-            helper.textContent = t('shareHelperText');
-
-            if (textarea) {
-                textarea.value = buildScheduleShareText();
-            }
-            if (waPhoneInput && !waPhoneInput.value && state.shareWaPhone) {
-                waPhoneInput.value = state.shareWaPhone;
-            }
-            if (emailToInput && !emailToInput.value && state.shareEmailTo) {
-                emailToInput.value = state.shareEmailTo;
-            }
 
             if (!rendered || !rendered.dataUrl) {
                 container.innerHTML = `<span style="font-size:0.8rem; color:#be123c; font-weight:700;">${escapeHTML(t('shareError'))}</span>`;
@@ -4546,13 +4433,19 @@
                 container.innerHTML = `<img src="${rendered.dataUrl}" alt="${escapeHTML(t('shareModalTitle'))}" class="png-preview-img">`;
             }
 
-            refreshShareModalLinks();
+            const canShareFile = typeof navigator !== 'undefined' &&
+                typeof navigator.share === 'function' &&
+                typeof File !== 'undefined' &&
+                rendered && rendered.blob &&
+                (!navigator.canShare || navigator.canShare({ files: [new File([rendered.blob], rendered.filename, { type: 'image/png' })] }));
+
+            helper.textContent = canShareFile ? t('shareHelperNative') : t('shareHelperFallback');
             document.getElementById('share-image-modal').classList.add('open');
 
-            if (focusField === 'whatsapp' && waPhoneInput) {
-                setTimeout(() => waPhoneInput.focus(), 60);
-            } else if (focusField === 'email' && emailToInput) {
-                setTimeout(() => emailToInput.focus(), 60);
+            if (preferredChannel === 'whatsapp' && canShareFile) {
+                shareRenderedScheduleImage('whatsapp');
+            } else if (preferredChannel === 'email' && canShareFile) {
+                shareRenderedScheduleImage('email');
             }
         }
 
@@ -4560,14 +4453,14 @@
             document.getElementById('share-image-modal').classList.remove('open');
         }
 
-        function downloadRenderedSchedulePNG(silent = false) {
+        function downloadRenderedSchedulePNG() {
             const rendered = (state.lastPngDataUrl && state.lastPngFilename)
                 ? { dataUrl: state.lastPngDataUrl, filename: state.lastPngFilename }
                 : renderScheduleToPNG();
 
             if (!rendered || !rendered.dataUrl) {
-                if (!silent) showToast(t('toastPngNotReady'));
-                return false;
+                showToast(t('toastPngNotReady'));
+                return;
             }
 
             try {
@@ -4577,11 +4470,9 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                if (!silent) showToast(t('toastPngDownloaded', { filename: rendered.filename }));
-                return true;
+                showToast(t('toastPngDownloaded', { filename: rendered.filename }));
             } catch (err) {
-                if (!silent) showToast(t('toastPngOpenFail'));
-                return false;
+                showToast(t('toastPngOpenFail'));
             }
         }
 
@@ -4610,49 +4501,57 @@
             showToast(t('toastImgCopyFallback'));
         }
 
-        function prepareAndSendWhatsApp(event) {
-            const textarea = document.getElementById('share-text-preview');
-            const waPhoneInput = document.getElementById('share-wa-phone');
-            const textToSend = (textarea && textarea.value.trim()) ? textarea.value : buildScheduleShareText();
-            const phoneVal = waPhoneInput ? waPhoneInput.value : state.shareWaPhone;
-            const waUrl = buildWhatsAppURL(textToSend, phoneVal);
+        async function shareRenderedScheduleImage(channel = 'whatsapp') {
+            const rendered = (state.lastPngBlob && state.lastPngFilename)
+                ? { dataUrl: state.lastPngDataUrl, blob: state.lastPngBlob, filename: state.lastPngFilename }
+                : renderScheduleToPNG();
 
-            const linkEl = document.getElementById('modal-wa-direct-link');
-            if (linkEl) linkEl.href = waUrl;
-
-            copyScheduleTextToClipboard(textToSend, true);
-            downloadRenderedSchedulePNG(true);
-
-            // Ensure link navigation always triggers even in sandboxed frames
-            if (event) {
-                showToast(t('toastSentWa'));
+            if (!rendered || !rendered.blob) {
+                showToast(t('toastNoPngGen'));
+                return;
             }
-        }
-
-        function prepareAndSendEmail(event) {
-            const textarea = document.getElementById('share-text-preview');
-            const emailToInput = document.getElementById('share-email-to');
-            const textToSend = (textarea && textarea.value.trim()) ? textarea.value : buildScheduleShareText();
-            const emailVal = emailToInput ? emailToInput.value : state.shareEmailTo;
 
             const days = getDatesOfISOWeek(state.year, state.week);
             const weekNumStr = String(state.week).padStart(2, '0');
             const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
-            const subject = t('shareTextTitle', { week: weekNumStr, range: rangeStr });
-            const mailtoUrl = buildMailtoURL(subject, textToSend, emailVal);
+            const title = t('shareTextTitle', { week: weekNumStr, range: rangeStr });
+            const fullText = buildScheduleShareText();
 
-            const linkEl = document.getElementById('modal-mail-direct-link');
-            if (linkEl) linkEl.href = mailtoUrl;
+            try {
+                if (typeof navigator.share === 'function' && typeof File !== 'undefined') {
+                    const pngFile = new File([rendered.blob], rendered.filename, { type: 'image/png' });
+                    const sharePayload = {
+                        title: title,
+                        text: title,
+                        files: [pngFile]
+                    };
 
-            copyScheduleTextToClipboard(textToSend, true);
-            downloadRenderedSchedulePNG(true);
+                    if (!navigator.canShare || navigator.canShare({ files: [pngFile] })) {
+                        await navigator.share(sharePayload);
+                        showToast(channel === 'whatsapp' ? t('toastSharedWa') : t('toastSharedMail'));
+                        return;
+                    }
+                }
+            } catch (err) {
+                if (err && err.name === 'AbortError') {
+                    showToast(t('toastShareCancelled'));
+                    return;
+                }
+            }
 
-            if (event) {
-                event.preventDefault();
+            downloadRenderedSchedulePNG();
+            if (channel === 'whatsapp') {
+                const waUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
+                try {
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                } catch (err) {}
+                showToast(t('toastOpenedWa'));
+            } else {
+                const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(fullText)}`;
                 try {
                     window.location.href = mailtoUrl;
                 } catch (err) {}
-                showToast(t('toastSentMail'));
+                showToast(t('toastOpenedMail'));
             }
         }
 
@@ -4754,7 +4653,7 @@
                 el.style.opacity = '0';
                 el.style.transition = 'opacity 0.25s ease';
                 setTimeout(() => el.remove(), 260);
-            }, 2800);
+            }, 2600);
         }
 
         function bindEvents() {
@@ -4774,7 +4673,7 @@
 
             document.getElementById('share-wa-btn').addEventListener('click', () => openShareImageModal('whatsapp'));
             document.getElementById('share-email-btn').addEventListener('click', () => openShareImageModal('email'));
-            document.getElementById('copy-text-btn').addEventListener('click', () => copyScheduleTextToClipboard());
+            document.getElementById('copy-text-btn').addEventListener('click', copyScheduleTextToClipboard);
 
             document.getElementById('fs-save-btn').addEventListener('click', commitChangesExplicitly);
             document.getElementById('fs-wa-btn').addEventListener('click', () => openShareImageModal('whatsapp'));
@@ -4838,29 +4737,16 @@
             document.getElementById('cancel-emp-btn').addEventListener('click', closeAddEmployeeModal);
             document.getElementById('add-emp-form').addEventListener('submit', submitNewEmployee);
 
-            // Share modal controls
+            // Share image modal controls
             document.getElementById('share-image-modal').addEventListener('click', (e) => {
                 if (e.target === e.currentTarget) closeShareImageModal();
             });
             document.getElementById('close-share-modal-btn').addEventListener('click', closeShareImageModal);
             document.getElementById('close-share-footer-btn').addEventListener('click', closeShareImageModal);
-            document.getElementById('download-png-btn').addEventListener('click', () => downloadRenderedSchedulePNG(false));
+            document.getElementById('download-png-btn').addEventListener('click', downloadRenderedSchedulePNG);
             document.getElementById('copy-png-btn').addEventListener('click', copyRenderedScheduleImage);
-            document.getElementById('modal-copy-text-btn').addEventListener('click', () => {
-                const ta = document.getElementById('share-text-preview');
-                copyScheduleTextToClipboard(ta ? ta.value : buildScheduleShareText(), false);
-            });
-            document.getElementById('share-wa-phone').addEventListener('input', (e) => {
-                state.shareWaPhone = e.target.value;
-                refreshShareModalLinks();
-            });
-            document.getElementById('share-email-to').addEventListener('input', (e) => {
-                state.shareEmailTo = e.target.value;
-                refreshShareModalLinks();
-            });
-            document.getElementById('share-text-preview').addEventListener('input', refreshShareModalLinks);
-            document.getElementById('modal-wa-direct-link').addEventListener('click', prepareAndSendWhatsApp);
-            document.getElementById('modal-mail-direct-link').addEventListener('click', prepareAndSendEmail);
+            document.getElementById('modal-wa-image-btn').addEventListener('click', () => shareRenderedScheduleImage('whatsapp'));
+            document.getElementById('modal-mail-image-btn').addEventListener('click', () => shareRenderedScheduleImage('email'));
 
             window.addEventListener('pagehide', persistEverythingNow);
             window.addEventListener('beforeunload', persistEverythingNow);

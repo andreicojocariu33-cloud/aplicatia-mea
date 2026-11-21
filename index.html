@@ -4194,7 +4194,7 @@
         }
 
         /* =====================================================================
-           8. TEXT EXPORT, CANVAS PNG RENDERING & WHATSAPP / EMAIL SHARE
+           8. TEXT EXPORT, CANVAS PNG RENDERING & WHATSAPP / EMAIL SHARE (APK SAFE)
            ===================================================================== */
         function buildScheduleShareText() {
             ensureWeekInitialized(state.year, state.week);
@@ -4303,21 +4303,78 @@
             return copied;
         }
 
-        function shareScheduleTextOnWhatsApp() {
-            const fullText = buildScheduleShareText();
-            copyScheduleTextToClipboard(true);
-            const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`;
+        function isAndroidWebView() {
+            const ua = (navigator.userAgent || '').toLowerCase();
+            return ua.includes('wv') || (ua.includes('android') && ua.includes('version/'));
+        }
+
+        function triggerAnchorNavigation(url, newTab = false) {
             try {
-                const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
-                if (!win) {
-                    window.location.href = waUrl;
+                const a = document.createElement('a');
+                a.href = url;
+                if (newTab) {
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
                 }
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                return true;
             } catch (err) {
+                return false;
+            }
+        }
+
+        async function openWhatsAppWithTextSafe(title, fullText) {
+            await copyScheduleTextToClipboard(true);
+
+            // 1. Cel mai sigur în APK / Android: meniul nativ Android Share (text)
+            if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
                 try {
-                    window.location.href = waUrl;
-                } catch (e) {}
+                    await navigator.share({
+                        title: title,
+                        text: fullText
+                    });
+                    showToast(t('toastOpenedWaText'));
+                    return;
+                } catch (err) {
+                    if (err && err.name === 'AbortError') {
+                        showToast(t('toastShareCancelled'));
+                        return;
+                    }
+                }
+            }
+
+            const encodedText = encodeURIComponent(fullText);
+
+            // 2. În Android WebView (WebIntoApp), intent:// deschide aplicația WhatsApp fără ERR_UNKNOWN_URL_SCHEME
+            if (isAndroidWebView() || /android/i.test(navigator.userAgent || '')) {
+                const fallbackWaWeb = encodeURIComponent(`https://wa.me/?text=${encodedText}`);
+                const androidIntentUrl = `intent://send?text=${encodedText}#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=${fallbackWaWeb};end`;
+                if (triggerAnchorNavigation(androidIntentUrl, false)) {
+                    showToast(t('toastOpenedWaText'));
+                    return;
+                }
+            }
+
+            // 3. Fallback standard pentru browser desktop / mobil
+            const waUrl = `https://wa.me/?text=${encodedText}`;
+            const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
+            if (!win) {
+                triggerAnchorNavigation(waUrl, true);
             }
             showToast(t('toastOpenedWaText'));
+        }
+
+        async function shareScheduleTextOnWhatsApp() {
+            const days = getDatesOfISOWeek(state.year, state.week);
+            const weekNumStr = String(state.week).padStart(2, '0');
+            const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
+            const title = t('shareTextTitle', { week: weekNumStr, range: rangeStr });
+            const fullText = buildScheduleShareText();
+
+            await openWhatsAppWithTextSafe(title, fullText);
         }
 
         function getSlotColors(kind) {
@@ -4384,7 +4441,6 @@
                 ctx.save();
                 ctx.scale(scale, scale);
 
-                // Strictly opaque background so WhatsApp/Android never renders black transparency
                 ctx.globalAlpha = 1;
                 ctx.fillStyle = '#f8fafc';
                 ctx.fillRect(0, 0, totalWidth, totalHeight);
@@ -4701,13 +4757,8 @@
                 container.innerHTML = `<img src="${rendered.dataUrl}" alt="${escapeHTML(t('shareModalTitle'))}" class="png-preview-img">`;
             }
 
-            const canShareFile = typeof navigator !== 'undefined' &&
-                typeof navigator.share === 'function' &&
-                typeof File !== 'undefined' &&
-                rendered && rendered.blob &&
-                (!navigator.canShare || navigator.canShare({ files: [new File([rendered.blob], rendered.filename, { type: 'image/png' })] }));
-
-            helper.textContent = canShareFile ? t('shareHelperNative') : t('shareHelperFallback');
+            const canShareTextOrFile = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+            helper.textContent = canShareTextOrFile ? t('shareHelperNative') : t('shareHelperFallback');
             document.getElementById('share-image-modal').classList.add('open');
 
             if (preferredChannel === 'whatsapp') {
@@ -4722,22 +4773,26 @@
         }
 
         function downloadRenderedSchedulePNG() {
-            const rendered = (state.lastPngDataUrl && state.lastPngFilename)
-                ? { dataUrl: state.lastPngDataUrl, filename: state.lastPngFilename }
+            const rendered = (state.lastPngBlob && state.lastPngFilename)
+                ? { blob: state.lastPngBlob, dataUrl: state.lastPngDataUrl, filename: state.lastPngFilename }
                 : renderScheduleToPNG();
 
-            if (!rendered || !rendered.dataUrl) {
+            if (!rendered || (!rendered.blob && !rendered.dataUrl)) {
                 showToast(t('toastPngNotReady'));
                 return;
             }
 
             try {
+                const objectUrl = rendered.blob ? URL.createObjectURL(rendered.blob) : rendered.dataUrl;
                 const link = document.createElement('a');
-                link.href = rendered.dataUrl;
+                link.href = objectUrl;
                 link.download = rendered.filename;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                if (rendered.blob) {
+                    setTimeout(() => URL.revokeObjectURL(objectUrl), 5000);
+                }
                 showToast(t('toastPngDownloaded', { filename: rendered.filename }));
             } catch (err) {
                 showToast(t('toastPngOpenFail'));
@@ -4777,20 +4832,18 @@
             const title = t('shareTextTitle', { week: weekNumStr, range: rangeStr });
             const fullText = buildScheduleShareText();
 
-            if (rendered && rendered.blob) {
+            // Treapta 1: Încearcă partajare nativă cu fișier PNG (dacă WebView permite)
+            if (rendered && rendered.blob && typeof navigator !== 'undefined' && typeof navigator.share === 'function' && typeof File !== 'undefined') {
                 try {
-                    if (typeof navigator.share === 'function' && typeof File !== 'undefined') {
-                        const pngFile = new File([rendered.blob], rendered.filename, { type: 'image/png' });
-                        const sharePayload = {
+                    const pngFile = new File([rendered.blob], rendered.filename, { type: 'image/png' });
+                    if (!navigator.canShare || navigator.canShare({ files: [pngFile] })) {
+                        await navigator.share({
                             title: title,
+                            text: fullText,
                             files: [pngFile]
-                        };
-
-                        if (!navigator.canShare || navigator.canShare({ files: [pngFile] })) {
-                            await navigator.share(sharePayload);
-                            showToast(channel === 'whatsapp' ? t('toastSharedWa') : t('toastSharedMail'));
-                            return;
-                        }
+                        });
+                        showToast(channel === 'whatsapp' ? t('toastSharedWa') : t('toastSharedMail'));
+                        return;
                     }
                 } catch (err) {
                     if (err && err.name === 'AbortError') {
@@ -4800,30 +4853,31 @@
                 }
             }
 
-            // Fallback: copy full schedule text + download PNG + open WhatsApp or Email reliably
-            await copyScheduleTextToClipboard(true);
-            if (rendered && rendered.dataUrl) {
-                downloadRenderedSchedulePNG();
+            // Treapta 2: Dacă fișierele nu sunt suportate în WebView-ul APK, folosește navigator.share doar cu text (merge nativ pe Android!)
+            if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+                try {
+                    await copyScheduleTextToClipboard(true);
+                    await navigator.share({
+                        title: title,
+                        text: fullText
+                    });
+                    showToast(channel === 'whatsapp' ? t('toastOpenedWaText') : t('toastOpenedMail'));
+                    return;
+                } catch (err) {
+                    if (err && err.name === 'AbortError') {
+                        showToast(t('toastShareCancelled'));
+                        return;
+                    }
+                }
             }
 
+            // Treapta 3: Fallback fără navigator.share (folosește intent:// pe Android pentru a evita ERR_UNKNOWN_URL_SCHEME)
             if (channel === 'whatsapp') {
-                const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(fullText)}`;
-                try {
-                    const win = window.open(waUrl, '_blank', 'noopener,noreferrer');
-                    if (!win) {
-                        window.location.href = waUrl;
-                    }
-                } catch (err) {
-                    try {
-                        window.location.href = waUrl;
-                    } catch (e) {}
-                }
-                showToast(t('toastOpenedWa'));
+                await openWhatsAppWithTextSafe(title, fullText);
             } else {
+                await copyScheduleTextToClipboard(true);
                 const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(fullText)}`;
-                try {
-                    window.location.href = mailtoUrl;
-                } catch (err) {}
+                triggerAnchorNavigation(mailtoUrl, false);
                 showToast(t('toastOpenedMail'));
             }
         }

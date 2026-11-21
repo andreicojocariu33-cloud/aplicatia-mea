@@ -242,6 +242,29 @@
             border-color: var(--indigo-700);
         }
 
+        .btn-save {
+            background: #059669;
+            color: #ffffff;
+            border-color: #047857;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+        }
+
+        .btn-save:hover {
+            background: #047857;
+            border-color: #065f46;
+        }
+
+        .btn-save.has-unsaved {
+            background: #d97706;
+            border-color: #b45309;
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.22);
+        }
+
+        .btn-save.has-unsaved:hover {
+            background: #b45309;
+            border-color: #92400e;
+        }
+
         .btn-soft-indigo {
             background: var(--indigo-50);
             color: var(--indigo-700);
@@ -468,6 +491,16 @@
 
         .fs-btn:hover {
             background: #334155;
+        }
+
+        .fs-btn-save {
+            background: #059669;
+            border-color: #047857;
+            color: #ffffff;
+        }
+
+        .fs-btn-save:hover {
+            background: #047857;
         }
 
         .fs-btn-wa {
@@ -1341,6 +1374,15 @@
 
             <!-- Action Buttons -->
             <div class="header-actions">
+                <button type="button" id="save-changes-btn" class="btn btn-save" title="Salvează toate modificările făcute în tabel">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    <span>Salvează modificările</span>
+                </button>
+
                 <button type="button" id="add-emp-btn" class="btn btn-primary">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -1432,6 +1474,7 @@
                         <span id="fs-week-label" style="color:#a5b4fc; font-weight:600;"></span>
                     </div>
                     <div class="fs-actions-group">
+                        <button type="button" id="fs-save-btn" class="fs-btn fs-btn-save">💾 Salvează</button>
                         <button type="button" id="fs-wa-btn" class="fs-btn fs-btn-wa">WhatsApp</button>
                         <button type="button" id="fs-mail-btn" class="fs-btn fs-btn-mail">Email</button>
                         <button type="button" id="fs-prev-btn" class="fs-btn">◀ Săpt. ant.</button>
@@ -1804,6 +1847,9 @@
                 weekPrefix: 'Săpt.',
                 week47Btn: 'Săpt. 47',
                 week47Title: 'Mergi la Săpt. 47 (16–22 Nov 2026)',
+                saveChangesBtn: 'Salvează modificările',
+                saveChangesPending: 'Salvează modificările •',
+                saveChangesTitle: 'Salvează toate modificările făcute în tabel',
                 addEmployeeBtn: '+ Angajat',
                 copyPrevWeekBtn: 'Copiază Săpt. Ant.',
                 copyPrevWeekTitle: 'Copiază programul din săptămâna anterioară',
@@ -1825,6 +1871,7 @@
                 statsWorkedDays: 'Zile lucrate / săpt.:',
                 daySingular: 'zi',
                 dayPlural: 'zile',
+                fsSave: '💾 Salvează',
                 fsPrevWeek: '◀ Săpt. ant.',
                 fsNextWeek: 'Săpt. urm. ▶',
                 fsRotate: '↻ Rotește ±90°',
@@ -1902,8 +1949,9 @@
                 toastFirstWeek2026: 'Ai ajuns la prima săptămână din 2026.',
                 toastLastWeek2027: 'Ai ajuns la ultima săptămână din 2027.',
                 toastWeek47: 'Afișat Săpt. 47 (16 – 22 Noiembrie 2026).',
-                toastShiftSaved: 'Programul zilei a fost salvat.',
-                toastExtraDayAdded: 'Zi Extra adăugată pentru {day}.',
+                toastChangesSaved: 'Toate modificările au fost salvate.',
+                toastShiftSaved: 'Programul zilei a fost actualizat. Apasă „Salvează modificările” pentru confirmare.',
+                toastExtraDayAdded: 'Zi Extra adăugată pentru {day}. Apasă „Salvează modificările” pentru a salva.',
                 toastGroupReapplied: 'Programul grupei a fost reaplicat pe această săptămână.',
                 toastAppliedMonFri: 'Program aplicat pentru Luni – Vineri.',
                 toastCellCleared: 'Celula a fost golită.',
@@ -1941,6 +1989,9 @@
                 weekPrefix: 'KW',
                 week47Btn: 'KW 47',
                 week47Title: 'Zu KW 47 wechseln (16.–22. Nov 2026)',
+                saveChangesBtn: 'Änderungen speichern',
+                saveChangesPending: 'Änderungen speichern •',
+                saveChangesTitle: 'Alle Änderungen in der Tabelle speichern',
                 addEmployeeBtn: '+ Mitarbeiter',
                 copyPrevWeekBtn: 'Vorwoche kopieren',
                 copyPrevWeekTitle: 'Plan der vorherigen Woche kopieren',
@@ -1962,6 +2013,7 @@
                 statsWorkedDays: 'Arbeitstage / Wo.:',
                 daySingular: 'Tag',
                 dayPlural: 'Tage',
+                fsSave: '💾 Speichern',
                 fsPrevWeek: '◀ Vorwoche',
                 fsNextWeek: 'Nächste Wo. ▶',
                 fsRotate: '↻ Drehen ±90°',
@@ -2039,7 +2091,8 @@
                 toastFirstWeek2026: 'Erste Woche von 2026 erreicht.',
                 toastLastWeek2027: 'Letzte Woche von 2027 erreicht.',
                 toastWeek47: 'KW 47 angezeigt (16.–22. November 2026).',
-                toastShiftSaved: 'Tagesplan gespeichert.',
+                toastChangesSaved: 'Alle Änderungen wurden gespeichert.',
+                toastShiftSaved: 'Tagesplan aktualisiert. Klicken Sie auf „Änderungen speichern“ zur Bestätigung.',
                 toastExtraDayAdded: 'Extra-Tag für {day} hinzugefügt.',
                 toastGroupReapplied: 'Gruppenplan für diese Woche erneut angewendet.',
                 toastAppliedMonFri: 'Plan auf Montag–Freitag angewendet.',
@@ -2078,6 +2131,9 @@
                 weekPrefix: 'Week',
                 week47Btn: 'Week 47',
                 week47Title: 'Go to Week 47 (16–22 Nov 2026)',
+                saveChangesBtn: 'Save changes',
+                saveChangesPending: 'Save changes •',
+                saveChangesTitle: 'Save all changes made in the table',
                 addEmployeeBtn: '+ Employee',
                 copyPrevWeekBtn: 'Copy Prev. Week',
                 copyPrevWeekTitle: 'Copy schedule from previous week',
@@ -2099,6 +2155,7 @@
                 statsWorkedDays: 'Worked days / wk:',
                 daySingular: 'day',
                 dayPlural: 'days',
+                fsSave: '💾 Save',
                 fsPrevWeek: '◀ Prev. wk',
                 fsNextWeek: 'Next wk ▶',
                 fsRotate: '↻ Rotate ±90°',
@@ -2176,7 +2233,8 @@
                 toastFirstWeek2026: 'Reached the first week of 2026.',
                 toastLastWeek2027: 'Reached the last week of 2027.',
                 toastWeek47: 'Showing Week 47 (16 – 22 November 2026).',
-                toastShiftSaved: 'Daily schedule saved.',
+                toastChangesSaved: 'All changes have been saved.',
+                toastShiftSaved: 'Daily schedule updated. Click "Save changes" to confirm.',
                 toastExtraDayAdded: 'Extra day added for {day}.',
                 toastGroupReapplied: 'Group schedule reapplied for this week.',
                 toastAppliedMonFri: 'Schedule applied to Monday – Friday.',
@@ -2215,6 +2273,9 @@
                 weekPrefix: 'Нед.',
                 week47Btn: 'Нед. 47',
                 week47Title: 'Перейти к неделе 47 (16–22 ноя 2026)',
+                saveChangesBtn: 'Сохранить изменения',
+                saveChangesPending: 'Сохранить изменения •',
+                saveChangesTitle: 'Сохранить все изменения в таблице',
                 addEmployeeBtn: '+ Сотрудник',
                 copyPrevWeekBtn: 'Копия пред. нед.',
                 copyPrevWeekTitle: 'Скопировать график с предыдущей недели',
@@ -2236,6 +2297,7 @@
                 statsWorkedDays: 'Рабочих дней / нед.:',
                 daySingular: 'день',
                 dayPlural: 'дней',
+                fsSave: '💾 Сохранить',
                 fsPrevWeek: '◀ Пред. нед.',
                 fsNextWeek: 'След. нед. ▶',
                 fsRotate: '↻ Повернуть ±90°',
@@ -2313,7 +2375,8 @@
                 toastFirstWeek2026: 'Достигнута первая неделя 2026 года.',
                 toastLastWeek2027: 'Достигнута последняя неделя 2027 года.',
                 toastWeek47: 'Показана неделя 47 (16 – 22 ноября 2026).',
-                toastShiftSaved: 'Дневной график сохранён.',
+                toastChangesSaved: 'Все изменения сохранены.',
+                toastShiftSaved: 'Дневной график обновлён. Нажмите «Сохранить изменения» для подтверждения.',
                 toastExtraDayAdded: 'День Extra добавлен на {day}.',
                 toastGroupReapplied: 'График группы повторно применён на эту неделю.',
                 toastAppliedMonFri: 'График применён с понедельника по пятницу.',
@@ -2352,6 +2415,9 @@
                 weekPrefix: 'Hafta',
                 week47Btn: 'Hafta 47',
                 week47Title: '47. Haftaya git (16–22 Kas 2026)',
+                saveChangesBtn: 'Değişiklikleri kaydet',
+                saveChangesPending: 'Değişiklikleri kaydet •',
+                saveChangesTitle: 'Tablodaki tüm değişiklikleri kaydet',
                 addEmployeeBtn: '+ Çalışan',
                 copyPrevWeekBtn: 'Önceki Haftayı Kopyala',
                 copyPrevWeekTitle: 'Önceki haftanın programını kopyala',
@@ -2373,6 +2439,7 @@
                 statsWorkedDays: 'Çalışılan gün / hf.:',
                 daySingular: 'gün',
                 dayPlural: 'gün',
+                fsSave: '💾 Kaydet',
                 fsPrevWeek: '◀ Önceki hf.',
                 fsNextWeek: 'Sonraki hf. ▶',
                 fsRotate: '↻ Döndür ±90°',
@@ -2450,7 +2517,8 @@
                 toastFirstWeek2026: '2026 yılının ilk haftasına ulaştınız.',
                 toastLastWeek2027: '2027 yılının son haftasına ulaştınız.',
                 toastWeek47: '47. Hafta gösteriliyor (16 – 22 Kasım 2026).',
-                toastShiftSaved: 'Günlük program kaydedildi.',
+                toastChangesSaved: 'Tüm değişiklikler kaydedildi.',
+                toastShiftSaved: 'Günlük program güncellendi. Onaylamak için „Değişiklikleri kaydet“ düğmesine tıklayın.',
                 toastExtraDayAdded: '{day} için Extra gün eklendi.',
                 toastGroupReapplied: 'Bu hafta için grup programı yeniden uygulandı.',
                 toastAppliedMonFri: 'Program Pazartesi – Cuma günlerine uygulandı.',
@@ -2489,6 +2557,9 @@
                 weekPrefix: 'Week',
                 week47Btn: 'Week 47',
                 week47Title: 'Ga naar Week 47 (16–22 nov 2026)',
+                saveChangesBtn: 'Wijzigingen opslaan',
+                saveChangesPending: 'Wijzigingen opslaan •',
+                saveChangesTitle: 'Alle wijzigingen in de tabel opslaan',
                 addEmployeeBtn: '+ Medewerker',
                 copyPrevWeekBtn: 'Kopieer Vorige Wk',
                 copyPrevWeekTitle: 'Kopieer rooster van vorige week',
@@ -2510,6 +2581,7 @@
                 statsWorkedDays: 'Gewerkte dagen / wk:',
                 daySingular: 'dag',
                 dayPlural: 'dagen',
+                fsSave: '💾 Opslaan',
                 fsPrevWeek: '◀ Vorige wk',
                 fsNextWeek: 'Volgende wk ▶',
                 fsRotate: '↻ Draai ±90°',
@@ -2587,7 +2659,8 @@
                 toastFirstWeek2026: 'Eerste week van 2026 bereikt.',
                 toastLastWeek2027: 'Laatste week van 2027 bereikt.',
                 toastWeek47: 'Week 47 weergegeven (16 – 22 november 2026).',
-                toastShiftSaved: 'Dagrooster opgeslagen.',
+                toastChangesSaved: 'Alle wijzigingen zijn opgeslagen.',
+                toastShiftSaved: 'Dagrooster bijgewerkt. Klik op „Wijzigingen opslaan“ om te bevestigen.',
                 toastExtraDayAdded: 'Extra dag toegevoegd voor {day}.',
                 toastGroupReapplied: 'Groepsrooster opnieuw toegepast voor deze week.',
                 toastAppliedMonFri: 'Rooster toegepast op maandag – vrijdag.',
@@ -2642,6 +2715,7 @@
             schedules: {},
             manualOverrides: {},
             customData: {},
+            hasPendingSave: false,
             editingCell: null,
             isFullscreen: false,
             pushedFullscreenState: false,
@@ -2651,6 +2725,30 @@
         };
 
         let persistDebounceTimer = null;
+
+        function updateSaveButtonVisualState() {
+            const saveBtn = document.getElementById('save-changes-btn');
+            if (!saveBtn) return;
+            const span = saveBtn.querySelector('span');
+            if (state.hasPendingSave) {
+                saveBtn.classList.add('has-unsaved');
+                if (span) span.textContent = t('saveChangesPending');
+            } else {
+                saveBtn.classList.remove('has-unsaved');
+                if (span) span.textContent = t('saveChangesBtn');
+            }
+        }
+
+        function markPendingSave(pending = true) {
+            state.hasPendingSave = Boolean(pending);
+            updateSaveButtonVisualState();
+        }
+
+        function commitChangesExplicitly() {
+            persistEverythingNow();
+            markPendingSave(false);
+            showToast(t('toastChangesSaved'));
+        }
 
         function persistEverythingNow() {
             if (persistDebounceTimer) {
@@ -2844,6 +2942,12 @@
                 w47Btn.setAttribute('title', t('week47Title'));
             }
 
+            const saveChangesBtn = document.getElementById('save-changes-btn');
+            if (saveChangesBtn) {
+                saveChangesBtn.setAttribute('title', t('saveChangesTitle'));
+                updateSaveButtonVisualState();
+            }
+
             const addEmpBtn = document.getElementById('add-emp-btn');
             if (addEmpBtn) {
                 const span = addEmpBtn.querySelector('span');
@@ -2917,6 +3021,8 @@
             const fsTitleSpan = document.querySelector('.fs-title-group > span:first-child');
             if (fsTitleSpan) fsTitleSpan.textContent = t('brandTitle');
 
+            const fsSaveBtn = document.getElementById('fs-save-btn');
+            if (fsSaveBtn) fsSaveBtn.textContent = t('fsSave');
             const fsWaBtn = document.getElementById('fs-wa-btn');
             if (fsWaBtn) fsWaBtn.textContent = t('whatsappBtn');
             const fsMailBtn = document.getElementById('fs-mail-btn');
@@ -3132,61 +3238,61 @@
         }
 
         // Exact pair schedule per ISO week (2026 W01..W53) read from the sheet:
-        // [Mon, Tue, Wed, Thu, Fri, Sat, Sun] where each item is 'AB', 'BC', or 'AC[span_2](start_span)'[span_2](end_span).
+        // [Mon, Tue, Wed, Thu, Fri, Sat, Sun] where each item is 'AB', 'BC', or 'AC'.
         const SHEET_PAIR_ROTATION_2026 = {
-            1:  ['BC', 'AC', 'AC', 'AB', 'AB', 'AB', 'BC'], // 29-12-2025 – 4-1-2026[span_3](start_span)[span_3](end_span)
-            2:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 5-1-2026 – 11-1-2026[span_4](start_span)[span_4](end_span)
-            3:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 12-1-2026 – 18-1-2026[span_5](start_span)[span_5](end_span)
-            4:  ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 19-1-2026 – 25-1-2026[span_6](start_span)[span_6](end_span)
-            5:  ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 26-1-2026 – 1-2-2026[span_7](start_span)[span_7](end_span)
-            6:  ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 2-2-2026 – 8-2-2026[span_8](start_span)[span_8](end_span)
-            7:  ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 9-2-2026 – 15-2-2026[span_9](start_span)[span_9](end_span)
-            8:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 16-2-2026 – 22-2-2026[span_10](start_span)[span_10](end_span)
-            9:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 23-2-2026 – 1-3-2026[span_11](start_span)[span_11](end_span)
-            10: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 2-3-2026 – 8-3-2026[span_12](start_span)[span_12](end_span)
-            11: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 9-3-2026 – 15-3-2026[span_13](start_span)[span_13](end_span)
-            12: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 16-3-2026 – 22-3-2026[span_14](start_span)[span_14](end_span)
-            13: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 23-3-2026 – 29-3-2026[span_15](start_span)[span_15](end_span)
-            14: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 30-3-2026 – 5-4-2026[span_16](start_span)[span_16](end_span)
-            15: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 6-4-2026 – 12-4-2026[span_17](start_span)[span_17](end_span)
-            16: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 13-4-2026 – 19-4-2026[span_18](start_span)[span_18](end_span)
-            17: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 20-4-2026 – 26-4-2026[span_19](start_span)[span_19](end_span)
-            18: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 27-4-2026 – 3-5-2026[span_20](start_span)[span_20](end_span)
-            19: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 4-5-2026 – 10-5-2026[span_21](start_span)[span_21](end_span)
-            20: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 11-5-2026 – 17-5-2026[span_22](start_span)[span_22](end_span)
-            21: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 18-5-2026 – 24-5-2026[span_23](start_span)[span_23](end_span)
-            22: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 25-5-2026 – 31-5-2026[span_24](start_span)[span_24](end_span)
-            23: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 1-6-2026 – 7-6-2026[span_25](start_span)[span_25](end_span)
-            24: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 8-6-2026 – 14-6-2026[span_26](start_span)[span_26](end_span)
-            25: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 15-6-2026 – 21-6-2026[span_27](start_span)[span_27](end_span)
-            26: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 22-6-2026 – 28-6-2026[span_28](start_span)[span_28](end_span)
-            27: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 29-6-2026 – 5-7-2026[span_29](start_span)[span_29](end_span)
-            28: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 6-7-2026 – 12-7-2026[span_30](start_span)[span_30](end_span)
-            29: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 13-7-2026 – 19-7-2026[span_31](start_span)[span_31](end_span)
-            30: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 20-7-2026 – 26-7-2026[span_32](start_span)[span_32](end_span)
-            31: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 27-7-2026 – 2-8-2026[span_33](start_span)[span_33](end_span)
-            32: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 3-8-2026 – 9-8-2026[span_34](start_span)[span_34](end_span)
-            33: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 10-8-2026 – 16-8-2026[span_35](start_span)[span_35](end_span)
-            34: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 17-8-2026 – 23-8-2026[span_36](start_span)[span_36](end_span)
-            35: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 24-8-2026 – 30-8-2026[span_37](start_span)[span_37](end_span)
-            36: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 31-8-2026 – 6-9-2026[span_38](start_span)[span_38](end_span)
-            37: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 7-9-2026 – 13-9-2026[span_39](start_span)[span_39](end_span)
-            38: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 14-9-2026 – 20-9-2026[span_40](start_span)[span_40](end_span)
-            39: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 21-9-2026 – 27-9-2026[span_41](start_span)[span_41](end_span)
-            40: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 28-9-2026 – 4-10-2026[span_42](start_span)[span_42](end_span)
-            41: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 5-10-2026 – 11-10-2026[span_43](start_span)[span_43](end_span)
-            42: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 12-10-2026 – 18-10-2026[span_44](start_span)[span_44](end_span)
-            43: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 19-10-2026 – 25-10-2026[span_45](start_span)[span_45](end_span)
-            44: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 26-10-2026 – 1-11-2026[span_46](start_span)[span_46](end_span)
-            45: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 2-11-2026 – 8-11-2026[span_47](start_span)[span_47](end_span)
-            46: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 9-11-2026 – 15-11-2026[span_48](start_span)[span_48](end_span)
-            47: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 16-11-2026 – 22-11-2026[span_49](start_span)[span_49](end_span)
-            48: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 23-11-2026 – 29-11-2026[span_50](start_span)[span_50](end_span)
-            49: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 30-11-2026 – 6-12-2026[span_51](start_span)[span_51](end_span)
-            50: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 7-12-2026 – 13-12-2026[span_52](start_span)[span_52](end_span)
-            51: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 14-12-2026 – 20-12-2026[span_53](start_span)[span_53](end_span)
-            52: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 21-12-2026 – 27-12-2026[span_54](start_span)[span_54](end_span)
-            53: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB']  // 28-12-2026 – 3-1-2027[span_55](start_span)[span_55](end_span)
+            1:  ['BC', 'AC', 'AC', 'AB', 'AB', 'AB', 'BC'], // 29-12-2025 – 4-1-2026
+            2:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 5-1-2026 – 11-1-2026
+            3:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 12-1-2026 – 18-1-2026
+            4:  ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 19-1-2026 – 25-1-2026
+            5:  ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 26-1-2026 – 1-2-2026
+            6:  ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 2-2-2026 – 8-2-2026
+            7:  ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 9-2-2026 – 15-2-2026
+            8:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 16-2-2026 – 22-2-2026
+            9:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 23-2-2026 – 1-3-2026
+            10: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 2-3-2026 – 8-3-2026
+            11: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 9-3-2026 – 15-3-2026
+            12: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 16-3-2026 – 22-3-2026
+            13: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 23-3-2026 – 29-3-2026
+            14: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 30-3-2026 – 5-4-2026
+            15: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 6-4-2026 – 12-4-2026
+            16: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 13-4-2026 – 19-4-2026
+            17: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 20-4-2026 – 26-4-2026
+            18: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 27-4-2026 – 3-5-2026
+            19: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 4-5-2026 – 10-5-2026
+            20: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 11-5-2026 – 17-5-2026
+            21: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 18-5-2026 – 24-5-2026
+            22: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 25-5-2026 – 31-5-2026
+            23: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 1-6-2026 – 7-6-2026
+            24: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 8-6-2026 – 14-6-2026
+            25: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 15-6-2026 – 21-6-2026
+            26: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 22-6-2026 – 28-6-2026
+            27: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 29-6-2026 – 5-7-2026
+            28: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 6-7-2026 – 12-7-2026
+            29: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 13-7-2026 – 19-7-2026
+            30: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 20-7-2026 – 26-7-2026
+            31: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 27-7-2026 – 2-8-2026
+            32: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 3-8-2026 – 9-8-2026
+            33: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 10-8-2026 – 16-8-2026
+            34: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 17-8-2026 – 23-8-2026
+            35: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 24-8-2026 – 30-8-2026
+            36: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 31-8-2026 – 6-9-2026
+            37: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 7-9-2026 – 13-9-2026
+            38: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 14-9-2026 – 20-9-2026
+            39: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 21-9-2026 – 27-9-2026
+            40: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 28-9-2026 – 4-10-2026
+            41: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 5-10-2026 – 11-10-2026
+            42: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 12-10-2026 – 18-10-2026
+            43: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 19-10-2026 – 25-10-2026
+            44: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 26-10-2026 – 1-11-2026
+            45: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 2-11-2026 – 8-11-2026
+            46: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 9-11-2026 – 15-11-2026
+            47: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 16-11-2026 – 22-11-2026
+            48: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 23-11-2026 – 29-11-2026
+            49: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 30-11-2026 – 6-12-2026
+            50: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 7-12-2026 – 13-12-2026
+            51: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 14-12-2026 – 20-12-2026
+            52: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 21-12-2026 – 27-12-2026
+            53: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB']  // 28-12-2026 – 3-1-2027
         };
 
         function extractGroupLetter(role) {
@@ -3357,6 +3463,7 @@
                         state.customData = (parsed.customData && typeof parsed.customData === 'object')
                             ? parsed.customData
                             : {};
+                        markPendingSave(false);
                         return;
                     }
                 } catch (err) {
@@ -3368,6 +3475,7 @@
             state.schedules = getDefaultWorkbookSchedules();
             state.manualOverrides = {};
             state.customData = {};
+            markPendingSave(false);
             persistEverythingNow();
         }
 
@@ -3599,6 +3707,7 @@
 
             document.getElementById('stat-emp-count').textContent = String(state.employees.length);
             document.getElementById('stat-total-days').textContent = `${grandTotalDays} ${t('dayPlural')}`;
+            updateSaveButtonVisualState();
         }
 
         /* =====================================================================
@@ -3684,6 +3793,7 @@
 
             state.schedules[weekKey][empId][dayIndex] = getModalShiftObject();
             markManualOverride(weekKey, empId, dayIndex);
+            markPendingSave(true);
             saveAppState();
             closeShiftModal();
             renderScheduleTable();
@@ -3721,6 +3831,7 @@
                 note: 'Extra'
             };
             markManualOverride(weekKey, empId, targetDay);
+            markPendingSave(true);
             saveAppState();
             closeShiftModal();
             renderScheduleTable();
@@ -3739,6 +3850,7 @@
             clearManualOverridesForEmpWeek(weekKey, empId);
             if (!state.schedules[weekKey]) state.schedules[weekKey] = {};
             state.schedules[weekKey][empId] = buildGroupScheduleForWeek(grp, state.year, state.week, '07:00');
+            markPendingSave(true);
             saveAppState();
             closeShiftModal();
             renderScheduleTable();
@@ -3758,6 +3870,7 @@
                 state.schedules[weekKey][empId][d] = { ...shiftObj };
                 markManualOverride(weekKey, empId, d);
             }
+            markPendingSave(true);
             saveAppState();
             closeShiftModal();
             renderScheduleTable();
@@ -3773,6 +3886,7 @@
                 delete state.schedules[weekKey][empId][dayIndex];
             }
             markManualOverride(weekKey, empId, dayIndex);
+            markPendingSave(true);
             saveAppState();
             closeShiftModal();
             renderScheduleTable();
@@ -3805,6 +3919,7 @@
 
             state.employees.push(newEmp);
             ensureWeekInitialized(state.year, state.week);
+            markPendingSave(true);
             saveAppState();
             closeAddEmployeeModal();
             renderScheduleTable();
@@ -3823,6 +3938,7 @@
                     delete state.manualOverrides[wk][empId];
                 }
             });
+            markPendingSave(true);
             saveAppState();
             renderScheduleTable();
             showToast(t('toastEmpRemoved'));
@@ -3854,6 +3970,7 @@
             if (state.manualOverrides?.[prevKey]) {
                 state.manualOverrides[currKey] = JSON.parse(JSON.stringify(state.manualOverrides[prevKey]));
             }
+            markPendingSave(true);
             saveAppState();
             renderScheduleTable();
             showToast(t('toastWeekCopied', { week: String(prevW).padStart(2, '0') }));
@@ -4550,6 +4667,7 @@
             document.getElementById('week-47-btn').addEventListener('click', goToWeek47);
             document.getElementById('lang-select').addEventListener('change', (e) => onLanguageChange(e.target.value));
 
+            document.getElementById('save-changes-btn').addEventListener('click', commitChangesExplicitly);
             document.getElementById('add-emp-btn').addEventListener('click', openAddEmployeeModal);
             document.getElementById('copy-prev-week-btn').addEventListener('click', copyPreviousWeek);
             document.getElementById('fullscreen-90-btn').addEventListener('click', enterFullscreenSchedule);
@@ -4559,6 +4677,7 @@
             document.getElementById('share-email-btn').addEventListener('click', () => openShareImageModal('email'));
             document.getElementById('copy-text-btn').addEventListener('click', copyScheduleTextToClipboard);
 
+            document.getElementById('fs-save-btn').addEventListener('click', commitChangesExplicitly);
             document.getElementById('fs-wa-btn').addEventListener('click', () => openShareImageModal('whatsapp'));
             document.getElementById('fs-mail-btn').addEventListener('click', () => openShareImageModal('email'));
             document.getElementById('fs-prev-btn').addEventListener('click', () => changeWeek(-1));

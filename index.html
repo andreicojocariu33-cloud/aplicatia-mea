@@ -1357,7 +1357,7 @@
             <span class="legend-pill shift-work"><span class="legend-dot" style="background:#059669"></span><span id="legend-work-text">Program (ex. 07:00 / 08:00 / 10:00)</span></span>
             <span class="legend-pill shift-extra"><span class="legend-dot" style="background:#d97706"></span><span id="legend-extra-text">Extra</span></span>
             <span class="legend-pill shift-vrij"><span class="legend-dot" style="background:#64748b"></span><span id="legend-vrij-text">liber</span></span>
-            <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span><span id="legend-vakantie-text">Vakantie / CO</span></span>
+            <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span><span id="legend-vakantie-text">Vacanță / CO</span></span>
         </div>
 
         <div class="right-toolbar-group">
@@ -1484,8 +1484,8 @@
                             <strong>liber</strong>
                             <span>Zi liberă (nu se numără ca zi lucrată)</span>
                         </button>
-                        <button type="button" class="preset-btn" data-preset-type="vakantie" data-preset-label="Vakantie" data-preset-extra="0">
-                            <strong>Vakantie</strong>
+                        <button type="button" class="preset-btn" data-preset-type="vakantie" data-preset-label="Vacanță" data-preset-extra="0">
+                            <strong>Vacanță</strong>
                             <span>Concediu (nu se numără ca zi lucrată)</span>
                         </button>
                     </div>
@@ -1496,7 +1496,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="custom-label">Oră început sau status</label>
-                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, liber, Vakantie">
+                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, liber, Vacanță">
                     </div>
                     <div class="form-group">
                         <label for="custom-status-type">Tip zi</label>
@@ -1504,7 +1504,7 @@
                             <option value="work">Zi lucrătoare</option>
                             <option value="extra">Extra (suplimentar)</option>
                             <option value="vrij">liber</option>
-                            <option value="vakantie">Vakantie / Concediu</option>
+                            <option value="vakantie">Vacanță / Concediu</option>
                         </select>
                     </div>
                 </div>
@@ -1599,7 +1599,7 @@
         /* =====================================================================
            1. STORAGE & MULTI-LANGUAGE DICTIONARY (RO, DE, EN, RU, TR, NL)
            ===================================================================== */
-        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v2';
+        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v3';
         const LANG_STORAGE_KEY = 'planificator_program_lang_2026_2027_v1';
         let memoryStorageFallback = null;
         let langMemoryFallback = null;
@@ -1648,7 +1648,7 @@
                 legendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
                 legendVrij: 'liber',
-                legendVakantie: 'Vakantie / CO',
+                legendVakantie: 'Vacanță / CO',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Trimite tot tabelul programului pe WhatsApp',
                 emailBtn: 'Email',
@@ -1684,15 +1684,15 @@
                 presetExtraDesc: 'Zi lucrătoare suplimentară',
                 presetVrijTitle: 'liber',
                 presetVrijDesc: 'Zi liberă (nu se numără ca zi lucrată)',
-                presetVakantieTitle: 'Vakantie',
+                presetVakantieTitle: 'Vacanță',
                 presetVakantieDesc: 'Concediu (nu se numără ca zi lucrată)',
                 customLabelField: 'Oră început sau status',
-                customLabelPlaceholder: 'Ex: 07:00, 08:00, 10:00, liber, Vakantie',
+                customLabelPlaceholder: 'Ex: 07:00, 08:00, 10:00, liber, Vacanță',
                 customTypeField: 'Tip zi',
                 typeWorkOption: 'Zi lucrătoare',
                 typeExtraOption: 'Extra (suplimentar)',
                 typeVrijOption: 'liber',
-                typeVakantieOption: 'Vakantie / Concediu',
+                typeVakantieOption: 'Vacanță / Concediu',
                 customNoteField: 'Mențiune opțională (ex: Extra, Grup A)',
                 customNotePlaceholder: 'Ex: Extra',
                 deleteCellBtn: 'Șterge',
@@ -1722,7 +1722,7 @@
                 canvasLegendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
                 canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vakantie / CO',
+                canvasLegendVakantie: 'Vacanță / CO',
                 shareTextTitle: 'PROGRAMUL DE MUNCĂ - Săpt. {week} ({range})',
                 shareTextDaysLine: 'Zile: {daysLine}',
                 shareTextNoEmp: 'Nu există angajați în program pentru această săptămână.',
@@ -1781,7 +1781,7 @@
                 legendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
                 legendVrij: 'liber',
-                legendVakantie: 'Urlaub / Vakantie',
+                legendVakantie: 'Vacanță',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Gesamten Plan über WhatsApp teilen',
                 emailBtn: 'E-Mail',
@@ -1817,15 +1817,15 @@
                 presetExtraDesc: 'Zusätzlicher Arbeitstag',
                 presetVrijTitle: 'liber',
                 presetVrijDesc: 'Freier Tag (zählt nicht als Arbeitstag)',
-                presetVakantieTitle: 'Vakantie',
+                presetVakantieTitle: 'Vacanță',
                 presetVakantieDesc: 'Urlaub (zählt nicht als Arbeitstag)',
                 customLabelField: 'Startzeit oder Status',
-                customLabelPlaceholder: 'Z. B. 07:00, 08:00, 10:00, liber, Vakantie',
+                customLabelPlaceholder: 'Z. B. 07:00, 08:00, 10:00, liber, Vacanță',
                 customTypeField: 'Tagestyp',
                 typeWorkOption: 'Arbeitstag',
                 typeExtraOption: 'Extra (zusätzlich)',
                 typeVrijOption: 'liber',
-                typeVakantieOption: 'Urlaub / Vakantie',
+                typeVakantieOption: 'Vacanță',
                 customNoteField: 'Optionale Notiz (z. B. Extra, Gruppe A)',
                 customNotePlaceholder: 'Z. B. Extra',
                 deleteCellBtn: 'Löschen',
@@ -1855,7 +1855,7 @@
                 canvasLegendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
                 canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Urlaub / Vakantie',
+                canvasLegendVakantie: 'Vacanță',
                 shareTextTitle: 'ARBEITSPLAN - KW {week} ({range})',
                 shareTextDaysLine: 'Tage: {daysLine}',
                 shareTextNoEmp: 'Keine Mitarbeiter für diese Woche eingetragen.',
@@ -1914,7 +1914,7 @@
                 legendWork: 'Schedule (e.g. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
                 legendVrij: 'liber',
-                legendVakantie: 'Vacation / Vakantie',
+                legendVakantie: 'Vacanță',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Share full schedule table on WhatsApp',
                 emailBtn: 'Email',
@@ -1950,15 +1950,15 @@
                 presetExtraDesc: 'Extra working day',
                 presetVrijTitle: 'liber',
                 presetVrijDesc: 'Day off (not counted as worked day)',
-                presetVakantieTitle: 'Vakantie',
+                presetVakantieTitle: 'Vacanță',
                 presetVakantieDesc: 'Vacation (not counted as worked day)',
                 customLabelField: 'Start time or status',
-                customLabelPlaceholder: 'E.g. 07:00, 08:00, 10:00, liber, Vakantie',
+                customLabelPlaceholder: 'E.g. 07:00, 08:00, 10:00, liber, Vacanță',
                 customTypeField: 'Day type',
                 typeWorkOption: 'Working day',
                 typeExtraOption: 'Extra (additional)',
                 typeVrijOption: 'liber',
-                typeVakantieOption: 'Vacation / Vakantie',
+                typeVakantieOption: 'Vacanță',
                 customNoteField: 'Optional note (e.g. Extra, Group A)',
                 customNotePlaceholder: 'E.g. Extra',
                 deleteCellBtn: 'Delete',
@@ -1988,7 +1988,7 @@
                 canvasLegendWork: 'Schedule (e.g. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
                 canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vacation / Vakantie',
+                canvasLegendVakantie: 'Vacanță',
                 shareTextTitle: 'WORK SCHEDULE - Week {week} ({range})',
                 shareTextDaysLine: 'Days: {daysLine}',
                 shareTextNoEmp: 'No employees in schedule for this week.',
@@ -2047,7 +2047,7 @@
                 legendWork: 'График (напр. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
                 legendVrij: 'liber',
-                legendVakantie: 'Отпуск / Vakantie',
+                legendVakantie: 'Vacanță',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Отправить всю таблицу графика в WhatsApp',
                 emailBtn: 'Email',
@@ -2083,15 +2083,15 @@
                 presetExtraDesc: 'Дополнительный рабочий день',
                 presetVrijTitle: 'liber',
                 presetVrijDesc: 'Выходной (не считается рабочим днём)',
-                presetVakantieTitle: 'Vakantie',
+                presetVakantieTitle: 'Vacanță',
                 presetVakantieDesc: 'Отпуск (не считается рабочим днём)',
                 customLabelField: 'Время начала или статус',
-                customLabelPlaceholder: 'Напр.: 07:00, 08:00, 10:00, liber, Vakantie',
+                customLabelPlaceholder: 'Напр.: 07:00, 08:00, 10:00, liber, Vacanță',
                 customTypeField: 'Тип дня',
                 typeWorkOption: 'Рабочий день',
                 typeExtraOption: 'Extra (доп.)',
                 typeVrijOption: 'liber',
-                typeVakantieOption: 'Отпуск / Vakantie',
+                typeVakantieOption: 'Vacanță',
                 customNoteField: 'Примечание (напр. Extra, Группа A)',
                 customNotePlaceholder: 'Напр.: Extra',
                 deleteCellBtn: 'Удалить',
@@ -2121,7 +2121,7 @@
                 canvasLegendWork: 'График (напр. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
                 canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Отпуск / Vakantie',
+                canvasLegendVakantie: 'Vacanță',
                 shareTextTitle: 'ГРАФИК РАБОТЫ - Нед. {week} ({range})',
                 shareTextDaysLine: 'Дни: {daysLine}',
                 shareTextNoEmp: 'На эту неделю сотрудники не добавлены.',
@@ -2180,7 +2180,7 @@
                 legendWork: 'Program (örn. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
                 legendVrij: 'liber',
-                legendVakantie: 'Tatil / Vakantie',
+                legendVakantie: 'Vacanță',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Tüm program tablosunu WhatsApp’ta paylaş',
                 emailBtn: 'E-posta',
@@ -2216,15 +2216,15 @@
                 presetExtraDesc: 'Ek çalışma günü',
                 presetVrijTitle: 'liber',
                 presetVrijDesc: 'İzin günü (çalışılan gün sayılmaz)',
-                presetVakantieTitle: 'Vakantie',
+                presetVakantieTitle: 'Vacanță',
                 presetVakantieDesc: 'Tatil (çalışılan gün sayılmaz)',
                 customLabelField: 'Başlangıç saati veya durum',
-                customLabelPlaceholder: 'Örn: 07:00, 08:00, 10:00, liber, Vakantie',
+                customLabelPlaceholder: 'Örn: 07:00, 08:00, 10:00, liber, Vacanță',
                 customTypeField: 'Gün türü',
                 typeWorkOption: 'Çalışma günü',
                 typeExtraOption: 'Extra (ek)',
                 typeVrijOption: 'liber',
-                typeVakantieOption: 'Tatil / Vakantie',
+                typeVakantieOption: 'Vacanță',
                 customNoteField: 'İsteğe bağlı not (örn. Extra, Grup A)',
                 customNotePlaceholder: 'Örn: Extra',
                 deleteCellBtn: 'Sil',
@@ -2254,7 +2254,7 @@
                 canvasLegendWork: 'Program (örn. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
                 canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Tatil / Vakantie',
+                canvasLegendVakantie: 'Vacanță',
                 shareTextTitle: 'ÇALIŞMA PROGRAMI - Hafta {week} ({range})',
                 shareTextDaysLine: 'Günler: {daysLine}',
                 shareTextNoEmp: 'Bu hafta için çalışan bulunmuyor.',
@@ -2313,7 +2313,7 @@
                 legendWork: 'Rooster (bijv. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
                 legendVrij: 'liber',
-                legendVakantie: 'Vakantie',
+                legendVakantie: 'Vacanță',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Deel het hele roostertabel op WhatsApp',
                 emailBtn: 'E-mail',
@@ -2349,15 +2349,15 @@
                 presetExtraDesc: 'Extra werkdag',
                 presetVrijTitle: 'liber',
                 presetVrijDesc: 'Vrije dag (telt niet als gewerkte dag)',
-                presetVakantieTitle: 'Vakantie',
+                presetVakantieTitle: 'Vacanță',
                 presetVakantieDesc: 'Vakantie (telt niet als gewerkte dag)',
                 customLabelField: 'Begintijd of status',
-                customLabelPlaceholder: 'Bijv.: 07:00, 08:00, 10:00, liber, Vakantie',
+                customLabelPlaceholder: 'Bijv.: 07:00, 08:00, 10:00, liber, Vacanță',
                 customTypeField: 'Dagtype',
                 typeWorkOption: 'Werkdag',
                 typeExtraOption: 'Extra (aanvullend)',
                 typeVrijOption: 'liber',
-                typeVakantieOption: 'Vakantie',
+                typeVakantieOption: 'Vacanță',
                 customNoteField: 'Optionele notitie (bijv. Extra, Groep A)',
                 customNotePlaceholder: 'Bijv.: Extra',
                 deleteCellBtn: 'Verwijderen',
@@ -2387,7 +2387,7 @@
                 canvasLegendWork: 'Rooster (bijv. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
                 canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vakantie',
+                canvasLegendVakantie: 'Vacanță',
                 shareTextTitle: 'WERKROOSTER - Week {week} ({range})',
                 shareTextDaysLine: 'Dagen: {daysLine}',
                 shareTextNoEmp: 'Geen medewerkers in het rooster voor deze week.',
@@ -2413,7 +2413,7 @@
                 toastPngDownloaded: 'Afbeelding {filename} gedownload.',
                 toastPngOpenFail: 'Open de afbeelding in het voorbeeld om deze op te slaan.',
                 toastNoPng: 'Geen PNG-afbeelding gegenereerd.',
-                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp of E-mail.',
+                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp or E-mail.',
                 toastImgCopyFallback: 'Browser ondersteunt direct kopiëren van afbeeldingen niet; PNG gedownload om bij te voegen.',
                 toastNoPngGen: 'Kon geen PNG-afbeelding genereren.',
                 toastSharedWa: 'PNG-afbeelding verzonden naar deelmenu / WhatsApp.',
@@ -2825,13 +2825,13 @@
                     6: createSlot('vrij', 'liber')
                 },
                 emp_albert: {
-                    0: createSlot('vakantie', 'Vakantie'),
-                    1: createSlot('vakantie', 'Vakantie'),
-                    2: createSlot('vakantie', 'Vakantie'),
-                    3: createSlot('vakantie', 'Vakantie'),
-                    4: createSlot('vakantie', 'Vakantie'),
-                    5: createSlot('vakantie', 'Vakantie'),
-                    6: createSlot('vakantie', 'Vakantie')
+                    0: createSlot('vakantie', 'Vacanță'),
+                    1: createSlot('vakantie', 'Vacanță'),
+                    2: createSlot('vakantie', 'Vacanță'),
+                    3: createSlot('vakantie', 'Vacanță'),
+                    4: createSlot('vakantie', 'Vacanță'),
+                    5: createSlot('vakantie', 'Vacanță'),
+                    6: createSlot('vakantie', 'Vacanță')
                 },
                 emp_iulian: {
                     0: createSlot('work', '08:00'),
@@ -3111,7 +3111,7 @@
             const slotType = (slot.type || '').toLowerCase();
             if (slotType === 'vrij' || slotType === 'vakantie') return false;
             const upper = slot.label.trim().toUpperCase();
-            if (upper === 'VRIJ' || upper === 'LIBER' || upper === 'VAKANTIE' || upper === 'CO' || upper === 'CM') {
+            if (upper === 'VRIJ' || upper === 'LIBER' || upper === 'VACANȚĂ' || upper === 'VACANTA' || upper === 'CO' || upper === 'CM') {
                 return false;
             }
             return true;
@@ -3291,7 +3291,7 @@
             const upper = label.toUpperCase();
             if (upper === 'VRIJ' || upper === 'LIBER') {
                 type = 'vrij';
-            } else if (upper === 'VAKANTIE' || upper === 'CO' || upper === 'CM') {
+            } else if (upper === 'VACANȚĂ' || upper === 'VACANTA' || upper === 'CO' || upper === 'CM') {
                 type = 'vakantie';
             } else if (note.toUpperCase() === 'EXTRA' || upper.includes('EXTRA')) {
                 type = 'extra';

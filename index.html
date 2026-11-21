@@ -1617,7 +1617,7 @@
         /* =====================================================================
            1. MULTI-LAYER PERSISTENT STORAGE (LOCALSTORAGE + INDEXEDDB + WINDOW.NAME)
            ===================================================================== */
-        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v4';
+        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v5';
         const LANG_STORAGE_KEY = 'planificator_program_lang_2026_2027_v1';
         const META_STORAGE_KEY = 'planificator_program_meta_2026_2027_v1';
         const IDB_DB_NAME = 'PlanificatorProgramDB_2026_2027';
@@ -2567,7 +2567,7 @@
                 toastPngDownloaded: 'Afbeelding {filename} gedownload.',
                 toastPngOpenFail: 'Open de afbeelding in het voorbeeld om deze op te slaan.',
                 toastNoPng: 'Geen PNG-afbeelding gegenereerd.',
-                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp of E-mail.',
+                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp eller E-mail.',
                 toastImgCopyFallback: 'Browser ondersteunt direct kopiëren van afbeeldingen niet; PNG gedownload om bij te voegen.',
                 toastNoPngGen: 'Kon geen PNG-afbeelding genereren.',
                 toastSharedWa: 'PNG-afbeelding verzonden naar deelmenu / WhatsApp.',
@@ -3083,221 +3083,206 @@
         }
 
         /* =====================================================================
-           4. DEFAULT SCHEDULE DATA (2026 WEEKS 47, 51, 52)
+           4. GROUP ROTATION SCHEDULE FROM SHEET & DEFAULT DATA (2026 & 2027)
            ===================================================================== */
         function createSlot(type, label, note = '') {
             return { type, label, note };
         }
 
+        // Exact pair schedule per ISO week (2026 W01..W53) read from the sheet:
+        // [Mon, Tue, Wed, Thu, Fri, Sat, Sun] where each item is 'AB', 'BC', or 'AC[span_4](start_span)'[span_4](end_span).
+        const SHEET_PAIR_ROTATION_2026 = {
+            1:  ['BC', 'AC', 'AC', 'AB', 'AB', 'AB', 'BC'], // 29-12-2025 – 4-1-2026[span_5](start_span)[span_5](end_span)
+            2:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 5-1-2026 – 11-1-2026[span_6](start_span)[span_6](end_span)
+            3:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 12-1-2026 – 18-1-2026[span_7](start_span)[span_7](end_span)
+            4:  ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 19-1-2026 – 25-1-2026[span_8](start_span)[span_8](end_span)
+            5:  ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 26-1-2026 – 1-2-2026[span_9](start_span)[span_9](end_span)
+            6:  ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 2-2-2026 – 8-2-2026[span_10](start_span)[span_10](end_span)
+            7:  ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 9-2-2026 – 15-2-2026[span_11](start_span)[span_11](end_span)
+            8:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 16-2-2026 – 22-2-2026[span_12](start_span)[span_12](end_span)
+            9:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 23-2-2026 – 1-3-2026[span_13](start_span)[span_13](end_span)
+            10: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 2-3-2026 – 8-3-2026[span_14](start_span)[span_14](end_span)
+            11: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 9-3-2026 – 15-3-2026[span_15](start_span)[span_15](end_span)
+            12: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 16-3-2026 – 22-3-2026[span_16](start_span)[span_16](end_span)
+            13: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 23-3-2026 – 29-3-2026[span_17](start_span)[span_17](end_span)
+            14: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 30-3-2026 – 5-4-2026[span_18](start_span)[span_18](end_span)
+            15: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 6-4-2026 – 12-4-2026[span_19](start_span)[span_19](end_span)
+            16: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 13-4-2026 – 19-4-2026[span_20](start_span)[span_20](end_span)
+            17: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 20-4-2026 – 26-4-2026[span_21](start_span)[span_21](end_span)
+            18: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 27-4-2026 – 3-5-2026[span_22](start_span)[span_22](end_span)
+            19: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 4-5-2026 – 10-5-2026[span_23](start_span)[span_23](end_span)
+            20: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 11-5-2026 – 17-5-2026[span_24](start_span)[span_24](end_span)
+            21: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 18-5-2026 – 24-5-2026[span_25](start_span)[span_25](end_span)
+            22: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 25-5-2026 – 31-5-2026[span_26](start_span)[span_26](end_span)
+            23: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 1-6-2026 – 7-6-2026[span_27](start_span)[span_27](end_span)
+            24: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 8-6-2026 – 14-6-2026[span_28](start_span)[span_28](end_span)
+            25: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 15-6-2026 – 21-6-2026[span_29](start_span)[span_29](end_span)
+            26: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 22-6-2026 – 28-6-2026[span_30](start_span)[span_30](end_span)
+            27: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 29-6-2026 – 5-7-2026[span_31](start_span)[span_31](end_span)
+            28: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 6-7-2026 – 12-7-2026[span_32](start_span)[span_32](end_span)
+            29: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 13-7-2026 – 19-7-2026[span_33](start_span)[span_33](end_span)
+            30: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 20-7-2026 – 26-7-2026[span_34](start_span)[span_34](end_span)
+            31: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 27-7-2026 – 2-8-2026[span_35](start_span)[span_35](end_span)
+            32: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 3-8-2026 – 9-8-2026[span_36](start_span)[span_36](end_span)
+            33: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 10-8-2026 – 16-8-2026[span_37](start_span)[span_37](end_span)
+            34: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 17-8-2026 – 23-8-2026[span_38](start_span)[span_38](end_span)
+            35: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 24-8-2026 – 30-8-2026[span_39](start_span)[span_39](end_span)
+            36: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 31-8-2026 – 6-9-2026[span_40](start_span)[span_40](end_span)
+            37: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 7-9-2026 – 13-9-2026[span_41](start_span)[span_41](end_span)
+            38: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 14-9-2026 – 20-9-2026[span_42](start_span)[span_42](end_span)
+            39: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 21-9-2026 – 27-9-2026[span_43](start_span)[span_43](end_span)
+            40: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 28-9-2026 – 4-10-2026[span_44](start_span)[span_44](end_span)
+            41: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 5-10-2026 – 11-10-2026[span_45](start_span)[span_45](end_span)
+            42: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 12-10-2026 – 18-10-2026[span_46](start_span)[span_46](end_span)
+            43: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 19-10-2026 – 25-10-2026[span_47](start_span)[span_47](end_span)
+            44: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 26-10-2026 – 1-11-2026[span_48](start_span)[span_48](end_span)
+            45: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 2-11-2026 – 8-11-2026[span_49](start_span)[span_49](end_span)
+            46: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 9-11-2026 – 15-11-2026[span_50](start_span)[span_50](end_span)
+            47: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 16-11-2026 – 22-11-2026[span_51](start_span)[span_51](end_span)
+            48: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 23-11-2026 – 29-11-2026[span_52](start_span)[span_52](end_span)
+            49: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 30-11-2026 – 6-12-2026[span_53](start_span)[span_53](end_span)
+            50: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 7-12-2026 – 13-12-2026[span_54](start_span)[span_54](end_span)
+            51: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 14-12-2026 – 20-12-2026[span_55](start_span)[span_55](end_span)
+            52: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 21-12-2026 – 27-12-2026[span_56](start_span)[span_56](end_span)
+            53: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB']  // 28-12-2026 – 3-1-2027[span_57](start_span)[span_57](end_span)
+        };
+
+        function extractGroupLetter(role) {
+            if (!role) return null;
+            const normalized = role.trim().toUpperCase();
+            if (normalized === 'A' || normalized === 'GRUP A' || normalized === 'GRUPA A' || normalized.endsWith(' A')) {
+                return 'A';
+            }
+            if (normalized === 'B' || normalized === 'GRUP B' || normalized === 'GRUPA B' || normalized.endsWith(' B')) {
+                return 'B';
+            }
+            if (normalized === 'C' || normalized === 'GRUP C' || normalized === 'GRUPA C' || normalized.endsWith(' C')) {
+                return 'C';
+            }
+            return null;
+        }
+
+        function getDayPairsForYearWeek(year, week) {
+            if (year === 2026 && SHEET_PAIR_ROTATION_2026[week]) {
+                return SHEET_PAIR_ROTATION_2026[week];
+            }
+            // Continuous 3-week cyclic pattern observed on the sheet:
+            // W01 -> W04 -> W07 ... (BC, AC, AC, AB, AB, AB, BC)
+            // W02 -> W05 -> W08 ... (BC, AC, AC, AB, AB, BC, BC)
+            // W03 -> W06 -> W09 ... (AC, AC, AB, AB, BC, BC, AC)
+            const refMonday = new Date(Date.UTC(2025, 11, 29)); // Monday of 2026-W01
+            const days = getDatesOfISOWeek(year, week);
+            const targetMonday = days[0];
+            const diffWeeks = Math.round((targetMonday.getTime() - refMonday.getTime()) / (7 * 86400000));
+            const cycleMod = ((diffWeeks % 3) + 3) % 3; // 0 => W1 pattern, 1 => W2 pattern, 2 => W3 pattern
+            return SHEET_PAIR_ROTATION_2026[cycleMod + 1];
+        }
+
+        function buildGroupScheduleForWeek(groupLetter, year, week, startTime = '07:00') {
+            const pairs = getDayPairsForYearWeek(year, week);
+            const empSched = {};
+            for (let d = 0; d < 7; d++) {
+                const activePair = pairs[d] || '';
+                if (activePair.includes(groupLetter)) {
+                    empSched[d] = createSlot('work', startTime);
+                } else {
+                    empSched[d] = createSlot('vrij', 'Liber');
+                }
+            }
+            return empSched;
+        }
+
+        function applyGroupSchedulesToWeekData(weekData, year, week, employeesList) {
+            const target = weekData && typeof weekData === 'object' ? weekData : {};
+            (employeesList || []).forEach(emp => {
+                const grp = extractGroupLetter(emp.role);
+                if (grp) {
+                    target[emp.id] = buildGroupScheduleForWeek(grp, year, week, '07:00');
+                }
+            });
+            return target;
+        }
+
         function getDefaultWorkbookSchedules() {
-            const w47 = {
-                emp_daniel: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_druvis: {
-                    0: createSlot('vrij', 'Liber'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('work', '09:00'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_ghenadie: {
-                    0: createSlot('work', '10:00'),
-                    1: createSlot('work', '10:00'),
-                    2: createSlot('work', '10:00'),
-                    3: createSlot('work', '10:00'),
-                    4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_evelina: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'Liber'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('work', '07:00'),
-                    6: createSlot('work', '07:00')
-                },
-                emp_andrei: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('extra', '07:00', 'Extra'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_albert: {
-                    0: createSlot('vakantie', 'Vacanță'),
-                    1: createSlot('vakantie', 'Vacanță'),
-                    2: createSlot('vakantie', 'Vacanță'),
-                    3: createSlot('vakantie', 'Vacanță'),
-                    4: createSlot('vakantie', 'Vacanță'),
-                    5: createSlot('vakantie', 'Vacanță'),
-                    6: createSlot('vakantie', 'Vacanță')
-                },
-                emp_iulian: {
-                    0: createSlot('work', '08:00'),
-                    1: createSlot('work', '08:00'),
-                    2: createSlot('extra', '08:00', 'Extra'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '08:00'),
-                    5: createSlot('work', '07:00'),
-                    6: createSlot('work', '07:00')
-                }
-            };
+            const schedules = {};
+            for (let w = 1; w <= 53; w++) {
+                const wkKey = getWeekKey(2026, w);
+                const weekMap = {
+                    emp_daniel: {
+                        0: createSlot('work', '07:00'),
+                        1: createSlot('work', '07:00'),
+                        2: createSlot('work', '07:00'),
+                        3: createSlot('work', '07:00'),
+                        4: createSlot('work', '07:00'),
+                        5: createSlot('vrij', 'Liber'),
+                        6: createSlot('vrij', 'Liber')
+                    },
+                    emp_druvis: {
+                        0: createSlot('vrij', 'Liber'),
+                        1: createSlot('work', '07:00'),
+                        2: createSlot('work', '07:00'),
+                        3: createSlot('work', '07:00'),
+                        4: createSlot('work', '07:00'),
+                        5: createSlot('work', w === 47 ? '09:00' : '07:00'),
+                        6: createSlot('vrij', 'Liber')
+                    },
+                    emp_ghenadie: {
+                        0: createSlot('work', '10:00'),
+                        1: createSlot('work', '10:00'),
+                        2: createSlot('work', '10:00'),
+                        3: createSlot('work', '10:00'),
+                        4: createSlot('work', '10:00'),
+                        5: createSlot('vrij', 'Liber'),
+                        6: createSlot('vrij', 'Liber')
+                    },
+                    emp_evelina: buildGroupScheduleForWeek('A', 2026, w, '07:00'),
+                    emp_andrei: buildGroupScheduleForWeek('B', 2026, w, '07:00'),
+                    emp_albert: w === 47
+                        ? {
+                            0: createSlot('vakantie', 'Vacanță'),
+                            1: createSlot('vakantie', 'Vacanță'),
+                            2: createSlot('vakantie', 'Vacanță'),
+                            3: createSlot('vakantie', 'Vacanță'),
+                            4: createSlot('vakantie', 'Vacanță'),
+                            5: createSlot('vakantie', 'Vacanță'),
+                            6: createSlot('vakantie', 'Vacanță')
+                        }
+                        : buildGroupScheduleForWeek('C', 2026, w, '07:00'),
+                    emp_iulian: buildGroupScheduleForWeek('A', 2026, w, '08:00')
+                };
 
-            const w51 = {
-                emp_daniel: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_druvis: {
-                    0: createSlot('vrij', 'Liber'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_ghenadie: {
-                    0: createSlot('work', '10:00'),
-                    1: createSlot('work', '10:00'),
-                    2: createSlot('work', '10:00'),
-                    3: createSlot('work', '10:00'),
-                    4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_evelina: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'Liber'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_andrei: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_albert: {
-                    0: createSlot('work', '08:00'),
-                    1: createSlot('work', '08:00'),
-                    2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '08:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_iulian: {
-                    0: createSlot('work', '08:00'),
-                    1: createSlot('work', '08:00'),
-                    2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '08:00'),
-                    5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Liber')
+                if (w === 47) {
+                    weekMap.emp_andrei[5] = createSlot('extra', '07:00', 'Extra');
+                    weekMap.emp_iulian[2] = createSlot('extra', '08:00', 'Extra');
                 }
-            };
 
-            const w52 = {
-                emp_daniel: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_druvis: {
-                    0: createSlot('vrij', 'Liber'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_ghenadie: {
-                    0: createSlot('work', '10:00'),
-                    1: createSlot('work', '10:00'),
-                    2: createSlot('work', '10:00'),
-                    3: createSlot('work', '10:00'),
-                    4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_evelina: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'Liber'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_andrei: {
-                    0: createSlot('work', '07:00'),
-                    1: createSlot('work', '07:00'),
-                    2: createSlot('work', '07:00'),
-                    3: createSlot('work', '07:00'),
-                    4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_albert: {
-                    0: createSlot('work', '08:00'),
-                    1: createSlot('work', '08:00'),
-                    2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '08:00'),
-                    5: createSlot('vrij', 'Liber'),
-                    6: createSlot('vrij', 'Liber')
-                },
-                emp_iulian: {
-                    0: createSlot('work', '08:00'),
-                    1: createSlot('work', '08:00'),
-                    2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Liber'),
-                    4: createSlot('work', '08:00'),
-                    5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Liber')
-                }
-            };
+                schedules[wkKey] = weekMap;
+            }
 
-            return {
-                '2026-W47': w47,
-                '2026-W51': w51,
-                '2026-W52': w52
-            };
+            return schedules;
+        }
+
+        function syncGroupEmployeesInCurrentWeek() {
+            const weekKey = getWeekKey(state.year, state.week);
+            if (!state.schedules[weekKey]) {
+                state.schedules[weekKey] = {};
+            }
+            applyGroupSchedulesToWeekData(state.schedules[weekKey], state.year, state.week, state.employees);
         }
 
         function loadAppState() {
             state.year = 2026;
             state.week = 47;
+
+            const defaultEmployees = [
+                { id: 'emp_daniel', name: 'Daniel', role: '' },
+                { id: 'emp_druvis', name: 'Druvis', role: '' },
+                { id: 'emp_ghenadie', name: 'Ghenadie', role: '' },
+                { id: 'emp_evelina', name: 'Evelina', role: 'Grup A' },
+                { id: 'emp_andrei', name: 'Andrei', role: 'Grup B' },
+                { id: 'emp_albert', name: 'Albert', role: 'Grup C' },
+                { id: 'emp_iulian', name: 'Iulian', role: 'Grup A' }
+            ];
 
             const raw = safeGetStorage(STORAGE_KEY);
             if (raw) {
@@ -3318,16 +3303,7 @@
                 }
             }
 
-            state.employees = [
-                { id: 'emp_daniel', name: 'Daniel', role: '' },
-                { id: 'emp_druvis', name: 'Druvis', role: '' },
-                { id: 'emp_ghenadie', name: 'Ghenadie', role: '' },
-                { id: 'emp_evelina', name: 'Evelina', role: 'Grup A' },
-                { id: 'emp_andrei', name: 'Andrei', role: 'Grup B' },
-                { id: 'emp_albert', name: 'Albert', role: 'Grup C' },
-                { id: 'emp_iulian', name: 'Iulian', role: 'Grup A' }
-            ];
-
+            state.employees = defaultEmployees;
             state.schedules = getDefaultWorkbookSchedules();
             state.customData = {};
             persistEverythingNow();
@@ -3362,12 +3338,14 @@
         function onYearChange() {
             state.year = parseInt(document.getElementById('year-select').value, 10);
             populateWeekDropdown();
+            syncGroupEmployeesInCurrentWeek();
             saveAppState();
             renderScheduleTable();
         }
 
         function onWeekChange() {
             state.week = parseInt(document.getElementById('week-select').value, 10);
+            syncGroupEmployeesInCurrentWeek();
             saveAppState();
             renderScheduleTable();
         }
@@ -3400,6 +3378,7 @@
             state.year = y;
             state.week = w;
             populateWeekDropdown();
+            syncGroupEmployeesInCurrentWeek();
             saveAppState();
             renderScheduleTable();
         }
@@ -3408,6 +3387,7 @@
             state.year = 2026;
             state.week = 47;
             populateWeekDropdown();
+            syncGroupEmployeesInCurrentWeek();
             saveAppState();
             renderScheduleTable();
             showToast(t('toastWeek47'));
@@ -3431,6 +3411,7 @@
         }
 
         function renderScheduleTable() {
+            syncGroupEmployeesInCurrentWeek();
             const days = getDatesOfISOWeek(state.year, state.week);
             const weekKey = getWeekKey(state.year, state.week);
             const weekData = state.schedules[weekKey] || {};
@@ -3697,6 +3678,7 @@
             };
 
             state.employees.push(newEmp);
+            syncGroupEmployeesInCurrentWeek();
             saveAppState();
             closeAddEmployeeModal();
             renderScheduleTable();
@@ -3738,6 +3720,7 @@
             }
 
             state.schedules[currKey] = JSON.parse(JSON.stringify(prevData));
+            syncGroupEmployeesInCurrentWeek();
             saveAppState();
             renderScheduleTable();
             showToast(t('toastWeekCopied', { week: String(prevW).padStart(2, '0') }));
@@ -3867,6 +3850,7 @@
 
         function renderScheduleToPNG() {
             try {
+                syncGroupEmployeesInCurrentWeek();
                 const days = getDatesOfISOWeek(state.year, state.week);
                 const weekKey = getWeekKey(state.year, state.week);
                 const weekData = state.schedules[weekKey] || {};

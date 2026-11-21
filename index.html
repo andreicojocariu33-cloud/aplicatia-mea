@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartWork </title>
+    <title>Programul de muncă (2026 &amp; 2027)</title>
     <style>
         /* =====================================================================
            1. DESIGN TOKENS & BASE STYLES (100% SELF-CONTAINED)
@@ -1297,8 +1297,8 @@
                     </svg>
                 </button>
 
-                <button type="button" id="week-47-btn" class="btn btn-soft-indigo" title="Mergi la Week 47 (16–22 Nov 2026)">
-                    Week 47
+                <button type="button" id="week-47-btn" class="btn btn-soft-indigo" title="Mergi la Săpt. 47 (16–22 Nov 2026)">
+                    Săpt. 47
                 </button>
 
                 <select id="lang-select" class="select-control" aria-label="Selectează limba">
@@ -1356,8 +1356,8 @@
         <div class="legend-list">
             <span class="legend-pill shift-work"><span class="legend-dot" style="background:#059669"></span><span id="legend-work-text">Program (ex. 07:00 / 08:00 / 10:00)</span></span>
             <span class="legend-pill shift-extra"><span class="legend-dot" style="background:#d97706"></span><span id="legend-extra-text">Extra</span></span>
-            <span class="legend-pill shift-vrij"><span class="legend-dot" style="background:#64748b"></span><span id="legend-vrij-text">liber</span></span>
-            <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span><span id="legend-vakantie-text">Vacanță / CO</span></span>
+            <span class="legend-pill shift-vrij"><span class="legend-dot" style="background:#64748b"></span><span id="legend-vrij-text">Liber</span></span>
+            <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span><span id="legend-vakantie-text">Vacanță</span></span>
         </div>
 
         <div class="right-toolbar-group">
@@ -1480,11 +1480,11 @@
                             <strong>08:00 • Extra</strong>
                             <span>Zi lucrătoare suplimentară</span>
                         </button>
-                        <button type="button" class="preset-btn" data-preset-type="vrij" data-preset-label="liber" data-preset-extra="0">
-                            <strong>liber</strong>
+                        <button type="button" class="preset-btn" data-preset-type="vrij" data-preset-label="__VRIJ__" data-preset-extra="0">
+                            <strong>Liber</strong>
                             <span>Zi liberă (nu se numără ca zi lucrată)</span>
                         </button>
-                        <button type="button" class="preset-btn" data-preset-type="vakantie" data-preset-label="Vacanță" data-preset-extra="0">
+                        <button type="button" class="preset-btn" data-preset-type="vakantie" data-preset-label="__VAKANTIE__" data-preset-extra="0">
                             <strong>Vacanță</strong>
                             <span>Concediu (nu se numără ca zi lucrată)</span>
                         </button>
@@ -1496,15 +1496,15 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="custom-label">Oră început sau status</label>
-                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, liber, Vacanță">
+                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, Liber, Vacanță">
                     </div>
                     <div class="form-group">
                         <label for="custom-status-type">Tip zi</label>
                         <select id="custom-status-type" class="form-input">
                             <option value="work">Zi lucrătoare</option>
                             <option value="extra">Extra (suplimentar)</option>
-                            <option value="vrij">liber</option>
-                            <option value="vakantie">Vacanță / Concediu</option>
+                            <option value="vrij">Liber</option>
+                            <option value="vakantie">Vacanță</option>
                         </select>
                     </div>
                 </div>
@@ -1563,7 +1563,7 @@
             <div class="modal-header">
                 <div>
                     <div class="modal-title" id="share-image-modal-title">Imagine Tabel Program (.PNG)</div>
-                    <div class="modal-subtitle" id="share-image-modal-subtitle">Previzualizare imagine completă pentru WhatsApp &amp; Email</div>
+                    <div class="modal-subtitle" id="share-image-modal-subtitle">Săpt. 47 (16 Nov – 22 Nov 2026) • Imagine PNG gata de trimis</div>
                 </div>
                 <button type="button" id="close-share-modal-btn" class="modal-close" aria-label="Închide">✕</button>
             </div>
@@ -1599,7 +1599,7 @@
         /* =====================================================================
            1. STORAGE & MULTI-LANGUAGE DICTIONARY (RO, DE, EN, RU, TR, NL)
            ===================================================================== */
-        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v3';
+        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v4';
         const LANG_STORAGE_KEY = 'planificator_program_lang_2026_2027_v1';
         let memoryStorageFallback = null;
         let langMemoryFallback = null;
@@ -1636,8 +1636,8 @@
                 weekAria: 'Selectează săptămâna',
                 langAria: 'Selectează limba',
                 weekPrefix: 'Săpt.',
-                week47Btn: 'Week 47',
-                week47Title: 'Mergi la Week 47 (16–22 Nov 2026)',
+                week47Btn: 'Săpt. 47',
+                week47Title: 'Mergi la Săpt. 47 (16–22 Nov 2026)',
                 addEmployeeBtn: '+ Angajat',
                 copyPrevWeekBtn: 'Copiază Săpt. Ant.',
                 copyPrevWeekTitle: 'Copiază programul din săptămâna anterioară',
@@ -1647,8 +1647,8 @@
                 printTitle: 'Printează sau salvează PDF',
                 legendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'liber',
-                legendVakantie: 'Vacanță / CO',
+                legendVrij: 'Liber',
+                legendVakantie: 'Vacanță',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Trimite tot tabelul programului pe WhatsApp',
                 emailBtn: 'Email',
@@ -1682,17 +1682,17 @@
                 presetWorkDesc: 'Zi lucrătoare',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Zi lucrătoare suplimentară',
-                presetVrijTitle: 'liber',
+                statusVrijLabel: 'Liber',
                 presetVrijDesc: 'Zi liberă (nu se numără ca zi lucrată)',
-                presetVakantieTitle: 'Vacanță',
-                presetVakantieDesc: 'Concediu (nu se numără ca zi lucrată)',
+                statusVakantieLabel: 'Vacanță',
+                presetVakantieDesc: 'Vacanță (nu se numără ca zi lucrată)',
                 customLabelField: 'Oră început sau status',
-                customLabelPlaceholder: 'Ex: 07:00, 08:00, 10:00, liber, Vacanță',
+                customLabelPlaceholder: 'Ex: 07:00, 08:00, 10:00, Liber, Vacanță',
                 customTypeField: 'Tip zi',
                 typeWorkOption: 'Zi lucrătoare',
                 typeExtraOption: 'Extra (suplimentar)',
-                typeVrijOption: 'liber',
-                typeVakantieOption: 'Vacanță / Concediu',
+                typeVrijOption: 'Liber',
+                typeVakantieOption: 'Vacanță',
                 customNoteField: 'Mențiune opțională (ex: Extra, Grup A)',
                 customNotePlaceholder: 'Ex: Extra',
                 deleteCellBtn: 'Șterge',
@@ -1721,8 +1721,8 @@
                 canvasBannerStats: 'Angajați: {count}   •   Total zile lucrate: {days} zile',
                 canvasLegendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vacanță / CO',
+                canvasLegendVrij: 'Liber',
+                canvasLegendVakantie: 'Vacanță',
                 shareTextTitle: 'PROGRAMUL DE MUNCĂ - Săpt. {week} ({range})',
                 shareTextDaysLine: 'Zile: {daysLine}',
                 shareTextNoEmp: 'Nu există angajați în program pentru această săptămână.',
@@ -1733,7 +1733,7 @@
                 shareMailBody: '{title}\n\nImaginea PNG a tabelului a fost descărcată pentru a fi atașată la email.',
                 toastFirstWeek2026: 'Ai ajuns la prima săptămână din 2026.',
                 toastLastWeek2027: 'Ai ajuns la ultima săptămână din 2027.',
-                toastWeek47: 'Afișat Week 47 (16 – 22 Noiembrie 2026).',
+                toastWeek47: 'Afișat Săpt. 47 (16 – 22 Noiembrie 2026).',
                 toastShiftSaved: 'Programul zilei a fost salvat.',
                 toastAppliedMonFri: 'Program aplicat pentru Luni – Vineri.',
                 toastCellCleared: 'Celula a fost golită.',
@@ -1780,8 +1780,8 @@
                 printTitle: 'Drucken oder als PDF speichern',
                 legendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'liber',
-                legendVakantie: 'Vacanță',
+                legendVrij: 'Frei',
+                legendVakantie: 'Urlaub',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Gesamten Plan über WhatsApp teilen',
                 emailBtn: 'E-Mail',
@@ -1815,17 +1815,17 @@
                 presetWorkDesc: 'Arbeitstag',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Zusätzlicher Arbeitstag',
-                presetVrijTitle: 'liber',
+                statusVrijLabel: 'Frei',
                 presetVrijDesc: 'Freier Tag (zählt nicht als Arbeitstag)',
-                presetVakantieTitle: 'Vacanță',
+                statusVakantieLabel: 'Urlaub',
                 presetVakantieDesc: 'Urlaub (zählt nicht als Arbeitstag)',
                 customLabelField: 'Startzeit oder Status',
-                customLabelPlaceholder: 'Z. B. 07:00, 08:00, 10:00, liber, Vacanță',
+                customLabelPlaceholder: 'Z. B. 07:00, 08:00, 10:00, Frei, Urlaub',
                 customTypeField: 'Tagestyp',
                 typeWorkOption: 'Arbeitstag',
                 typeExtraOption: 'Extra (zusätzlich)',
-                typeVrijOption: 'liber',
-                typeVakantieOption: 'Vacanță',
+                typeVrijOption: 'Frei',
+                typeVakantieOption: 'Urlaub',
                 customNoteField: 'Optionale Notiz (z. B. Extra, Gruppe A)',
                 customNotePlaceholder: 'Z. B. Extra',
                 deleteCellBtn: 'Löschen',
@@ -1854,8 +1854,8 @@
                 canvasBannerStats: 'Mitarbeiter: {count}   •   Arbeitstage gesamt: {days} Tage',
                 canvasLegendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vacanță',
+                canvasLegendVrij: 'Frei',
+                canvasLegendVakantie: 'Urlaub',
                 shareTextTitle: 'ARBEITSPLAN - KW {week} ({range})',
                 shareTextDaysLine: 'Tage: {daysLine}',
                 shareTextNoEmp: 'Keine Mitarbeiter für diese Woche eingetragen.',
@@ -1913,8 +1913,8 @@
                 printTitle: 'Print or save as PDF',
                 legendWork: 'Schedule (e.g. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'liber',
-                legendVakantie: 'Vacanță',
+                legendVrij: 'Off',
+                legendVakantie: 'Vacation',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Share full schedule table on WhatsApp',
                 emailBtn: 'Email',
@@ -1948,17 +1948,17 @@
                 presetWorkDesc: 'Working day',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Extra working day',
-                presetVrijTitle: 'liber',
+                statusVrijLabel: 'Off',
                 presetVrijDesc: 'Day off (not counted as worked day)',
-                presetVakantieTitle: 'Vacanță',
+                statusVakantieLabel: 'Vacation',
                 presetVakantieDesc: 'Vacation (not counted as worked day)',
                 customLabelField: 'Start time or status',
-                customLabelPlaceholder: 'E.g. 07:00, 08:00, 10:00, liber, Vacanță',
+                customLabelPlaceholder: 'E.g. 07:00, 08:00, 10:00, Off, Vacation',
                 customTypeField: 'Day type',
                 typeWorkOption: 'Working day',
                 typeExtraOption: 'Extra (additional)',
-                typeVrijOption: 'liber',
-                typeVakantieOption: 'Vacanță',
+                typeVrijOption: 'Off',
+                typeVakantieOption: 'Vacation',
                 customNoteField: 'Optional note (e.g. Extra, Group A)',
                 customNotePlaceholder: 'E.g. Extra',
                 deleteCellBtn: 'Delete',
@@ -1987,8 +1987,8 @@
                 canvasBannerStats: 'Employees: {count}   •   Total worked days: {days} days',
                 canvasLegendWork: 'Schedule (e.g. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vacanță',
+                canvasLegendVrij: 'Off',
+                canvasLegendVakantie: 'Vacation',
                 shareTextTitle: 'WORK SCHEDULE - Week {week} ({range})',
                 shareTextDaysLine: 'Days: {daysLine}',
                 shareTextNoEmp: 'No employees in schedule for this week.',
@@ -2046,8 +2046,8 @@
                 printTitle: 'Печать или сохранение в PDF',
                 legendWork: 'График (напр. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'liber',
-                legendVakantie: 'Vacanță',
+                legendVrij: 'Выходной',
+                legendVakantie: 'Отпуск',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Отправить всю таблицу графика в WhatsApp',
                 emailBtn: 'Email',
@@ -2081,17 +2081,17 @@
                 presetWorkDesc: 'Рабочий день',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Дополнительный рабочий день',
-                presetVrijTitle: 'liber',
+                statusVrijLabel: 'Выходной',
                 presetVrijDesc: 'Выходной (не считается рабочим днём)',
-                presetVakantieTitle: 'Vacanță',
+                statusVakantieLabel: 'Отпуск',
                 presetVakantieDesc: 'Отпуск (не считается рабочим днём)',
                 customLabelField: 'Время начала или статус',
-                customLabelPlaceholder: 'Напр.: 07:00, 08:00, 10:00, liber, Vacanță',
+                customLabelPlaceholder: 'Напр.: 07:00, 08:00, 10:00, Выходной, Отпуск',
                 customTypeField: 'Тип дня',
                 typeWorkOption: 'Рабочий день',
                 typeExtraOption: 'Extra (доп.)',
-                typeVrijOption: 'liber',
-                typeVakantieOption: 'Vacanță',
+                typeVrijOption: 'Выходной',
+                typeVakantieOption: 'Отпуск',
                 customNoteField: 'Примечание (напр. Extra, Группа A)',
                 customNotePlaceholder: 'Напр.: Extra',
                 deleteCellBtn: 'Удалить',
@@ -2120,8 +2120,8 @@
                 canvasBannerStats: 'Сотрудников: {count}   •   Всего рабочих дней: {days} дн.',
                 canvasLegendWork: 'График (напр. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vacanță',
+                canvasLegendVrij: 'Выходной',
+                canvasLegendVakantie: 'Отпуск',
                 shareTextTitle: 'ГРАФИК РАБОТЫ - Нед. {week} ({range})',
                 shareTextDaysLine: 'Дни: {daysLine}',
                 shareTextNoEmp: 'На эту неделю сотрудники не добавлены.',
@@ -2179,8 +2179,8 @@
                 printTitle: 'Yazdır veya PDF olarak kaydet',
                 legendWork: 'Program (örn. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'liber',
-                legendVakantie: 'Vacanță',
+                legendVrij: 'İzinli',
+                legendVakantie: 'Tatil',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Tüm program tablosunu WhatsApp’ta paylaş',
                 emailBtn: 'E-posta',
@@ -2214,17 +2214,17 @@
                 presetWorkDesc: 'Çalışma günü',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Ek çalışma günü',
-                presetVrijTitle: 'liber',
+                statusVrijLabel: 'İzinli',
                 presetVrijDesc: 'İzin günü (çalışılan gün sayılmaz)',
-                presetVakantieTitle: 'Vacanță',
+                statusVakantieLabel: 'Tatil',
                 presetVakantieDesc: 'Tatil (çalışılan gün sayılmaz)',
                 customLabelField: 'Başlangıç saati veya durum',
-                customLabelPlaceholder: 'Örn: 07:00, 08:00, 10:00, liber, Vacanță',
+                customLabelPlaceholder: 'Örn: 07:00, 08:00, 10:00, İzinli, Tatil',
                 customTypeField: 'Gün türü',
                 typeWorkOption: 'Çalışma günü',
                 typeExtraOption: 'Extra (ek)',
-                typeVrijOption: 'liber',
-                typeVakantieOption: 'Vacanță',
+                typeVrijOption: 'İzinli',
+                typeVakantieOption: 'Tatil',
                 customNoteField: 'İsteğe bağlı not (örn. Extra, Grup A)',
                 customNotePlaceholder: 'Örn: Extra',
                 deleteCellBtn: 'Sil',
@@ -2253,8 +2253,8 @@
                 canvasBannerStats: 'Çalışanlar: {count}   •   Toplam çalışılan gün: {days} gün',
                 canvasLegendWork: 'Program (örn. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vacanță',
+                canvasLegendVrij: 'İzinli',
+                canvasLegendVakantie: 'Tatil',
                 shareTextTitle: 'ÇALIŞMA PROGRAMI - Hafta {week} ({range})',
                 shareTextDaysLine: 'Günler: {daysLine}',
                 shareTextNoEmp: 'Bu hafta için çalışan bulunmuyor.',
@@ -2312,8 +2312,8 @@
                 printTitle: 'Afdrukken of opslaan als PDF',
                 legendWork: 'Rooster (bijv. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'liber',
-                legendVakantie: 'Vacanță',
+                legendVrij: 'Vrij',
+                legendVakantie: 'Vakantie',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Deel het hele roostertabel op WhatsApp',
                 emailBtn: 'E-mail',
@@ -2347,17 +2347,17 @@
                 presetWorkDesc: 'Werkdag',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Extra werkdag',
-                presetVrijTitle: 'liber',
+                statusVrijLabel: 'Vrij',
                 presetVrijDesc: 'Vrije dag (telt niet als gewerkte dag)',
-                presetVakantieTitle: 'Vacanță',
+                statusVakantieLabel: 'Vakantie',
                 presetVakantieDesc: 'Vakantie (telt niet als gewerkte dag)',
                 customLabelField: 'Begintijd of status',
-                customLabelPlaceholder: 'Bijv.: 07:00, 08:00, 10:00, liber, Vacanță',
+                customLabelPlaceholder: 'Bijv.: 07:00, 08:00, 10:00, Vrij, Vakantie',
                 customTypeField: 'Dagtype',
                 typeWorkOption: 'Werkdag',
                 typeExtraOption: 'Extra (aanvullend)',
-                typeVrijOption: 'liber',
-                typeVakantieOption: 'Vacanță',
+                typeVrijOption: 'Vrij',
+                typeVakantieOption: 'Vakantie',
                 customNoteField: 'Optionele notitie (bijv. Extra, Groep A)',
                 customNotePlaceholder: 'Bijv.: Extra',
                 deleteCellBtn: 'Verwijderen',
@@ -2386,8 +2386,8 @@
                 canvasBannerStats: 'Medewerkers: {count}   •   Totaal gewerkte dagen: {days} dagen',
                 canvasLegendWork: 'Rooster (bijv. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'liber',
-                canvasLegendVakantie: 'Vacanță',
+                canvasLegendVrij: 'Vrij',
+                canvasLegendVakantie: 'Vakantie',
                 shareTextTitle: 'WERKROOSTER - Week {week} ({range})',
                 shareTextDaysLine: 'Dagen: {daysLine}',
                 shareTextNoEmp: 'Geen medewerkers in het rooster voor deze week.',
@@ -2413,7 +2413,7 @@
                 toastPngDownloaded: 'Afbeelding {filename} gedownload.',
                 toastPngOpenFail: 'Open de afbeelding in het voorbeeld om deze op te slaan.',
                 toastNoPng: 'Geen PNG-afbeelding gegenereerd.',
-                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp or E-mail.',
+                toastImgCopied: 'Roosterafbeelding gekopieerd naar klembord! Plak direct in WhatsApp of E-mail.',
                 toastImgCopyFallback: 'Browser ondersteunt direct kopiëren van afbeeldingen niet; PNG gedownload om bij te voegen.',
                 toastNoPngGen: 'Kon geen PNG-afbeelding genereren.',
                 toastSharedWa: 'PNG-afbeelding verzonden naar deelmenu / WhatsApp.',
@@ -2424,6 +2424,24 @@
                 toastFsActive: '90° volledig scherm actief • Druk op Terug voor hoofdweergave.'
             }
         };
+
+        const ALL_VRIJ_WORDS = new Set(
+            Object.values(TRANSLATIONS).map(d => (d.statusVrijLabel || '').trim().toUpperCase())
+                .concat(['VRIJ', 'LIBER', 'OFF', 'DAY OFF'])
+                .filter(Boolean)
+        );
+
+        const ALL_VAKANTIE_WORDS = new Set(
+            Object.values(TRANSLATIONS).map(d => (d.statusVakantieLabel || '').trim().toUpperCase())
+                .concat(['VACANȚĂ', 'VACANTA', 'URLAUB', 'VACATION', 'ОТПУСК', 'TATIL', 'VAKANTIE', 'CO', 'CM'])
+                .filter(Boolean)
+        );
+
+        const ALL_DEFAULT_ROLES = new Set(
+            Object.values(TRANSLATIONS).map(d => (d.empDefaultRole || '').trim().toUpperCase())
+                .concat(['ANGAJAT', 'EMPLOYEE', 'MITARBEITER', 'СОТРУДНИК', 'ÇALIŞAN', 'MEDEWERKER'])
+                .filter(Boolean)
+        );
 
         const state = {
             year: 2026,
@@ -2459,6 +2477,40 @@
 
         function getMonthShortNames() {
             return (TRANSLATIONS[state.lang] || TRANSLATIONS.ro).monthsShort;
+        }
+
+        function detectSlotKind(slot) {
+            if (!slot || !slot.label) return 'empty';
+            const rawType = (slot.type || '').toLowerCase();
+            const upperLabel = slot.label.trim().toUpperCase();
+            const upperNote = (slot.note || '').trim().toUpperCase();
+
+            if (rawType === 'vakantie' || ALL_VAKANTIE_WORDS.has(upperLabel)) {
+                return 'vakantie';
+            }
+            if (rawType === 'vrij' || ALL_VRIJ_WORDS.has(upperLabel)) {
+                return 'vrij';
+            }
+            if (rawType === 'extra' || upperNote === 'EXTRA' || upperLabel.includes('EXTRA')) {
+                return 'extra';
+            }
+            return 'work';
+        }
+
+        function getLocalizedSlotLabel(slot) {
+            if (!slot || !slot.label) return '';
+            const kind = detectSlotKind(slot);
+            if (kind === 'vrij') return t('statusVrijLabel');
+            if (kind === 'vakantie') return t('statusVakantieLabel');
+            return slot.label;
+        }
+
+        function getLocalizedEmployeeRole(role) {
+            if (!role) return '';
+            if (ALL_DEFAULT_ROLES.has(role.trim().toUpperCase())) {
+                return t('empDefaultRole');
+            }
+            return role;
         }
 
         function loadSavedLanguage() {
@@ -2613,8 +2665,14 @@
                 }
                 if (presetBtns[4]) presetBtns[4].innerHTML = `<strong>${t('presetExtraTitle', { time: '07:00' })}</strong><span>${t('presetExtraDesc')}</span>`;
                 if (presetBtns[5]) presetBtns[5].innerHTML = `<strong>${t('presetExtraTitle', { time: '08:00' })}</strong><span>${t('presetExtraDesc')}</span>`;
-                if (presetBtns[6]) presetBtns[6].innerHTML = `<strong>${t('presetVrijTitle')}</strong><span>${t('presetVrijDesc')}</span>`;
-                if (presetBtns[7]) presetBtns[7].innerHTML = `<strong>${t('presetVakantieTitle')}</strong><span>${t('presetVakantieDesc')}</span>`;
+                if (presetBtns[6]) {
+                    presetBtns[6].setAttribute('data-preset-label', t('statusVrijLabel'));
+                    presetBtns[6].innerHTML = `<strong>${escapeHTML(t('statusVrijLabel'))}</strong><span>${t('presetVrijDesc')}</span>`;
+                }
+                if (presetBtns[7]) {
+                    presetBtns[7].setAttribute('data-preset-label', t('statusVakantieLabel'));
+                    presetBtns[7].innerHTML = `<strong>${escapeHTML(t('statusVakantieLabel'))}</strong><span>${t('presetVakantieDesc')}</span>`;
+                }
 
                 const labels = shiftModal.querySelectorAll('.form-group label');
                 if (labels[0]) labels[0].textContent = t('customLabelField');
@@ -2655,6 +2713,11 @@
                             date: formatShortDate(days[state.editingCell.dayIndex]),
                             year: state.year
                         });
+                    }
+                    const weekKey = getWeekKey(state.year, state.week);
+                    const currentSlot = state.schedules[weekKey]?.[state.editingCell.empId]?.[state.editingCell.dayIndex];
+                    if (currentSlot && currentSlot.label) {
+                        document.getElementById('custom-label').value = getLocalizedSlotLabel(currentSlot);
                     }
                 }
             }
@@ -2785,17 +2848,17 @@
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_druvis: {
-                    0: createSlot('vrij', 'liber'),
+                    0: createSlot('vrij', 'Liber'),
                     1: createSlot('work', '07:00'),
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '09:00'),
-                    6: createSlot('vrij', 'liber')
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_ghenadie: {
                     0: createSlot('work', '10:00'),
@@ -2803,14 +2866,14 @@
                     2: createSlot('work', '10:00'),
                     3: createSlot('work', '10:00'),
                     4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_evelina: {
                     0: createSlot('work', '07:00'),
                     1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'liber'),
-                    3: createSlot('vrij', 'liber'),
+                    2: createSlot('vrij', 'Liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
                     6: createSlot('work', '07:00')
@@ -2822,7 +2885,7 @@
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('extra', '07:00', 'Extra'),
-                    6: createSlot('vrij', 'liber')
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_albert: {
                     0: createSlot('vakantie', 'Vacanță'),
@@ -2837,7 +2900,7 @@
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('extra', '08:00', 'Extra'),
-                    3: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '08:00'),
                     5: createSlot('work', '07:00'),
                     6: createSlot('work', '07:00')
@@ -2851,17 +2914,17 @@
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_druvis: {
-                    0: createSlot('vrij', 'liber'),
+                    0: createSlot('vrij', 'Liber'),
                     1: createSlot('work', '07:00'),
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'liber')
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_ghenadie: {
                     0: createSlot('work', '10:00'),
@@ -2869,17 +2932,17 @@
                     2: createSlot('work', '10:00'),
                     3: createSlot('work', '10:00'),
                     4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_evelina: {
                     0: createSlot('work', '07:00'),
                     1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'liber'),
-                    3: createSlot('vrij', 'liber'),
+                    2: createSlot('vrij', 'Liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'liber')
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_andrei: {
                     0: createSlot('work', '07:00'),
@@ -2887,26 +2950,26 @@
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_albert: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '08:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_iulian: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '08:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'liber')
+                    6: createSlot('vrij', 'Liber')
                 }
             };
 
@@ -2917,17 +2980,17 @@
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_druvis: {
-                    0: createSlot('vrij', 'liber'),
+                    0: createSlot('vrij', 'Liber'),
                     1: createSlot('work', '07:00'),
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_ghenadie: {
                     0: createSlot('work', '10:00'),
@@ -2935,17 +2998,17 @@
                     2: createSlot('work', '10:00'),
                     3: createSlot('work', '10:00'),
                     4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_evelina: {
                     0: createSlot('work', '07:00'),
                     1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'liber'),
-                    3: createSlot('vrij', 'liber'),
+                    2: createSlot('vrij', 'Liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'liber')
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_andrei: {
                     0: createSlot('work', '07:00'),
@@ -2953,26 +3016,26 @@
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_albert: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '08:00'),
-                    5: createSlot('vrij', 'liber'),
-                    6: createSlot('vrij', 'liber')
+                    5: createSlot('vrij', 'Liber'),
+                    6: createSlot('vrij', 'Liber')
                 },
                 emp_iulian: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'Liber'),
                     4: createSlot('work', '08:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'liber')
+                    6: createSlot('vrij', 'Liber')
                 }
             };
 
@@ -3108,13 +3171,8 @@
 
         function isWorkingDaySlot(slot) {
             if (!slot || !slot.label) return false;
-            const slotType = (slot.type || '').toLowerCase();
-            if (slotType === 'vrij' || slotType === 'vakantie') return false;
-            const upper = slot.label.trim().toUpperCase();
-            if (upper === 'VRIJ' || upper === 'LIBER' || upper === 'VACANȚĂ' || upper === 'VACANTA' || upper === 'CO' || upper === 'CM') {
-                return false;
-            }
-            return true;
+            const kind = detectSlotKind(slot);
+            return kind === 'work' || kind === 'extra';
         }
 
         function renderScheduleTable() {
@@ -3166,13 +3224,14 @@
                 state.employees.forEach(emp => {
                     const empSchedule = weekData[emp.id] || {};
                     let empWorkedDays = 0;
+                    const displayRole = getLocalizedEmployeeRole(emp.role);
 
                     let cellsHTML = `
                         <td class="sticky-col" dir="ltr">
                             <div class="emp-cell-wrap" dir="ltr">
                                 <div class="emp-info" dir="ltr">
                                     <div class="emp-name" dir="ltr" title="${escapeHTML(emp.name)}">${escapeHTML(emp.name)}</div>
-                                    ${emp.role ? `<div class="emp-role" dir="ltr" title="${escapeHTML(emp.role)}">${escapeHTML(emp.role)}</div>` : ''}
+                                    ${displayRole ? `<div class="emp-role" dir="ltr" title="${escapeHTML(displayRole)}">${escapeHTML(displayRole)}</div>` : ''}
                                 </div>
                                 <button type="button" class="emp-del-btn" data-delete-emp="${escapeHTML(emp.id)}" title="${escapeHTML(t('removeEmployeeTitle'))}">✕</button>
                             </div>
@@ -3185,19 +3244,21 @@
                         const tdClass = isWeekend ? 'weekend-cell' : '';
 
                         if (slot && slot.label) {
-                            const worked = isWorkingDaySlot(slot);
+                            const kind = detectSlotKind(slot);
+                            const worked = (kind === 'work' || kind === 'extra');
                             if (worked) {
                                 empWorkedDays += 1;
                                 dailyWorkingCount[d] += 1;
                             }
 
-                            const typeClass = `shift-${slot.type || (worked ? 'work' : 'vrij')}`;
+                            const typeClass = `shift-${kind}`;
+                            const displayLabel = getLocalizedSlotLabel(slot);
                             const subText = slot.note ? slot.note : '';
 
                             cellsHTML += `
                                 <td class="${tdClass}">
                                     <div class="shift-slot ${typeClass}" data-emp-id="${escapeHTML(emp.id)}" data-day-index="${d}">
-                                        <span class="shift-title">${escapeHTML(slot.label)}</span>
+                                        <span class="shift-title">${escapeHTML(displayLabel)}</span>
                                         ${subText ? `<span class="shift-sub">${escapeHTML(subText)}</span>` : ''}
                                     </div>
                                 </td>
@@ -3259,9 +3320,10 @@
                 year: state.year
             });
 
-            if (currentSlot) {
-                document.getElementById('custom-label').value = currentSlot.label || '';
-                document.getElementById('custom-status-type').value = currentSlot.type || 'work';
+            if (currentSlot && currentSlot.label) {
+                const kind = detectSlotKind(currentSlot);
+                document.getElementById('custom-label').value = getLocalizedSlotLabel(currentSlot);
+                document.getElementById('custom-status-type').value = kind === 'empty' ? 'work' : kind;
                 document.getElementById('custom-note').value = currentSlot.note || '';
             } else {
                 document.getElementById('custom-label').value = '07:00';
@@ -3278,21 +3340,27 @@
         }
 
         function selectPreset(type, label, isExtra) {
+            let resolvedLabel = label;
+            if (label === '__VRIJ__') resolvedLabel = t('statusVrijLabel');
+            if (label === '__VAKANTIE__') resolvedLabel = t('statusVakantieLabel');
+
             document.getElementById('custom-status-type').value = type;
-            document.getElementById('custom-label').value = label;
+            document.getElementById('custom-label').value = resolvedLabel;
             document.getElementById('custom-note').value = isExtra ? 'Extra' : '';
         }
 
         function getModalShiftObject() {
-            const label = document.getElementById('custom-label').value.trim() || '07:00';
+            let label = document.getElementById('custom-label').value.trim() || '07:00';
             const note = document.getElementById('custom-note').value.trim();
             let type = document.getElementById('custom-status-type').value;
 
             const upper = label.toUpperCase();
-            if (upper === 'VRIJ' || upper === 'LIBER') {
+            if (ALL_VRIJ_WORDS.has(upper)) {
                 type = 'vrij';
-            } else if (upper === 'VACANȚĂ' || upper === 'VACANTA' || upper === 'CO' || upper === 'CM') {
+                label = t('statusVrijLabel');
+            } else if (ALL_VAKANTIE_WORDS.has(upper)) {
                 type = 'vakantie';
+                label = t('statusVakantieLabel');
             } else if (note.toUpperCase() === 'EXTRA' || upper.includes('EXTRA')) {
                 type = 'extra';
             }
@@ -3439,6 +3507,7 @@
                     const empSchedule = weekData[emp.id] || {};
                     let empWorkedDays = 0;
                     const dayParts = [];
+                    const displayRole = getLocalizedEmployeeRole(emp.role);
 
                     for (let d = 0; d < 7; d++) {
                         const slot = empSchedule[d];
@@ -3448,15 +3517,16 @@
                                 empWorkedDays += 1;
                                 dailyWorkingCount[d] += 1;
                             }
+                            const displayLabel = getLocalizedSlotLabel(slot);
                             const noteSuffix = slot.note ? ` (${slot.note})` : '';
-                            dayParts.push(`${dayShort[d]}: ${slot.label}${noteSuffix}`);
+                            dayParts.push(`${dayShort[d]}: ${displayLabel}${noteSuffix}`);
                         } else {
                             dayParts.push(`${dayShort[d]}: -`);
                         }
                     }
 
                     grandTotalDays += empWorkedDays;
-                    const rolePart = emp.role ? ` [${emp.role}]` : '';
+                    const rolePart = displayRole ? ` [${displayRole}]` : '';
                     const dayWord = empWorkedDays === 1 ? t('daySingular') : t('dayPlural');
 
                     lines.push(t('shareTextEmpLine', {
@@ -3506,18 +3576,17 @@
             }
         }
 
-        function getSlotColors(slot, isWorked) {
-            const slotType = slot ? (slot.type || (isWorked ? 'work' : 'vrij')) : 'empty';
-            if (slotType === 'work') {
+        function getSlotColors(kind) {
+            if (kind === 'work') {
                 return { bg: '#ecfdf5', border: '#a7f3d0', text: '#065f46', sub: '#047857' };
             }
-            if (slotType === 'extra') {
+            if (kind === 'extra') {
                 return { bg: '#fffbeb', border: '#fde68a', text: '#92400e', sub: '#b45309' };
             }
-            if (slotType === 'vakantie') {
+            if (kind === 'vakantie') {
                 return { bg: '#fff1f2', border: '#fecdd3', text: '#be123c', sub: '#e11d48' };
             }
-            if (slotType === 'vrij') {
+            if (kind === 'vrij') {
                 return { bg: '#f1f5f9', border: '#cbd5e1', text: '#475569', sub: '#64748b' };
             }
             return { bg: '#f8fafc', border: '#e2e8f0', text: '#94a3b8', sub: '#94a3b8' };
@@ -3679,6 +3748,7 @@
                         const y = tableTop + headerHeight + rIdx * rowHeight;
                         const empSchedule = weekData[emp.id] || {};
                         let empWorkedDays = 0;
+                        const displayRole = getLocalizedEmployeeRole(emp.role);
 
                         ctx.fillStyle = rIdx % 2 === 0 ? '#ffffff' : '#f8fafc';
                         ctx.fillRect(colX[0], y, colWidths[0], rowHeight);
@@ -3692,13 +3762,13 @@
                         ctx.font = '800 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
                         ctx.textAlign = 'left';
                         ctx.textBaseline = 'middle';
-                        const nameY = emp.role ? y + 20 : y + rowHeight / 2;
+                        const nameY = displayRole ? y + 20 : y + rowHeight / 2;
                         ctx.fillText(emp.name, colX[0] + 12, nameY);
 
-                        if (emp.role) {
+                        if (displayRole) {
                             ctx.fillStyle = '#4f46e5';
                             ctx.font = '700 11px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
-                            ctx.fillText(emp.role, colX[0] + 12, y + 38);
+                            ctx.fillText(displayRole, colX[0] + 12, y + 38);
                         }
 
                         for (let d = 0; d < 7; d++) {
@@ -3711,10 +3781,11 @@
                             ctx.strokeStyle = '#e2e8f0';
                             ctx.strokeRect(cx, y, cw, rowHeight);
 
-                            const isWorked = !!(slot && slot.label && isWorkingDaySlot(slot));
+                            const kind = detectSlotKind(slot);
+                            const isWorked = (kind === 'work' || kind === 'extra');
                             if (isWorked) empWorkedDays += 1;
 
-                            const colors = getSlotColors(slot, isWorked);
+                            const colors = getSlotColors(kind);
                             const badgePad = 5;
                             const bx = cx + badgePad;
                             const by = y + badgePad;
@@ -3729,12 +3800,13 @@
                             ctx.stroke();
 
                             if (slot && slot.label) {
+                                const displayLabel = getLocalizedSlotLabel(slot);
                                 const hasNote = Boolean(slot.note);
                                 ctx.fillStyle = colors.text;
                                 ctx.font = '800 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif';
                                 ctx.textAlign = 'center';
                                 ctx.textBaseline = 'middle';
-                                ctx.fillText(slot.label, bx + bw / 2, hasNote ? by + bh / 2 - 7 : by + bh / 2);
+                                ctx.fillText(displayLabel, bx + bw / 2, hasNote ? by + bh / 2 - 7 : by + bh / 2);
 
                                 if (hasNote) {
                                     ctx.fillStyle = colors.sub;

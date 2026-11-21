@@ -643,7 +643,6 @@
             z-index: 20;
             direction: ltr;
             unicode-bidi: isolate;
-            background: linear-gradient(90deg, var(--indigo-50) 0%, #ffffff 100%);
             text-align: left;
             padding: 6px 8px 6px 12px;
             border-left: 4px solid var(--indigo-600);
@@ -3237,62 +3236,60 @@
             return { type, label, note };
         }
 
-        // Exact pair schedule per ISO week (2026 W01..W53) read from the sheet:
-        // [Mon, Tue, Wed, Thu, Fri, Sat, Sun] where each item is 'AB', 'BC', or 'AC'.
         const SHEET_PAIR_ROTATION_2026 = {
-            1:  ['BC', 'AC', 'AC', 'AB', 'AB', 'AB', 'BC'], // 29-12-2025 – 4-1-2026
-            2:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 5-1-2026 – 11-1-2026
-            3:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 12-1-2026 – 18-1-2026
-            4:  ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 19-1-2026 – 25-1-2026
-            5:  ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 26-1-2026 – 1-2-2026
-            6:  ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 2-2-2026 – 8-2-2026
-            7:  ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 9-2-2026 – 15-2-2026
-            8:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 16-2-2026 – 22-2-2026
-            9:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 23-2-2026 – 1-3-2026
-            10: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 2-3-2026 – 8-3-2026
-            11: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 9-3-2026 – 15-3-2026
-            12: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 16-3-2026 – 22-3-2026
-            13: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 23-3-2026 – 29-3-2026
-            14: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 30-3-2026 – 5-4-2026
-            15: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 6-4-2026 – 12-4-2026
-            16: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 13-4-2026 – 19-4-2026
-            17: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 20-4-2026 – 26-4-2026
-            18: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 27-4-2026 – 3-5-2026
-            19: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 4-5-2026 – 10-5-2026
-            20: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 11-5-2026 – 17-5-2026
-            21: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 18-5-2026 – 24-5-2026
-            22: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 25-5-2026 – 31-5-2026
-            23: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 1-6-2026 – 7-6-2026
-            24: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 8-6-2026 – 14-6-2026
-            25: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 15-6-2026 – 21-6-2026
-            26: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 22-6-2026 – 28-6-2026
-            27: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 29-6-2026 – 5-7-2026
-            28: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 6-7-2026 – 12-7-2026
-            29: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 13-7-2026 – 19-7-2026
-            30: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 20-7-2026 – 26-7-2026
-            31: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 27-7-2026 – 2-8-2026
-            32: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 3-8-2026 – 9-8-2026
-            33: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 10-8-2026 – 16-8-2026
-            34: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 17-8-2026 – 23-8-2026
-            35: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 24-8-2026 – 30-8-2026
-            36: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 31-8-2026 – 6-9-2026
-            37: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 7-9-2026 – 13-9-2026
-            38: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 14-9-2026 – 20-9-2026
-            39: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 21-9-2026 – 27-9-2026
-            40: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 28-9-2026 – 4-10-2026
-            41: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 5-10-2026 – 11-10-2026
-            42: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 12-10-2026 – 18-10-2026
-            43: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 19-10-2026 – 25-10-2026
-            44: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 26-10-2026 – 1-11-2026
-            45: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 2-11-2026 – 8-11-2026
-            46: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 9-11-2026 – 15-11-2026
-            47: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'], // 16-11-2026 – 22-11-2026
-            48: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'], // 23-11-2026 – 29-11-2026
-            49: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'], // 30-11-2026 – 6-12-2026
-            50: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'], // 7-12-2026 – 13-12-2026
-            51: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'], // 14-12-2026 – 20-12-2026
-            52: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'], // 21-12-2026 – 27-12-2026
-            53: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB']  // 28-12-2026 – 3-1-2027
+            1:  ['BC', 'AC', 'AC', 'AB', 'AB', 'AB', 'BC'],
+            2:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            3:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            4:  ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            5:  ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            6:  ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            7:  ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            8:  ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            9:  ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            10: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            11: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            12: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            13: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            14: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            15: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            16: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            17: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            18: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            19: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            20: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            21: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            22: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            23: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            24: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            25: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            26: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            27: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            28: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            29: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            30: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            31: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            32: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            33: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            34: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            35: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            36: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            37: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            38: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            39: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            40: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            41: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            42: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            43: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            44: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            45: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            46: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            47: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB'],
+            48: ['AB', 'BC', 'BC', 'AC', 'AC', 'AB', 'AB'],
+            49: ['BC', 'BC', 'AC', 'AC', 'AB', 'AB', 'BC'],
+            50: ['BC', 'AC', 'AC', 'AB', 'AB', 'BC', 'BC'],
+            51: ['AC', 'AC', 'AB', 'AB', 'BC', 'BC', 'AC'],
+            52: ['AC', 'AB', 'AB', 'BC', 'BC', 'AC', 'AC'],
+            53: ['AB', 'AB', 'BC', 'BC', 'AC', 'AC', 'AB']
         };
 
         function extractGroupLetter(role) {
@@ -4518,6 +4515,7 @@
             const weekNumStr = String(state.week).padStart(2, '0');
             const rangeStr = `${formatShortDate(days[0])} – ${formatShortDate(days[6])} ${state.year}`;
             const title = t('shareTextTitle', { week: weekNumStr, range: rangeStr });
+            const fullText = buildScheduleShareText();
 
             try {
                 if (typeof navigator.share === 'function' && typeof File !== 'undefined') {
@@ -4543,13 +4541,13 @@
 
             downloadRenderedSchedulePNG();
             if (channel === 'whatsapp') {
-                const waUrl = `https://wa.me/?text=${encodeURIComponent(t('shareAttachNote', { title: title }))}`;
+                const waUrl = `https://wa.me/?text=${encodeURIComponent(fullText)}`;
                 try {
                     window.open(waUrl, '_blank', 'noopener,noreferrer');
                 } catch (err) {}
                 showToast(t('toastOpenedWa'));
             } else {
-                const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(t('shareMailBody', { title: title }))}`;
+                const mailtoUrl = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(fullText)}`;
                 try {
                     window.location.href = mailtoUrl;
                 } catch (err) {}

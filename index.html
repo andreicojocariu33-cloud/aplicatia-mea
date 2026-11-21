@@ -1,4 +1,3 @@
-Html
 <!DOCTYPE html>
 <html lang="ro" dir="ltr">
 <head>
@@ -1357,7 +1356,7 @@ Html
         <div class="legend-list">
             <span class="legend-pill shift-work"><span class="legend-dot" style="background:#059669"></span><span id="legend-work-text">Program (ex. 07:00 / 08:00 / 10:00)</span></span>
             <span class="legend-pill shift-extra"><span class="legend-dot" style="background:#d97706"></span><span id="legend-extra-text">Extra</span></span>
-            <span class="legend-pill shift-vrij"><span class="legend-dot" style="background:#64748b"></span><span id="legend-vrij-text">Vrij / Liber</span></span>
+            <span class="legend-pill shift-vrij"><span class="legend-dot" style="background:#64748b"></span><span id="legend-vrij-text">liber</span></span>
             <span class="legend-pill shift-vakantie"><span class="legend-dot" style="background:#e11d48"></span><span id="legend-vakantie-text">Vakantie / CO</span></span>
         </div>
 
@@ -1481,8 +1480,8 @@ Html
                             <strong>08:00 • Extra</strong>
                             <span>Zi lucrătoare suplimentară</span>
                         </button>
-                        <button type="button" class="preset-btn" data-preset-type="vrij" data-preset-label="Vrij" data-preset-extra="0">
-                            <strong>Vrij</strong>
+                        <button type="button" class="preset-btn" data-preset-type="vrij" data-preset-label="liber" data-preset-extra="0">
+                            <strong>liber</strong>
                             <span>Zi liberă (nu se numără ca zi lucrată)</span>
                         </button>
                         <button type="button" class="preset-btn" data-preset-type="vakantie" data-preset-label="Vakantie" data-preset-extra="0">
@@ -1497,14 +1496,14 @@ Html
                 <div class="form-row">
                     <div class="form-group">
                         <label for="custom-label">Oră început sau status</label>
-                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, Vrij, Vakantie">
+                        <input type="text" id="custom-label" class="form-input" placeholder="Ex: 07:00, 08:00, 10:00, liber, Vakantie">
                     </div>
                     <div class="form-group">
                         <label for="custom-status-type">Tip zi</label>
                         <select id="custom-status-type" class="form-input">
                             <option value="work">Zi lucrătoare</option>
                             <option value="extra">Extra (suplimentar)</option>
-                            <option value="vrij">Vrij / Liber</option>
+                            <option value="vrij">liber</option>
                             <option value="vakantie">Vakantie / Concediu</option>
                         </select>
                     </div>
@@ -1600,7 +1599,7 @@ Html
         /* =====================================================================
            1. STORAGE & MULTI-LANGUAGE DICTIONARY (RO, DE, EN, RU, TR, NL)
            ===================================================================== */
-        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v1';
+        const STORAGE_KEY = 'planificator_program_o_tura_2026_2027_v2';
         const LANG_STORAGE_KEY = 'planificator_program_lang_2026_2027_v1';
         let memoryStorageFallback = null;
         let langMemoryFallback = null;
@@ -1648,7 +1647,7 @@ Html
                 printTitle: 'Printează sau salvează PDF',
                 legendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'Vrij / Liber',
+                legendVrij: 'liber',
                 legendVakantie: 'Vakantie / CO',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Trimite tot tabelul programului pe WhatsApp',
@@ -1683,16 +1682,16 @@ Html
                 presetWorkDesc: 'Zi lucrătoare',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Zi lucrătoare suplimentară',
-                presetVrijTitle: 'Vrij',
+                presetVrijTitle: 'liber',
                 presetVrijDesc: 'Zi liberă (nu se numără ca zi lucrată)',
                 presetVakantieTitle: 'Vakantie',
                 presetVakantieDesc: 'Concediu (nu se numără ca zi lucrată)',
                 customLabelField: 'Oră început sau status',
-                customLabelPlaceholder: 'Ex: 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customLabelPlaceholder: 'Ex: 07:00, 08:00, 10:00, liber, Vakantie',
                 customTypeField: 'Tip zi',
                 typeWorkOption: 'Zi lucrătoare',
                 typeExtraOption: 'Extra (suplimentar)',
-                typeVrijOption: 'Vrij / Liber',
+                typeVrijOption: 'liber',
                 typeVakantieOption: 'Vakantie / Concediu',
                 customNoteField: 'Mențiune opțională (ex: Extra, Grup A)',
                 customNotePlaceholder: 'Ex: Extra',
@@ -1722,7 +1721,7 @@ Html
                 canvasBannerStats: 'Angajați: {count}   •   Total zile lucrate: {days} zile',
                 canvasLegendWork: 'Program (ex. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'Vrij / Liber',
+                canvasLegendVrij: 'liber',
                 canvasLegendVakantie: 'Vakantie / CO',
                 shareTextTitle: 'PROGRAMUL DE MUNCĂ - Săpt. {week} ({range})',
                 shareTextDaysLine: 'Zile: {daysLine}',
@@ -1781,7 +1780,7 @@ Html
                 printTitle: 'Drucken oder als PDF speichern',
                 legendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'Frei / Vrij',
+                legendVrij: 'liber',
                 legendVakantie: 'Urlaub / Vakantie',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Gesamten Plan über WhatsApp teilen',
@@ -1816,16 +1815,16 @@ Html
                 presetWorkDesc: 'Arbeitstag',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Zusätzlicher Arbeitstag',
-                presetVrijTitle: 'Vrij',
+                presetVrijTitle: 'liber',
                 presetVrijDesc: 'Freier Tag (zählt nicht als Arbeitstag)',
                 presetVakantieTitle: 'Vakantie',
                 presetVakantieDesc: 'Urlaub (zählt nicht als Arbeitstag)',
                 customLabelField: 'Startzeit oder Status',
-                customLabelPlaceholder: 'Z. B. 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customLabelPlaceholder: 'Z. B. 07:00, 08:00, 10:00, liber, Vakantie',
                 customTypeField: 'Tagestyp',
                 typeWorkOption: 'Arbeitstag',
                 typeExtraOption: 'Extra (zusätzlich)',
-                typeVrijOption: 'Frei / Vrij',
+                typeVrijOption: 'liber',
                 typeVakantieOption: 'Urlaub / Vakantie',
                 customNoteField: 'Optionale Notiz (z. B. Extra, Gruppe A)',
                 customNotePlaceholder: 'Z. B. Extra',
@@ -1855,7 +1854,7 @@ Html
                 canvasBannerStats: 'Mitarbeiter: {count}   •   Arbeitstage gesamt: {days} Tage',
                 canvasLegendWork: 'Arbeitszeit (z. B. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'Frei / Vrij',
+                canvasLegendVrij: 'liber',
                 canvasLegendVakantie: 'Urlaub / Vakantie',
                 shareTextTitle: 'ARBEITSPLAN - KW {week} ({range})',
                 shareTextDaysLine: 'Tage: {daysLine}',
@@ -1914,7 +1913,7 @@ Html
                 printTitle: 'Print or save as PDF',
                 legendWork: 'Schedule (e.g. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'Day off / Vrij',
+                legendVrij: 'liber',
                 legendVakantie: 'Vacation / Vakantie',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Share full schedule table on WhatsApp',
@@ -1949,16 +1948,16 @@ Html
                 presetWorkDesc: 'Working day',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Extra working day',
-                presetVrijTitle: 'Vrij',
+                presetVrijTitle: 'liber',
                 presetVrijDesc: 'Day off (not counted as worked day)',
                 presetVakantieTitle: 'Vakantie',
                 presetVakantieDesc: 'Vacation (not counted as worked day)',
                 customLabelField: 'Start time or status',
-                customLabelPlaceholder: 'E.g. 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customLabelPlaceholder: 'E.g. 07:00, 08:00, 10:00, liber, Vakantie',
                 customTypeField: 'Day type',
                 typeWorkOption: 'Working day',
                 typeExtraOption: 'Extra (additional)',
-                typeVrijOption: 'Day off / Vrij',
+                typeVrijOption: 'liber',
                 typeVakantieOption: 'Vacation / Vakantie',
                 customNoteField: 'Optional note (e.g. Extra, Group A)',
                 customNotePlaceholder: 'E.g. Extra',
@@ -1988,7 +1987,7 @@ Html
                 canvasBannerStats: 'Employees: {count}   •   Total worked days: {days} days',
                 canvasLegendWork: 'Schedule (e.g. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'Day off / Vrij',
+                canvasLegendVrij: 'liber',
                 canvasLegendVakantie: 'Vacation / Vakantie',
                 shareTextTitle: 'WORK SCHEDULE - Week {week} ({range})',
                 shareTextDaysLine: 'Days: {daysLine}',
@@ -2047,7 +2046,7 @@ Html
                 printTitle: 'Печать или сохранение в PDF',
                 legendWork: 'График (напр. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'Выходной / Vrij',
+                legendVrij: 'liber',
                 legendVakantie: 'Отпуск / Vakantie',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Отправить всю таблицу графика в WhatsApp',
@@ -2082,16 +2081,16 @@ Html
                 presetWorkDesc: 'Рабочий день',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Дополнительный рабочий день',
-                presetVrijTitle: 'Vrij',
+                presetVrijTitle: 'liber',
                 presetVrijDesc: 'Выходной (не считается рабочим днём)',
                 presetVakantieTitle: 'Vakantie',
                 presetVakantieDesc: 'Отпуск (не считается рабочим днём)',
                 customLabelField: 'Время начала или статус',
-                customLabelPlaceholder: 'Напр.: 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customLabelPlaceholder: 'Напр.: 07:00, 08:00, 10:00, liber, Vakantie',
                 customTypeField: 'Тип дня',
                 typeWorkOption: 'Рабочий день',
                 typeExtraOption: 'Extra (доп.)',
-                typeVrijOption: 'Выходной / Vrij',
+                typeVrijOption: 'liber',
                 typeVakantieOption: 'Отпуск / Vakantie',
                 customNoteField: 'Примечание (напр. Extra, Группа A)',
                 customNotePlaceholder: 'Напр.: Extra',
@@ -2121,7 +2120,7 @@ Html
                 canvasBannerStats: 'Сотрудников: {count}   •   Всего рабочих дней: {days} дн.',
                 canvasLegendWork: 'График (напр. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'Выходной / Vrij',
+                canvasLegendVrij: 'liber',
                 canvasLegendVakantie: 'Отпуск / Vakantie',
                 shareTextTitle: 'ГРАФИК РАБОТЫ - Нед. {week} ({range})',
                 shareTextDaysLine: 'Дни: {daysLine}',
@@ -2180,7 +2179,7 @@ Html
                 printTitle: 'Yazdır veya PDF olarak kaydet',
                 legendWork: 'Program (örn. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'İzinli / Vrij',
+                legendVrij: 'liber',
                 legendVakantie: 'Tatil / Vakantie',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Tüm program tablosunu WhatsApp’ta paylaş',
@@ -2215,16 +2214,16 @@ Html
                 presetWorkDesc: 'Çalışma günü',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Ek çalışma günü',
-                presetVrijTitle: 'Vrij',
+                presetVrijTitle: 'liber',
                 presetVrijDesc: 'İzin günü (çalışılan gün sayılmaz)',
                 presetVakantieTitle: 'Vakantie',
                 presetVakantieDesc: 'Tatil (çalışılan gün sayılmaz)',
                 customLabelField: 'Başlangıç saati veya durum',
-                customLabelPlaceholder: 'Örn: 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customLabelPlaceholder: 'Örn: 07:00, 08:00, 10:00, liber, Vakantie',
                 customTypeField: 'Gün türü',
                 typeWorkOption: 'Çalışma günü',
                 typeExtraOption: 'Extra (ek)',
-                typeVrijOption: 'İzinli / Vrij',
+                typeVrijOption: 'liber',
                 typeVakantieOption: 'Tatil / Vakantie',
                 customNoteField: 'İsteğe bağlı not (örn. Extra, Grup A)',
                 customNotePlaceholder: 'Örn: Extra',
@@ -2254,7 +2253,7 @@ Html
                 canvasBannerStats: 'Çalışanlar: {count}   •   Toplam çalışılan gün: {days} gün',
                 canvasLegendWork: 'Program (örn. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'İzinli / Vrij',
+                canvasLegendVrij: 'liber',
                 canvasLegendVakantie: 'Tatil / Vakantie',
                 shareTextTitle: 'ÇALIŞMA PROGRAMI - Hafta {week} ({range})',
                 shareTextDaysLine: 'Günler: {daysLine}',
@@ -2313,7 +2312,7 @@ Html
                 printTitle: 'Afdrukken of opslaan als PDF',
                 legendWork: 'Rooster (bijv. 07:00 / 08:00 / 10:00)',
                 legendExtra: 'Extra',
-                legendVrij: 'Vrij',
+                legendVrij: 'liber',
                 legendVakantie: 'Vakantie',
                 whatsappBtn: 'WhatsApp',
                 whatsappTitle: 'Deel het hele roostertabel op WhatsApp',
@@ -2348,16 +2347,16 @@ Html
                 presetWorkDesc: 'Werkdag',
                 presetExtraTitle: '{time} • Extra',
                 presetExtraDesc: 'Extra werkdag',
-                presetVrijTitle: 'Vrij',
+                presetVrijTitle: 'liber',
                 presetVrijDesc: 'Vrije dag (telt niet als gewerkte dag)',
                 presetVakantieTitle: 'Vakantie',
                 presetVakantieDesc: 'Vakantie (telt niet als gewerkte dag)',
                 customLabelField: 'Begintijd of status',
-                customLabelPlaceholder: 'Bijv.: 07:00, 08:00, 10:00, Vrij, Vakantie',
+                customLabelPlaceholder: 'Bijv.: 07:00, 08:00, 10:00, liber, Vakantie',
                 customTypeField: 'Dagtype',
                 typeWorkOption: 'Werkdag',
                 typeExtraOption: 'Extra (aanvullend)',
-                typeVrijOption: 'Vrij',
+                typeVrijOption: 'liber',
                 typeVakantieOption: 'Vakantie',
                 customNoteField: 'Optionele notitie (bijv. Extra, Groep A)',
                 customNotePlaceholder: 'Bijv.: Extra',
@@ -2387,7 +2386,7 @@ Html
                 canvasBannerStats: 'Medewerkers: {count}   •   Totaal gewerkte dagen: {days} dagen',
                 canvasLegendWork: 'Rooster (bijv. 07:00 / 08:00 / 10:00)',
                 canvasLegendExtra: 'Extra',
-                canvasLegendVrij: 'Vrij',
+                canvasLegendVrij: 'liber',
                 canvasLegendVakantie: 'Vakantie',
                 shareTextTitle: 'WERKROOSTER - Week {week} ({range})',
                 shareTextDaysLine: 'Dagen: {daysLine}',
@@ -2786,17 +2785,17 @@ Html
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_druvis: {
-                    0: createSlot('vrij', 'Vrij'),
+                    0: createSlot('vrij', 'liber'),
                     1: createSlot('work', '07:00'),
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '09:00'),
-                    6: createSlot('vrij', 'Vrij')
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_ghenadie: {
                     0: createSlot('work', '10:00'),
@@ -2804,14 +2803,14 @@ Html
                     2: createSlot('work', '10:00'),
                     3: createSlot('work', '10:00'),
                     4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_evelina: {
                     0: createSlot('work', '07:00'),
                     1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'Vrij'),
-                    3: createSlot('vrij', 'Vrij'),
+                    2: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
                     6: createSlot('work', '07:00')
@@ -2823,7 +2822,7 @@ Html
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('extra', '07:00', 'Extra'),
-                    6: createSlot('vrij', 'Vrij')
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_albert: {
                     0: createSlot('vakantie', 'Vakantie'),
@@ -2838,7 +2837,7 @@ Html
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('extra', '08:00', 'Extra'),
-                    3: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '08:00'),
                     5: createSlot('work', '07:00'),
                     6: createSlot('work', '07:00')
@@ -2852,17 +2851,17 @@ Html
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_druvis: {
-                    0: createSlot('vrij', 'Vrij'),
+                    0: createSlot('vrij', 'liber'),
                     1: createSlot('work', '07:00'),
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Vrij')
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_ghenadie: {
                     0: createSlot('work', '10:00'),
@@ -2870,17 +2869,17 @@ Html
                     2: createSlot('work', '10:00'),
                     3: createSlot('work', '10:00'),
                     4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_evelina: {
                     0: createSlot('work', '07:00'),
                     1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'Vrij'),
-                    3: createSlot('vrij', 'Vrij'),
+                    2: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Vrij')
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_andrei: {
                     0: createSlot('work', '07:00'),
@@ -2888,26 +2887,26 @@ Html
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_albert: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '08:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_iulian: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '08:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Vrij')
+                    6: createSlot('vrij', 'liber')
                 }
             };
 
@@ -2918,17 +2917,17 @@ Html
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_druvis: {
-                    0: createSlot('vrij', 'Vrij'),
+                    0: createSlot('vrij', 'liber'),
                     1: createSlot('work', '07:00'),
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_ghenadie: {
                     0: createSlot('work', '10:00'),
@@ -2936,17 +2935,17 @@ Html
                     2: createSlot('work', '10:00'),
                     3: createSlot('work', '10:00'),
                     4: createSlot('work', '10:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_evelina: {
                     0: createSlot('work', '07:00'),
                     1: createSlot('work', '07:00'),
-                    2: createSlot('vrij', 'Vrij'),
-                    3: createSlot('vrij', 'Vrij'),
+                    2: createSlot('vrij', 'liber'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '07:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Vrij')
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_andrei: {
                     0: createSlot('work', '07:00'),
@@ -2954,26 +2953,26 @@ Html
                     2: createSlot('work', '07:00'),
                     3: createSlot('work', '07:00'),
                     4: createSlot('work', '07:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_albert: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '08:00'),
-                    5: createSlot('vrij', 'Vrij'),
-                    6: createSlot('vrij', 'Vrij')
+                    5: createSlot('vrij', 'liber'),
+                    6: createSlot('vrij', 'liber')
                 },
                 emp_iulian: {
                     0: createSlot('work', '08:00'),
                     1: createSlot('work', '08:00'),
                     2: createSlot('work', '08:00'),
-                    3: createSlot('vrij', 'Vrij'),
+                    3: createSlot('vrij', 'liber'),
                     4: createSlot('work', '08:00'),
                     5: createSlot('work', '07:00'),
-                    6: createSlot('vrij', 'Vrij')
+                    6: createSlot('vrij', 'liber')
                 }
             };
 
@@ -4238,4 +4237,3 @@ Html
     </script>
 </body>
 </html>
-```
